@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@airgap/beacon-sdk@^2.3.8", "@airgap/beacon-sdk@^2.3.9":
+"@airgap/beacon-sdk@^2.3.8":
   version "2.3.9"
   resolved "https://registry.yarnpkg.com/@airgap/beacon-sdk/-/beacon-sdk-2.3.9.tgz#1545acb040f851ea4e8d6c7b7883d571b014534b"
   integrity sha512-vj7NxrwhGBkRQN+yxozisE2m/h1WduFJsMACBzm3g1ctvn9lik4unNjojPjbmkFLv9R2JD/OYyFkz2rYi81lVA==
@@ -1574,7 +1574,7 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@taquito/beacon-wallet@^11.1.0":
+"@taquito/beacon-wallet@^11.0.1":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/beacon-wallet/-/beacon-wallet-11.1.0.tgz#20b86c316a58a8975398290bf7b3319092a73d09"
   integrity sha512-FrL8WworlaLN/XHbaHDU8A6Be8EYqahwFhruh1HTA7wNbRSZT7O4nwItjWIONiqKJw4dDJKhCEpaplWfKrx3kw==
@@ -1615,7 +1615,7 @@
     lodash.get "^4.4.2"
     lodash.set "^4.3.2"
 
-"@taquito/signer@^11.1.0":
+"@taquito/signer@^11.0.1":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/signer/-/signer-11.1.0.tgz#ffb2656b332c477ee486356a6387cbe0ba48fe6a"
   integrity sha512-WJLm2tJPb69F5jL/C4keIzJ/AbhmMzupiCS8jx0CXev+YKZmJE0kW7UpUzorLt9Va0grE9/VRxQiQVdAyp+w6A==
@@ -1629,7 +1629,7 @@
     pbkdf2 "^3.1.2"
     typedarray-to-buffer "^4.0.0"
 
-"@taquito/taquito@^11.1.0":
+"@taquito/taquito@^11.0.1", "@taquito/taquito@^11.1.0":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@taquito/taquito/-/taquito-11.1.0.tgz#96c86fb6c8b7425b0faccca8150fd5127fe278d8"
   integrity sha512-aGibJBTi+kCCEhz3E+wHyJ6Pf/n30Tv/m/ag2ZMoWMYxWzOHepfkYaPQ6nq4eXUcWzAAxEuAtvgJBUB2pkHlog==
@@ -1655,7 +1655,7 @@
     elliptic "^6.5.4"
     typedarray-to-buffer "^4.0.0"
 
-"@temple-wallet/dapp@^6.1.0":
+"@temple-wallet/dapp@^6.0.1":
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/@temple-wallet/dapp/-/dapp-6.1.0.tgz#3a7afab66bba6072bb3ac0ce0bdfa188e72c3da1"
   integrity sha512-rMu31nN7Ted8bvHxCYy6sEg4ZEIdhW9+I50DBWAT9lDu4w424LoZDnkCLn+hsoVqDhfJBo/rkQTNjGYu8fmzHg==
@@ -1716,7 +1716,7 @@
     "@types/filesystem" "*"
     "@types/har-format" "*"
 
-"@types/elliptic@^6.4.14":
+"@types/elliptic@^6.4.13":
   version "6.4.14"
   resolved "https://registry.yarnpkg.com/@types/elliptic/-/elliptic-6.4.14.tgz#7bbaad60567a588c1f08b10893453e6b9b4de48e"
   integrity sha512-z4OBcDAU0GVwDTuwJzQCiL6188QvZMkvoERgcVjq0/mPM8jCfdwZ3x5zQEVoL9WCAru3aG5wl3Z5Ww5wBWn7ZQ==
@@ -1853,7 +1853,7 @@
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.1.tgz#3b9ce2489919d9e4fea439b76916abc34b2df129"
   integrity sha512-7tFImggNeNBVMsn0vLrpn1H1uPrUBdnARPTpZoitY37ZrdJREzf7I16tMrlK3hen349gr1NYh8CmZQa7CTG6Aw==
 
-"@types/yargs@^17.0.8":
+"@types/yargs@^17.0.7":
   version "17.0.8"
   resolved "https://registry.yarnpkg.com/@types/yargs/-/yargs-17.0.8.tgz#d23a3476fd3da8a0ea44b5494ca7fa677b9dad4c"
   integrity sha512-wDeUwiUmem9FzsyysEwRukaEdDNcwbROvQ9QGRKaLI6t+IltNzbn4/i4asmB10auvZGQCzSQ6t0GSczEThlUXw==
@@ -2434,7 +2434,7 @@ bignumber.js@9.0.0:
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
   integrity sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A==
 
-bignumber.js@^9.0.0, bignumber.js@^9.0.1, bignumber.js@^9.0.2:
+bignumber.js@^9.0.0, bignumber.js@^9.0.1:
   version "9.0.2"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.2.tgz#71c6c6bed38de64e24a65ebe16cfcf23ae693673"
   integrity sha512-GAcQvbpsM0pUb0zw1EI0KhQEZ+lRwR5fYaAp3vPOYuP7aDvGy6cVN6XHLauvF8SOga2y0dcLcjt3iQDTSEliyw==
@@ -5433,7 +5433,7 @@ kind-of@^6.0.2, kind-of@^6.0.3:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-kukai-embed@^0.7.1:
+kukai-embed@^0.7.0:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/kukai-embed/-/kukai-embed-0.7.1.tgz#47371eeab3f917b7b71cc484dc997055d1e7e98b"
   integrity sha512-2QNU/9Qy3XnKAsOWmxTN+XbgtyKBcud1xZp4r/XmvqrAwzn0uasH5EhVBJAfRwYodWazOXp3x6tpQn9YzdymUA==
