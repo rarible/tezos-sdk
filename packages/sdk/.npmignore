@@ -1,0 +1,12 @@
+node_modules/
+common
+config
+contracts
+main
+nft
+order
+providers
+test
+www
+!dist/**/*.ts
+!dist/**/*.js

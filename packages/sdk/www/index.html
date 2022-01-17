@@ -1,0 +1,424 @@
+<html>
+  <head>
+    <title>Rarible Tezos Example</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="/favicon.png" />
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/json-formatter-js@2.3.4/dist/json-formatter.css"/>
+
+    <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue-icons.min.js"></script>
+    <script src="test.js" defer></script>
+  </head>
+  <body>
+    <div id="app">
+      <b-navbar sticky toggleable="sm" type="dark" variant="dark">
+        <b-navbar-brand @click="path='home'" class="px-2">
+          <img src="/rarible-logo.png" alt="Rarible" width="30"/>
+        </b-navbar-brand>
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <b-collapse id="nav-collapse" is-nav>
+          <b-navbar-nav>
+            <b-nav-item :active="path=='tokens'" @click="path='tokens'">Tokens</b-nav-item>
+            <b-nav-item :active="path=='orders'" @click="path='orders'">Orders</b-nav-item>
+            <b-nav-item :active="path=='api'" @click="path='api'">API</b-nav-item>
+            <b-nav-item :active="path=='sign'" @click="path='sign'">Sign</b-nav-item>
+            <b-nav-item :active="path=='test'" @click="path='test'">Test</b-nav-item>
+            <b-nav-item v-if="connected" @click="copy(address)">{{ address.substring(0, 10) }}</b-nav-item>
+          </b-navbar-nav>
+          <b-navbar-nav class="ms-auto">
+            <b-button v-if="!connected" @click="connect()" class="mx-2">CONNECT</b-button>
+            <b-button v-else @click="disconnect()" class="mx-2">DISCONNECT</b-button>
+            <b-input-group prepend="Node" class="mx-2">
+              <b-form-input size="sm" v-model="node"></b-form-input>
+            </b-input-group>
+            <b-input-group prepend="API" class="mx-2">
+              <b-form-input size="sm" v-model="api_url"></b-form-input>
+            </b-input-group>
+            <b-input-group prepend="Wallet" class="mx-2">
+              <b-form-input size="sm" v-model="wallet"></b-form-input>
+            </b-input-group>
+          </b-navbar-nav>
+        </b-collapse>
+      </b-navbar>
+
+      <b-container v-if="path=='home'" class="mt-4">
+        <h3 class="text-center mt-5 pt-5">
+          Rarible SDK Example
+        </h3>
+        <div class="text-center">
+          <b-button v-if="!connected" size="lg" class="m-3" @click="connect()">CONNECT</b-button>
+          <b-button v-else @click="disconnect()" size="lg" class="m-3">DISCONNECT</b-button>
+        </div>
+      </b-container>
+
+      <b-container v-if="path=='tokens'" class="mt-4">
+        <b-tabs justified>
+
+          <b-tab title="Deploy" class="mt-4">
+            <div>
+              <b-form-group label="Owner" class="mb-2">
+                <b-form-input v-model="deploy.owner"></b-form-input>
+              </b-form-group>
+              <b-form-group label="Kind" class="mb-2">
+                <b-form-select v-model="deploy.kind" :options="['NFT', 'MT']"></b-form-select>
+              </b-form-group>
+              <b-form-group label="Metadata" class="mb-2">
+                <b-form-textarea v-model="deploy.metadata"></b-form-textarea>
+              </b-form-group>
+              <div class="text-center" class="mb-2">
+                <b-button class="m-2" @click="deploy_fa2()">
+                  Deploy FA2
+                </b-button>
+              </div>
+              <div :class="'text-center text-'+deploy.status">{{ deploy.result }}</div>
+            </div>
+          </b-tab>
+
+          <b-tab title="Mint" class="mt-4">
+            <b-form-group label="Class *" class="mb-2">
+              <b-form-select v-model="mint.asset_class" :options="['NFT', 'MT']"></b-form-select>
+            </b-form-group>
+            <b-form-group label="Contract *" class="mb-2">
+              <b-form-select v-model="mint.contract" :options="nft_contracts_options"></b-form-select>
+              <b-form-input v-if="mint.contract=='custom'" v-model="mint.contract_custom" class="mt-2"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Token ID" class="mb-2">
+              <b-form-input v-model="mint.token_id"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Amount" class="mb-2">
+              <b-form-input v-model="mint.amount" type="number" :disabled="mint.asset_class=='NFT'"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Royalties" description="{ &quot;tz1...&quot;: 42, ... }" class="mb-2">
+              <b-form-input v-model="mint.royalties"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Metadata" class="mb-2">
+              <b-form-input v-model="mint.metadata"></b-form-input>
+            </b-form-group>
+            <div class="text-center" class="mb-2">
+              <b-button class="m-2" @click="fmint()">
+                Mint
+              </b-button>
+            </div>
+            <div :class="'text-center text-'+mint.status">{{ mint.result }}</div>
+          </b-tab>
+
+          <b-tab title="Burn" class="mt-4">
+            <b-form-group label="Class *" class="mb-2">
+              <b-form-select v-model="burn.asset_type.asset_class" :options="['NFT', 'MT']"></b-form-select>
+            </b-form-group>
+            <b-form-group label="Contract *" class="mb-2">
+              <b-form-select v-model="burn.asset_type.contract" :options="nft_contracts_options"></b-form-select>
+              <b-form-input v-if="burn.asset_type.contract=='custom'" v-model="burn.asset_type.contract_custom" class="mt-2"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Token ID" class="mb-2">
+              <b-form-input v-model="burn.asset_type.token_id">
+              </b-form-input>
+            </b-form-group>
+            <b-form-group label="Amount" class="mb-2">
+              <b-form-input v-model="burn.amount" type="number" :disabled="burn.asset_type.asset_class=='NFT'"></b-form-input>
+            </b-form-group>
+            <div class="text-center" class="mb-2">
+              <b-button class="m-2" @click="fburn()">
+                Burn
+              </b-button>
+            </div>
+            <div :class="'text-center text-'+burn.status">{{ burn.result }}</div>
+          </b-tab>
+
+          <b-tab title="Transfer" class="mt-4">
+            <b-form-group label="Class *" class="mb-2">
+              <b-form-select v-model="transfer.asset_type.asset_class" :options="['NFT', 'MT']"></b-form-select>
+            </b-form-group>
+            <b-form-group label="Contract *" class="mb-2">
+              <b-form-select v-model="transfer.asset_type.contract" :options="nft_contracts_options"></b-form-select>
+              <b-form-input v-if="transfer.asset_type.contract=='custom'" v-model="transfer.asset_type.contract_custom" class="mt-2"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Token ID" class="mb-2">
+              <b-form-input v-model="transfer.asset_type.token_id">
+              </b-form-input>
+            </b-form-group>
+            <b-form-group label="Destination *" class="mb-2">
+              <b-form-input v-model="transfer.destination"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Amount" class="mb-2">
+              <b-form-input v-model="transfer.amount" type="number" :disabled="transfer.asset_type.asset_class=='NFT'"></b-form-input>
+            </b-form-group>
+            <div class="text-center" class="mb-2">
+              <b-button class="m-2" @click="ftransfer()">
+                Transfer
+              </b-button>
+            </div>
+            <div :class="'text-center text-'+transfer.status">{{ transfer.result }}</div>
+          </b-tab>
+
+          <b-tab title="Approve" class="mt-4">
+            <b-form-group label="Class *" class="mb-2">
+              <b-form-select v-model="approve.asset_type.asset_class" :options="['FT', 'NFT', 'MT']"></b-form-select>
+            </b-form-group>
+            <b-form-group label="Contract *" class="mb-2">
+              <b-form-select v-model="approve.asset_type.contract" :options="nft_contracts_options" :disabled="approve.asset_type.asset_class=='XTZ'"></b-form-select>
+              <b-form-input v-if="approve.asset_type.contract=='custom'" v-model="approve.asset_type.contract_custom" class="mt-2"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Token ID" class="mb-2">
+              <b-form-input v-model="approve.asset_type.token_id" :disabled="approve.asset_type.asset_class=='XTZ'">
+              </b-form-input>
+            </b-form-group>
+            <b-form-group label="Value" class="mb-2">
+              <b-form-input v-model="approve.value"></b-form-input>
+            </b-form-group>
+
+            <div class="text-center" class="mb-2">
+              <b-button class="m-2" @click="fapprove()">
+                Approve
+              </b-button>
+            </div>
+            <div :class="'text-center text-'+approve.status">{{ approve.result }}</div>
+          </b-tab>
+
+        </b-tabs>
+      </b-container>
+
+      <b-container v-if="path=='orders'" class="mt-4">
+
+        <b-tabs justified>
+
+          <b-tab title="Upsert" class="mt-4">
+            <b-form-group label="Maker" class="mb-2">
+              <b-form-input v-model="upsert.maker"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Taker" class="mb-2">
+              <b-form-input v-model="upsert.taker"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Make Asset *" class="mb-2">
+              <b-input-group>
+                <b-input-group-text>Class</b-input-group-text>
+                <b-form-select v-model="upsert.make.asset_type.asset_class" :options="['XTZ', 'FT', 'NFT', 'MT']"></b-form-select>
+                <b-input-group-text>Contract</b-input-group-text>
+                <b-form-select v-model="upsert.make.asset_type.contract" :options="nft_contracts_options" :disabled="upsert.make.asset_type.asset_class=='XTZ'"></b-form-select>
+                <b-form-input v-if="upsert.make.asset_type.contract=='custom'" v-model="upsert.make.asset_type.contract_custom" :disabled="upsert.make.asset_type.asset_class=='XTZ'"></b-form-input>
+                <b-input-group-text>Token ID</b-input-group-text>
+                <b-form-input v-model="upsert.make.asset_type.token_id" :disabled="upsert.make.asset_type.asset_class=='XTZ'" type="number"></b-form-input>
+                <b-input-group-text>Value</b-input-group-text>
+                <b-form-input v-model="upsert.make.value" type="number"></b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group label="Take Asset *" class="mb-2">
+              <b-input-group>
+                <b-input-group-text>Class</b-input-group-text>
+                <b-form-select v-model="upsert.take.asset_type.asset_class" :options="['XTZ', 'FT', 'NFT', 'MT']"></b-form-select>
+                <b-input-group-text>Contract</b-input-group-text>
+                <b-form-select v-model="upsert.take.asset_type.contract" :options="nft_contracts_options" :disabled="upsert.take.asset_type.asset_class=='XTZ'"></b-form-select>
+                <b-form-input v-if="upsert.take.asset_type.contract=='custom'" v-model="upsert.take.asset_type.contract_custom" :disabled="upsert.take.asset_type.asset_class=='XTZ'"></b-form-input>
+                <b-input-group-text>Token ID</b-input-group-text>
+                <b-form-input v-model="upsert.take.asset_type.token_id" :disabled="upsert.take.asset_type.asset_class=='XTZ'" type="number"></b-form-input>
+                <b-input-group-text>Value</b-input-group-text>
+                <b-form-input v-model="upsert.take.value" type="number"></b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group label="Payouts" class="mb-2" description="{ &quot;tz1...&quot;: 42, ... }">
+              <b-form-input v-model="upsert.payouts"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Origin Fees" class="mb-2" description="{ &quot;tz1...&quot;: 42, ... }">
+              <b-form-input v-model="upsert.origin_fees"></b-form-input>
+            </b-form-group>
+
+            <div class="text-center" class="mb-2">
+              <b-button class="m-2" @click="fupsert_order()">
+                Upsert
+              </b-button>
+            </div>
+            <div v-if="upsert.result" :class="'text-center text-'+upsert.status">{{ upsert.result }}</div>
+            <div id="upsert-result" :class="'text-'+upsert.status"></div>
+          </b-tab>
+
+          <b-tab title="Sell" class="mt-4">
+            <b-form-group label="Maker" class="mb-2">
+              <b-form-input v-model="sell.maker"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Make Asset Type *" class="mb-2">
+              <b-input-group>
+                <b-input-group-text>Class</b-input-group-text>
+                <b-form-select v-model="sell.make_asset_type.asset_class" :options="['XTZ', 'FT', 'NFT', 'MT', 'Unknown']"></b-form-select>
+                <b-input-group-text>Contract</b-input-group-text>
+                <b-form-select v-model="sell.make_asset_type.contract" :options="nft_contracts_options" :disabled="sell.make_asset_type.asset_class=='XTZ'"></b-form-select>
+                <b-form-input v-if="sell.make_asset_type.contract=='custom'" v-model="sell.make_asset_type.contract_custom" :disabled="sell.make_asset_type.asset_class=='XTZ'"></b-form-input>
+                <b-input-group-text>Token ID</b-input-group-text>
+                <b-form-input v-model="sell.make_asset_type.token_id" :disabled="sell.make_asset_type.asset_class=='XTZ'" type="number"></b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group label="Take Asset Type *" class="mb-2">
+              <b-input-group>
+                <b-input-group-text>Class</b-input-group-text>
+                <b-form-select v-model="sell.take_asset_type.asset_class" :options="['XTZ', 'FT']"></b-form-select>
+                <b-input-group-text>Contract</b-input-group-text>
+                <b-form-select v-model="sell.take_asset_type.contract" :options="nft_contracts_options" :disabled="sell.take_asset_type.asset_class=='XTZ'"></b-form-select>
+                <b-form-input v-if="sell.take_asset_type.contract=='custom'" v-model="sell.take_asset_type.contract_custom" :disabled="sell.take_asset_type.asset_class=='XTZ'"></b-form-input>
+                <b-input-group-text>Token ID</b-input-group-text>
+                <b-form-input v-model="sell.take_asset_type.token_id" :disabled="sell.take_asset_type.asset_class=='XTZ'" type="number"></b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group label="Amount *" class="mb-2">
+              <b-form-input v-model="sell.amount" type="number"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Price *" class="mb-2">
+              <b-form-input v-model="sell.price" type="number"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Payouts" class="mb-2" description="{ &quot;tz1...&quot;: 42, ... }">
+              <b-form-input v-model="sell.payouts"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Origin Fees" class="mb-2" description="{ &quot;tz1...&quot;: 42, ... }">
+              <b-form-input v-model="sell.origin_fees"></b-form-input>
+            </b-form-group>
+
+            <div class="text-center" class="mb-2">
+              <b-button class="m-2" @click="sell_order()">
+                Sell
+              </b-button>
+            </div>
+            <div v-if="sell.result" :class="'text-center text-'+sell.status">{{ sell.result }}</div>
+            <div id="sell-result" :class="'text-'+sell.status"></div>
+          </b-tab>
+
+          <b-tab title="Bid" class="mt-4">
+            <b-form-group label="Maker" class="mb-2">
+              <b-form-input v-model="bid.maker"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Make Asset Type *" class="mb-2">
+              <b-input-group>
+                <b-input-group-text>Class</b-input-group-text>
+                <b-form-select v-model="bid.make_asset_type.asset_class" :options="['XTZ', 'FT']"></b-form-select>
+                <b-input-group-text>Contract</b-input-group-text>
+                <b-form-select v-model="bid.make_asset_type.contract" :options="nft_contracts_options" :disabled="bid.make_asset_type.asset_class=='XTZ'"></b-form-select>
+                <b-form-input v-if="bid.make_asset_type.contract=='custom'" v-model="bid.make_asset_type.contract_custom" :disabled="bid.make_asset_type.asset_class=='XTZ'"></b-form-input>
+                <b-input-group-text>Token ID</b-input-group-text>
+                <b-form-input v-model="sell.make_asset_type.token_id" :disabled="bid.make_asset_type.asset_class=='XTZ'" type="number"></b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group label="Take Asset Type *" class="mb-2">
+              <b-input-group>
+                <b-input-group-text>Class</b-input-group-text>
+                <b-form-select v-model="bid.take_asset_type.asset_class" :options="['XTZ', 'FT', 'NFT', 'MT', 'Unknown']"></b-form-select>
+                <b-input-group-text>Contract</b-input-group-text>
+                <b-form-select v-model="bid.take_asset_type.contract" :options="nft_contracts_options" :disabled="bid.take_asset_type.asset_class=='XTZ'"></b-form-select>
+                <b-form-input v-if="bid.take_asset_type.contract=='custom'" v-model="bid.take_asset_type.contract_custom" :disabled="bid.take_asset_type.asset_class=='XTZ'"></b-form-input>
+                <b-input-group-text>Token ID</b-input-group-text>
+                <b-form-input v-model="bid.take_asset_type.token_id" :disabled="bid.take_asset_type.asset_class=='XTZ'" type="number"></b-form-input>
+              </b-input-group>
+            </b-form-group>
+            <b-form-group label="Amount *" class="mb-2">
+              <b-form-input v-model="bid.amount" type="number"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Price *" class="mb-2">
+              <b-form-input v-model="bid.price" type="number"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Payouts" class="mb-2" description="{ &quot;tz1...&quot;: 42, ... }">
+              <b-form-input v-model="bid.payouts"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Origin Fees" class="mb-2" description="{ &quot;tz1...&quot;: 42, ... }">
+              <b-form-input v-model="bid.origin_fees"></b-form-input>
+            </b-form-group>
+            <div class="text-center" class="mb-2">
+              <b-button class="m-2" @click="bid_order()">
+                Bid
+              </b-button>
+            </div>
+            <div v-if="bid.result" :class="'text-center text-'+bid.status">{{ bid.result }}</div>
+            <div id="bid-result" :class="'text-'+bid.status"></div>
+          </b-tab>
+
+          <b-tab title="Fill" @click="get_orders()">
+            <b-table selectable :fields="fill.fields" :items="fill.orders" select-mode="single" class="mt-4" @row-selected="onselected" ref="orders_table">
+              <template #cell(hash)="data">
+                {{ data.item.hash.substring(0,10) }}
+              </template>
+              <template #cell(make_class)="data">
+                {{ data.item.make.asset_type.asset_class }}
+              </template>
+              <template #cell(make_contract)="data">
+                {{ data.item.make.asset_type.contract || '--'  }}
+              </template>
+              <template #cell(make_token_id)="data">
+                {{ (data.item.make.asset_type.token_id==undefined) ? '--' : data.item.make.asset_type.token_id }}
+              </template>
+              <template #cell(make_value)="data">
+                <!-- {{ (data.item.make.asset_type.asset_class!='XTZ') ? data.item.make.value : Number(data.item.make.value / 1000000n) + Number(data.item.make.value % 1000000n) / Number(1000000n) }} -->
+                {{ data.item.make.value }}
+              </template>
+              <template #cell(take_class)="data">
+                {{ data.item.take.asset_type.asset_class }}
+              </template>
+              <template #cell(take_contract)="data">
+                {{ data.item.take.asset_type.contract || '--'  }}
+              </template>
+              <template #cell(take_token_id)="data">
+                {{ (data.item.take.asset_type.token_id==undefined) ? '--' : data.item.take.asset_type.token_id }}
+              </template>
+              <template #cell(take_value)="data">
+                {{ data.item.take.value }}
+                <!-- {{ (data.item.take.asset_type.asset_class!='XTZ') ? data.item.take.value : Number(data.item.take.value / 1000000n) + Number(data.item.take.value % 1000000n) / Number(1000000n) }} -->
+              </template>
+            </b-table>
+            <div v-if="fill.get_result!=''" class="text-center text-danger">{{ fill.get_result }}</div>
+            <b-form-group label="Amount" class="mb-2">
+              <b-form-input v-model="fill.amount" type="number"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Payouts" class="mb-2" description="{ &quot;tz1...&quot;: 42, ... }">
+              <b-form-input v-model="fill.payouts"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Origin Fees" class="mb-2" description="{ &quot;tz1...&quot;: 42, ... }">
+              <b-form-input v-model="fill.origin_fees"></b-form-input>
+            </b-form-group>
+
+            <div class="text-center" class="mb-2">
+              <b-button class="m-2" @click="ffill_order()">
+                Fill
+              </b-button>
+            </div>
+            <div :class="'text-center text-'+fill.status">{{ fill.result }}</div>
+          </b-tab>
+
+        </b-tabs>
+      </b-container>
+
+
+      <b-container v-if="path=='api'" class="mt-4">
+        <b-form-group label="Path *" class="mb-2">
+          <b-form-input v-model="api.path"></b-form-input>
+        </b-form-group>
+        <b-form-group label="Data" class="mb-2">
+          <b-form-textarea v-model="api.data"></b-form-textarea>
+        </b-form-group>
+        <div class="text-center" class="mb-2">
+          <b-button class="m-2" @click="api_request()">
+            Request
+          </b-button>
+        </div>
+        <div v-if="api.result" :class="'text-center text-'+api.status">{{ api.result }}</div>
+        <div id="api-request-result"></div>
+      </b-container>
+
+      <b-container v-if="path=='sign'" class="mt-4">
+        <b-form-group label="Message *" class="mb-2">
+          <b-form-textarea v-model="sign.message"></b-form-textarea>
+        </b-form-group>
+        <div class="text-center" class="mb-2">
+          <b-button @click="sign_message()">SIGN</b-button>
+        </div>
+        <div id="sign-result"></div>
+      </b-container>
+
+
+      <b-container v-if="path=='test'" class="mt-4">
+        <h3 class="text-center mt-5 pt-5">
+          <b-button @click="test()">TEST</b-button>
+        </h3>
+      </b-container>
+
+    </div>
+
+
+  </body>
+</html>

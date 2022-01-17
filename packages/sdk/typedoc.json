@@ -1,0 +1,10 @@
+{
+  "entryPoints": [
+    "./main/index.ts"
+  ],
+  "out": "../public/sdk",
+  "readme": "none",
+  "name": "Rarible Tezos SDK",
+  "gitRemote": "hub",
+  "gitRevision": "master"
+}

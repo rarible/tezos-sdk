@@ -1,0 +1,5 @@
+{
+  "api_url": "https://rarible-api.functori.com/v0.1/",
+  "node": "https://hangzhou.tz.functori.com",
+  "nft_contracts": [ ]
+}
