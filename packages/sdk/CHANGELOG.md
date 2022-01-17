@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.5](https://github.com/rarible/tezos-sdk/compare/v0.0.4...v0.0.5) (2022-01-17)
+
+
+### Bug Fixes
+
+* revert deps versions ([eaf538d](https://github.com/rarible/tezos-sdk/commit/eaf538d3ec0c215861318e2d5259ce89a7e799d8))
+
+
+
+
+
 ## [0.0.4](https://github.com/rarible/tezos-sdk/compare/v0.0.3...v0.0.4) (2022-01-17)
 
 **Note:** Version bump only for package @rarible/tezos-sdk
