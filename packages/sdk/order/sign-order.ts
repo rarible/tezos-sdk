@@ -2,6 +2,7 @@ import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-cod
 import { Provider, AssetType, Asset, StorageFA1_2, StorageFA2, of_hex } from "../common/base"
 import { OrderForm, OrderRaribleV2DataV1 } from "./utils"
 import BigNumber from "bignumber.js"
+import fetch from "node-fetch"
 const keccak_base = require("keccak")
 
 export function keccak(s : string) : string {
@@ -99,8 +100,16 @@ export async function get_decimals(p: Provider, contract: string, token_id = new
     if (v==undefined) return new BigNumber(0)
     else {
       let v2 = v[Object.keys(v)[1]].get('decimals')
+      if (v2!=undefined) return new BigNumber(of_hex(v2))
+      v2 = v[Object.keys(v)[1]].get('')
       if (v2==undefined) return new BigNumber(0)
-      else return new BigNumber(of_hex(v2))
+      let url = of_hex(v2)
+      const url_http = (url.substring(0, 4) == 'ipfs') ? "https://rarible.mypinata.cloud/ipfs/" + url.substring(7) : url
+      const r = await fetch(url_http)
+      if (!r.ok) return new BigNumber(0)
+      const json = await r.json()
+      if (json.decimals==undefined) return new BigNumber(0)
+      else return new BigNumber(json.decimals)
     }
   }
 }
