@@ -93,6 +93,7 @@ export function asset_type_to_struct(p: Provider, a : AssetType) : MichelsonData
 }
 
 export async function get_decimals(p: Provider, contract: string, token_id = new BigNumber(0)) : Promise<BigNumber> {
+  if (p.config.wrapper == contract) return new BigNumber(6)
   const st : StorageFA1_2 | StorageFA2 = await p.tezos.storage(contract)
   if (st.token_metadata==undefined) return new BigNumber(0)
   else {
