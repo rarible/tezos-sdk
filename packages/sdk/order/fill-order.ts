@@ -76,7 +76,8 @@ async function use_permit(provider: Provider, asset: Asset) : Promise<undefined 
 export async function fill_order(
   provider: Provider,
   left: OrderForm,
-  request: FillOrderRequest
+  request: FillOrderRequest,
+  unwrap = false,
 ): Promise<OperationResult> {
   const pk = (request.edpk) ? request.edpk : await get_public_key(provider)
   if (!pk) throw new Error("cannot get public key")
@@ -106,7 +107,7 @@ export async function fill_order(
     const parameter = await match_order_to_struct(provider, left, right)
     args = args.concat({
       destination: provider.config.exchange, entrypoint: "match_orders", parameter, amount })
-    if (left.make.asset_type.asset_class == "FT" && left.make.asset_type.contract == provider.config.wrapper && left.make.asset_type.token_id != undefined && left.make.asset_type.token_id.isZero()) {
+    if (unwrap && left.make.asset_type.asset_class == "FT" && left.make.asset_type.contract == provider.config.wrapper && left.make.asset_type.token_id != undefined && left.make.asset_type.token_id.isZero()) {
       args = args.concat(await unwrap_arg(provider, left.make.value))
     }
     return send_batch(provider, args)
@@ -124,8 +125,6 @@ export async function fill_order(
     body: JSON.stringify(mp.permit)
     })
     if (!r_add.ok) throw new Error(r_add.statusText + ' ' + await r_add.text())
-    console.log(JSON.stringify({
-      left: order_to_json(left), right: order_to_json(right) }))
     const r_match = await fetch(provider.config.api_permit + '/permit/match_orders', {
       method: 'POST', headers: [[ 'content-type', 'application/json' ]],
       body: JSON.stringify({
