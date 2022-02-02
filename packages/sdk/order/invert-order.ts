@@ -1,5 +1,5 @@
 import { OrderForm } from "./utils"
-import { pk_to_pkh } from "../common/base"
+import { pk_to_pkh } from "@rarible/tezos-common"
 import { is_nft } from "./is-nft"
 import BigNumber from "bignumber.js"
 

@@ -1,4 +1,4 @@
-import { Provider, DeployResult, to_hex } from "../common/base"
+import { Provider, DeployResult, to_hex } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 
 export const fa1_code : any =

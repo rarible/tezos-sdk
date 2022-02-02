@@ -1,6 +1,6 @@
 import { TezosToolkit, TransferParams, OriginateParams, OpKind } from "@taquito/taquito"
 import { InMemorySigner } from '@taquito/signer'
-import { TezosProvider, to_hex, op_to_kt1 } from "../../common/base"
+import { TezosProvider, to_hex, op_to_kt1 } from "@rarible/tezos-common"
 
 export function in_memory_provider(edsk: string, endpoint: string) : TezosProvider {
   const tk = new TezosToolkit(endpoint)

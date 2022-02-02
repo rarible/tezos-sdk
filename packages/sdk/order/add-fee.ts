@@ -1,4 +1,4 @@
-import { Asset, Provider } from "../common/base"
+import { Asset, Provider } from "@rarible/tezos-common"
 import { get_decimals } from "./sign-order"
 import BigNumber from "bignumber.js"
 

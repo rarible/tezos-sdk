@@ -1,4 +1,4 @@
-import { Provider, Asset, NFTAssetType, MultipleAssetType, asset_to_json, asset_of_json } from "../common/base"
+import { Provider, Asset, NFTAssetType, MultipleAssetType, asset_to_json, asset_of_json } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
 const getRandomValues = require('get-random-values')

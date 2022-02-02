@@ -1,5 +1,5 @@
 import { MichelsonData } from "@taquito/michel-codec"
-import { Provider, send, TransactionArg, get_address, OperationResult, MintResult, to_hex } from "../common/base"
+import { Provider, send, TransactionArg, get_address, OperationResult, MintResult, to_hex } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
 

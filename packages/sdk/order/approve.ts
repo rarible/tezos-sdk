@@ -1,6 +1,6 @@
 import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-codec"
 import { Provider, send, StorageFA1_2, StorageFA2,
-         Asset, TransactionArg, OperationResult, hex_to_uint8array, b58enc } from "../common/base"
+         Asset, TransactionArg, OperationResult, hex_to_uint8array, b58enc } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 const blake = require('blakejs')
 

@@ -1,5 +1,5 @@
 import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-codec"
-import { Provider, AssetType, Asset, StorageFA1_2, StorageFA2, of_hex } from "../common/base"
+import { Provider, AssetType, Asset, StorageFA1_2, StorageFA2, of_hex } from "@rarible/tezos-common"
 import { OrderForm, OrderRaribleV2DataV1 } from "./utils"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"

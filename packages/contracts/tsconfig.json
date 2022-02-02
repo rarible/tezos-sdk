@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": ["es5", "esnext"],
+    "strict": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "build",
+    "target": "es5",
+    "downlevelIteration": true,
+    "declaration": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "./contracts/*.ts"
+  ],
+  "exclude": [
+    "node_modules/*"
+  ]
+}
