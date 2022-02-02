@@ -1,0 +1,28 @@
+{
+  "name": "@rarible/tezos-common",
+  "version": "0.0.7",
+  "public": false,
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rarible/tezos-sdk/issues"
+  },
+  "homepage": "https://github.com/rarible/tezos-sdk",
+  "description": "",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "clean": "rimraf ./dist"
+  },
+  "dependencies": {
+    "node-fetch": "2.6.1",
+    "@taquito/taquito": "^11.0.1",
+    "bignumber.js": "^9.0.1",
+    "text-encoder": "^0.0.4",
+    "bs58check": "^2.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  }
+}

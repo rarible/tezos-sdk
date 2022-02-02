@@ -1,7 +1,9 @@
-import { transfer, mint, burn, deploy_nft_public, deploy_royalties, set_token_metadata, set_metadata, deploy_fill, deploy_exchange, deploy_transfer_proxy, deploy_transfer_manager, send, TransactionArg} from "./index"
+import { transfer, mint, burn, deploy_nft_public, set_token_metadata, set_metadata } from "./index"
 import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
 import BigNumber from "bignumber.js"
+import { deploy_exchange, deploy_fill, deploy_royalties, deploy_transfer_manager, deploy_transfer_proxy } from "@rarible/tezos-contracts"
+import { send, TransactionArg } from "@rarible/tezos-common"
 
 async function main() {
   const argv = await yargs(process.argv.slice(2)).options({

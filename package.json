@@ -5,9 +5,12 @@
     "packages/*"
   ],
   "scripts": {
+    "bootstrap": "lerna bootstrap && lerna link",
     "clean": "lerna run clean --parallel",
     "build-all": "sh ./scripts/build.sh",
+    "build-common": "yarn workspace @rarible/tezos-common run build",
     "build-sdk": "yarn workspace @rarible/tezos-sdk run build",
+    "build-contracts": "yarn workspace @rarible/tezos-contracts run build",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "lint:fix": "eslint --ext .js,.jsx,.ts,.tsx . --fix",
     "release": "lerna publish from-package",
