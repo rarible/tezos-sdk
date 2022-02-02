@@ -1,4 +1,4 @@
-import { Provider, send, OperationResult, to_hex } from "../common/base"
+import { Provider, send, OperationResult, to_hex } from "./base"
 
 export async function set_metadata(
   provider: Provider,

@@ -1,5 +1,4 @@
-import { Provider, DeployResult } from "../common/base"
-import { make_metadata } from "./contract-metadata"
+import { DeployResult, Provider, make_metadata } from "@rarible/tezos-common"
 
 export const nft_private_code : any =
   [  {  "prim": "storage",

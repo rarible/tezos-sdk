@@ -1,4 +1,4 @@
-import { Provider, TransactionArg, send_batch } from "../common/base"
+import { Provider, TransactionArg, send_batch } from "@rarible/tezos-common"
 import { OrderForm, order_to_json } from "./utils"
 import { get_make_fee } from "./get-make-fee"
 import { add_fee } from "./add-fee"

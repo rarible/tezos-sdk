@@ -1,4 +1,4 @@
-import { deploy_fa1, mint, make_permit, add_permit, send, sign, StorageFA2, of_hex, storage, hex_to_uint8array, b58enc, Provider, op_to_kt1, Asset, Part, OrderForm, OrderRaribleV2DataV1, fill_offchain_royalties } from "../main"
+import { Asset, Part, OrderForm, OrderRaribleV2DataV1, fill_offchain_royalties } from "../main"
 import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
 import BigNumber from "bignumber.js"
 import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-codec"

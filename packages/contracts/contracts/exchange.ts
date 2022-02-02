@@ -1,4 +1,4 @@
-import { Provider, DeployResult } from "../common/base"
+import { Provider, DeployResult } from "@rarible/tezos-common"
 
 export const exchange_code : any =
   [  {  "prim": "storage",

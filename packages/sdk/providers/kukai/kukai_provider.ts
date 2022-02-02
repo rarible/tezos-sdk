@@ -1,4 +1,4 @@
-import { TezosProvider, pack_string, tezos_signed_message_prefix } from "../../common/base"
+import { TezosProvider, pack_string, tezos_signed_message_prefix } from "@rarible/tezos-common"
 import { KukaiEmbed, Networks, LoginInfo } from 'kukai-embed'
 import BigNumber from "bignumber.js"
 import { TezosOperationType, PartialTezosTransactionOperation, TezosTransactionParameters } from '@airgap/beacon-sdk'

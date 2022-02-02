@@ -1,5 +1,5 @@
 import { MichelsonData } from "@taquito/michel-codec"
-import { Provider, send_batch, get_public_key, OperationResult, Asset, get_address } from "../common/base"
+import { Provider, send_batch, get_public_key, OperationResult, Asset, get_address } from "@rarible/tezos-common"
 import { Part, OrderForm, order_to_json, salt, fill_offchain_royalties } from "./utils"
 import { invert_order } from "./invert-order"
 import { get_make_fee } from "./get-make-fee"

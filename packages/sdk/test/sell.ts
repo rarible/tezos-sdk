@@ -1,11 +1,11 @@
 import {
-  deploy_nft_public,
   mint,
   sell,
   pk_to_pkh, get_public_key, fill_order
 } from "../main"
 import {in_memory_provider} from '../providers/in_memory/in_memory_provider'
 import BigNumber from "bignumber.js"
+import { deploy_nft_public } from "@rarible/tezos-sdk-tests"
 
 // edsk3UUamwmemNBJgDvS8jXCgKsvjL2NoTwYRFpGSRPut4Hmfs6dG8 Mxs
 // edsk4RqeRTrhdKfJKBTndA9x1RLp4A3wtNL1iMFRXDvfs5ANeZAncZ ibJ

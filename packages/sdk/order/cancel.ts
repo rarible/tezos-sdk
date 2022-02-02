@@ -1,4 +1,4 @@
-import { Provider, send_batch, TransactionArg, OperationResult } from "../common/base"
+import { Provider, send_batch, TransactionArg, OperationResult } from "@rarible/tezos-common"
 import { OrderForm } from "./utils"
 import { order_to_struct } from "./sign-order"
 import { unwrap_arg } from "./wrapper"
