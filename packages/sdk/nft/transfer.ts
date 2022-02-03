@@ -1,6 +1,6 @@
 import { MichelsonData } from "@taquito/michel-codec"
-import { Provider, send, TransactionArg, get_address, OperationResult } from "../common/base"
-import { check_asset_type, ExtendedAssetType } from "../common/check-asset-type"
+import { Provider, send, TransactionArg, get_address, OperationResult } from "@rarible/tezos-common"
+import { check_asset_type, ExtendedAssetType } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 
 function transfer_param(

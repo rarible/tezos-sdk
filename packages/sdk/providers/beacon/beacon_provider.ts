@@ -1,7 +1,7 @@
 import { BeaconWallet } from '@taquito/beacon-wallet'
 import { SigningType } from "@airgap/beacon-sdk"
 import { TezosToolkit, TransferParams, OriginateParams, OpKind } from "@taquito/taquito"
-import { TezosProvider, b58enc, hex_to_uint8array, edpk_prefix, tezos_signed_message_prefix, pack_string, op_to_kt1 } from "../../common/base"
+import { TezosProvider, b58enc, hex_to_uint8array, edpk_prefix, tezos_signed_message_prefix, pack_string, op_to_kt1 } from "@rarible/tezos-common"
 
 export async function beacon_provider(wallet: BeaconWallet, tk: TezosToolkit) : Promise<TezosProvider> {
   tk.setWalletProvider(wallet)

@@ -1,6 +1,6 @@
 import { MichelsonData } from "@taquito/michel-codec"
-import { Provider, TransactionArg, send, OperationResult } from "../common/base"
-import { check_asset_type, ExtendedAssetType } from "../common/check-asset-type"
+import { Provider, TransactionArg, send, OperationResult } from "@rarible/tezos-common"
+import { check_asset_type, ExtendedAssetType } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 
 function burn_param(

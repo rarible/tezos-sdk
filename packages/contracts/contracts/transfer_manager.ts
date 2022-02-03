@@ -1,4 +1,4 @@
-import { Provider, DeployResult } from "../common/base"
+import { Provider, DeployResult } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 
 export const transfer_manager_code : any =

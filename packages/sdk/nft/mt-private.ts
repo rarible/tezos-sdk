@@ -1,5 +1,5 @@
-import { Provider, DeployResult } from "../common/base"
-import { make_metadata } from "./contract-metadata"
+import { Provider, DeployResult } from "@rarible/tezos-common"
+import { make_metadata } from "@rarible/tezos-common"
 
 export const mt_private_code : any =
   [  {  "prim": "storage",

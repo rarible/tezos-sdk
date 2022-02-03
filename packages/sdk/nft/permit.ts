@@ -1,5 +1,5 @@
-import { Provider, send, OperationResult, TransactionArg, hex_to_uint8array, uint8array_to_hex } from "../common/base"
-import { pk_to_pkh } from "../common/base"
+import { Provider, send, OperationResult, TransactionArg, hex_to_uint8array, uint8array_to_hex } from "@rarible/tezos-common"
+import { pk_to_pkh } from "@rarible/tezos-common"
 import { BigMapAbstraction } from "@taquito/taquito"
 import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"

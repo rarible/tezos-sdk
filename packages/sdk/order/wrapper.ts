@@ -1,4 +1,4 @@
-import { Provider, TransactionArg, OperationResult, send } from "../common/base"
+import { Provider, TransactionArg, OperationResult, send } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 
 export async function wrap_arg(
