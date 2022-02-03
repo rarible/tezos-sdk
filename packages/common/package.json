@@ -1,7 +1,6 @@
 {
   "name": "@rarible/tezos-common",
   "version": "0.0.9",
-  "public": false,
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "author": "",
@@ -24,5 +23,8 @@
   },
   "devDependencies": {
     "typescript": "^4.4.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
