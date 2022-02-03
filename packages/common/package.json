@@ -1,7 +1,6 @@
 {
   "name": "@rarible/tezos-common",
-  "version": "0.0.8",
-  "public": false,
+  "version": "0.0.10",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "author": "",
@@ -16,13 +15,16 @@
     "clean": "rimraf ./dist"
   },
   "dependencies": {
-    "node-fetch": "2.6.1",
     "@taquito/taquito": "^11.0.1",
     "bignumber.js": "^9.0.1",
-    "text-encoder": "^0.0.4",
-    "bs58check": "^2.1.2"
+    "bs58check": "^2.1.2",
+    "node-fetch": "2.6.1",
+    "text-encoder": "^0.0.4"
   },
   "devDependencies": {
     "typescript": "^4.4.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
