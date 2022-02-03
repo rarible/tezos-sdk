@@ -18,8 +18,8 @@
     "clean": "rimraf ./dist"
   },
   "dependencies": {
-    "@rarible/tezos-common": "^0.0.7",
-    "@rarible/tezos-contracts": "^0.0.7",
+    "@rarible/tezos-common": "^0.0.8",
+    "@rarible/tezos-contracts": "^0.0.8",
     "@airgap/beacon-sdk": "^2.3.8",
     "@taquito/beacon-wallet": "^11.0.1",
     "@taquito/signer": "^11.0.1",

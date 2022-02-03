@@ -1,7 +1,7 @@
 import { ready, crypto_generichash, crypto_sign_verify_detached } from "libsodium-wrappers"
-import { ec } from 'elliptic'
-import { b58cdecode, buf2hex, hex2buf, isValidPrefix, prefix } from '@taquito/utils'
-import { pk_to_pkh, pack_string } from './base'
+import { ec } from "elliptic"
+import { b58cdecode, buf2hex, hex2buf, isValidPrefix, prefix } from "@taquito/utils"
+import { pk_to_pkh, pack_string } from "./base"
 
 type curves = 'ed' | 'p2' | 'sp'
 
