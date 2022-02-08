@@ -67,6 +67,29 @@ function asset_type_to_struct(p: Provider, a : AssetType) : MichelsonData {
   }
 }
 
+async function asset_factor(provider: Provider, asset_type: XTZAssetType | FTAssetType) : Promise<BigNumber> {
+  let decimals: BigNumber
+  switch (asset_type.asset_class) {
+    case 'XTZ':
+      decimals = new BigNumber(6)
+      break
+    case 'FT':
+      decimals = await get_decimals(provider, asset_type.contract, asset_type.token_id)
+      break
+  }
+  return new BigNumber(10).pow(decimals)
+}
+
+async function absolute_amount(provider: Provider, amount: BigNumber, asset_type: XTZAssetType | FTAssetType) : Promise<BigNumber> {
+  const factor = await asset_factor(provider, asset_type)
+  return amount.times(factor).integerValue()
+}
+
+async function decimal_amount(provider: Provider, amount: BigNumber, asset_type: XTZAssetType | FTAssetType) : Promise<BigNumber> {
+  const factor = await asset_factor(provider, asset_type)
+  return amount.div(factor)
+}
+
 export async function start_auction(provider: Provider, auction: Auction, use_all = false) : Promise<OperationResult> {
   const sell_asset_type = asset_type_to_struct(provider, auction.sell_asset.asset_type)
   const buy_asset_type = asset_type_to_struct(provider, auction.buy_asset_type)
@@ -79,9 +102,9 @@ export async function start_auction(provider: Provider, auction: Auction, use_al
     {string: seller},
     option_struct([ auction.start, (d : Date) => { return {string: d.toISOString()} } ]),
     {int: auction.duration.toString()},
-    {int: auction.minimal_price.toString()},
-    {int: auction.buyout_price.toString()},
-    {int: auction.minimal_step.toString()},
+    {int: absolute_amount(provider, auction.minimal_price, auction.buy_asset_type).toString()},
+    {int: absolute_amount(provider, auction.buyout_price, auction.buy_asset_type).toString()},
+    {int: absolute_amount(provider, auction.minimal_step, auction.buy_asset_type).toString()},
     auction.payouts.map((p) => {
       return [ {string: p.account}, {int: p.value.toString()} ] }),
     auction.origin_fees.map((p) => {
@@ -125,20 +148,21 @@ function parse_bid(m: any, bid_asset_type: NFTAssetType | MTAssetType) : Auction
   }
 }
 
-function parse_auction(m: any) : AuctionInfo {
-  let { args: [ sell_asset_type, amount, buy_asset_type, last_bid, seller, start, end, minimal_price, buyout_price, minimal_step, protocol_fee, payouts, origin_fees ] } = m
+async function parse_auction(provider: Provider, m: any) : Promise<AuctionInfo> {
+  let { args: [ sell_asset_type, amount, buy_asset, last_bid, seller, start, end, minimal_price, buyout_price, minimal_step, protocol_fee, payouts, origin_fees ] } = m
   const asset_type = parse_asset_type(sell_asset_type) as NFTAssetType
   const sell_asset = { asset_type, value: new BigNumber(amount.int) }
+  const buy_asset_type = parse_asset_type(buy_asset) as XTZAssetType | FTAssetType
   return {
     sell_asset,
-    buy_asset_type: parse_asset_type(buy_asset_type) as XTZAssetType | FTAssetType,
+    buy_asset_type,
     last_bid: parse_bid(last_bid, asset_type),
     seller: seller.string,
     start: new Date(start.string),
     end: new Date(end.string),
-    minimal_price: new BigNumber(minimal_price.int),
-    buyout_price: new BigNumber(buyout_price.int),
-    minimal_step: new BigNumber(minimal_step.int),
+    minimal_price: await decimal_amount(provider, new BigNumber(minimal_price.int), buy_asset_type),
+    buyout_price: await decimal_amount(provider, new BigNumber(buyout_price.int), buy_asset_type),
+    minimal_step: await decimal_amount(provider, new BigNumber(minimal_step.int), buy_asset_type),
     protocol_fee: new BigNumber(protocol_fee.int),
     payouts: parse_parts(payouts),
     origin_fees: parse_parts(origin_fees)
@@ -152,30 +176,7 @@ export async function get_auction(provider: Provider, asset_type: NFTAssetType |
   const typ : MichelsonType = { prim: 'pair', args: [{prim: 'address'}, {prim:'nat'}] }
   const value : MichelsonData = { prim: 'Pair', args: [{string: contract}, {int: asset_type.token_id.toString()}] }
   const r = await get_big_map_value(provider, id, value, typ)
-  return parse_auction(r)
-}
-
-async function asset_factor(provider: Provider, asset_type: XTZAssetType | FTAssetType) : Promise<BigNumber> {
-  let decimals: BigNumber
-  switch (asset_type.asset_class) {
-    case 'XTZ':
-      decimals = new BigNumber(6)
-      break
-    case 'FT':
-      decimals = await get_decimals(provider, asset_type.contract, asset_type.token_id)
-      break
-  }
-  return new BigNumber(10).pow(decimals)
-}
-
-async function absolute_amount(provider: Provider, amount: BigNumber, asset_type: XTZAssetType | FTAssetType) : Promise<BigNumber> {
-  const factor = await asset_factor(provider, asset_type)
-  return amount.times(factor).integerValue()
-}
-
-async function decimal_amount(provider: Provider, amount: BigNumber, asset_type: XTZAssetType | FTAssetType) : Promise<BigNumber> {
-  const factor = await asset_factor(provider, asset_type)
-  return amount.div(factor)
+  return await parse_auction(provider, r)
 }
 
 function calculate_amount(amount: BigNumber, protocol_fee: BigNumber, origin_fees: Array<Part>) : BigNumber {
