@@ -10,7 +10,7 @@ function key_expr(value: MichelsonData, type: MichelsonType) : string {
   return b58enc(hash, new Uint8Array([13, 44, 64, 27]))
 }
 
-async function get_big_map_value(provider: Provider, id: string, value: MichelsonData, type: MichelsonType) : Promise<any | undefined> {
+export async function get_big_map_value(provider: Provider, id: string, value: MichelsonData, type: MichelsonType) : Promise<any | undefined> {
   try {
     const rpc = provider.tezos.tk.rpc
     let expr = key_expr(value, type)
@@ -25,9 +25,10 @@ export async function approve_fa1_2_arg(
   owner: string,
   contract: string,
   value: BigNumber,
-  infinite: boolean = true
+  infinite: boolean = true,
+  spender?: string
 ) : Promise<TransactionArg | undefined > {
-  const spender = provider.config.transfer_proxy
+  spender = spender || provider.config.transfer_proxy
   const st : StorageFA1_2 = await provider.tezos.storage(contract)
   let key_exists = false
   let balance = undefined
@@ -67,8 +68,9 @@ export async function approve_fa2_arg(
   owner: string,
   contract: string,
   token_id: BigNumber,
-  use_all = false) : Promise<TransactionArg | undefined> {
-  const operator = provider.config.transfer_proxy
+  use_all = false,
+  operator ?: string) : Promise<TransactionArg | undefined> {
+  operator = operator || provider.config.transfer_proxy
   const st : StorageFA2 = await provider.tezos.storage(contract)
   let key_exists = false
   if (use_all && st.operator_for_all) {
@@ -127,16 +129,17 @@ export async function approve_arg(
   owner: string,
   asset: Asset,
   use_all = false,
-  infinite?: boolean
+  infinite?: boolean,
+  operator?: string,
 ): Promise<TransactionArg | undefined> {
   if (asset.asset_type.asset_class == "FT" && asset.asset_type.token_id==undefined) {
-    return approve_fa1_2_arg(provider, owner, asset.asset_type.contract, asset.value, infinite)
+    return approve_fa1_2_arg(provider, owner, asset.asset_type.contract, asset.value, infinite, operator)
   } else if (asset.asset_type.asset_class == "FT" && asset.asset_type.token_id!=undefined) {
-    return approve_fa2_arg(provider, owner, asset.asset_type.contract, asset.asset_type.token_id)
+    return approve_fa2_arg(provider, owner, asset.asset_type.contract, asset.asset_type.token_id, undefined, operator)
   } else if (asset.asset_type.asset_class == "NFT") {
-    return approve_fa2_arg(provider, owner, asset.asset_type.contract || provider.config.nft_public, asset.asset_type.token_id, use_all)
+    return approve_fa2_arg(provider, owner, asset.asset_type.contract || provider.config.nft_public, asset.asset_type.token_id, use_all, operator)
   } else if (asset.asset_type.asset_class == "MT") {
-    return approve_fa2_arg(provider, owner, asset.asset_type.contract || provider.config.mt_public, asset.asset_type.token_id, use_all)
+    return approve_fa2_arg(provider, owner, asset.asset_type.contract || provider.config.mt_public, asset.asset_type.token_id, use_all, operator)
   }else
     throw new Error("Asset class " + asset.asset_type.asset_class + " not handled for approve")
 }

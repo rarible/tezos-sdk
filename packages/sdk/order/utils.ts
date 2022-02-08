@@ -1,4 +1,4 @@
-import { Provider, Asset, NFTAssetType, MultipleAssetType, asset_to_json, asset_of_json } from "@rarible/tezos-common"
+import { Provider, Asset, NFTAssetType, MTAssetType, asset_to_json, asset_of_json } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
 const getRandomValues = require('get-random-values')
@@ -86,7 +86,7 @@ export function salt() : string {
 }
 
 export async function fill_offchain_royalties(provider : Provider, order: OrderForm) : Promise<OrderForm> {
-  let assett : NFTAssetType | MultipleAssetType | undefined ;
+  let assett : NFTAssetType | MTAssetType | undefined ;
   if ((order.make.asset_type.asset_class=="NFT" || order.make.asset_type.asset_class=="MT") && order.take.asset_type.asset_class!="NFT" && order.take.asset_type.asset_class!="MT") {
     assett = order.make.asset_type }
   if (!assett) return order

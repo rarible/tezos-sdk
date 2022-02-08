@@ -35,19 +35,21 @@ export interface NFTAssetType {
   token_id: BigNumber;
 }
 
-export interface MultipleAssetType {
+export interface MTAssetType {
   asset_class: "MT";
   contract?: string;
   token_id: BigNumber;
 }
 
-export type TokenAssetType = FTAssetType | NFTAssetType | MultipleAssetType
+export type TokenAssetType = FTAssetType | NFTAssetType | MTAssetType
 export type AssetType = XTZAssetType | TokenAssetType
 
-export interface Asset {
-  asset_type: AssetType;
+export interface AssetBase<T> {
+  asset_type: T;
   value: BigNumber;
 }
+
+export type Asset = AssetBase<AssetType>
 
 export interface OperationResult {
   hash: string;
@@ -81,6 +83,8 @@ export interface Config {
   api: string;
   api_permit: string;
   wrapper: string;
+  auction: string;
+  auction_storage: string;
 }
 
 export interface Provider {
@@ -147,6 +151,14 @@ export function asset_of_json(a: any) : Asset {
   return {
     asset_type : asset_type_of_json(a.assetType),
     value: new BigNumber(a.value)
+  }
+}
+
+export function asset_type_contract(p: Provider, a: TokenAssetType) {
+  switch (a.asset_class) {
+    case 'NFT': return a.contract || p.config.nft_public
+    case 'MT': return a.contract || p.config.mt_public
+    case 'FT': return a.contract
   }
 }
 

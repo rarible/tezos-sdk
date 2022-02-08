@@ -93,6 +93,8 @@ async function provider(node: string, api:string, wallet: 'temple' | 'beacon' | 
     api, api_permit: "http://localhost:8081/v0.1/",
     permit_whitelist: [ "KT1VY7fDqc2FxhfCPM1DrELKFz6EHwudAXQb" ],
     wrapper: 'KT1LkKaeLBvTBo6knGeN5RsEunERCaqVcLr9',
+    auction: 'KT1KXNLp8eRuXnrS33G4fyZRLB33618ViUJq',
+    auction_storage: 'KT1DbtDvhYGXeHHixUBsnsKrT1Q5APVWDDya',
   }
   return { tezos, config }
 }

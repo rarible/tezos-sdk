@@ -57,7 +57,9 @@ async function main() {
     api: "https://localhost:8080/v0.1",
     api_permit: "https://localhost:8081/v0.1",
     permit_whitelist: [],
-    wrapper: argv.wrapper
+    wrapper: argv.wrapper,
+    auction: "",
+    auction_storage: "",
   }
 
   const provider = {
