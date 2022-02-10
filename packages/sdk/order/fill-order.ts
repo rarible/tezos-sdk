@@ -78,6 +78,7 @@ export async function fill_order(
   left: OrderForm,
   request: FillOrderRequest,
   unwrap = false,
+  unwrap_amount?: BigNumber,
 ): Promise<OperationResult> {
   const pk = (request.edpk) ? request.edpk : await get_public_key(provider)
   if (!pk) throw new Error("cannot get public key")
@@ -108,7 +109,7 @@ export async function fill_order(
     args = args.concat({
       destination: provider.config.exchange, entrypoint: "match_orders", parameter, amount })
     if (unwrap && left.make.asset_type.asset_class == "FT" && left.make.asset_type.contract == provider.config.wrapper && left.make.asset_type.token_id != undefined && left.make.asset_type.token_id.isZero()) {
-      args = args.concat(await unwrap_arg(provider, left.make.value))
+      args = args.concat(await unwrap_arg(provider, unwrap_amount || left.make.value))
     }
     return send_batch(provider, args)
   }
