@@ -17,11 +17,13 @@ export async function cancel_arg(
 
 export async function cancel(
   provider: Provider,
-  order: OrderForm
+  order: OrderForm,
+  unwrap = false,
+  unwrap_amount?: BigNumber,
 ): Promise<OperationResult> {
   let arg = [ await cancel_arg(provider, order) ]
-  if (order.make.asset_type.asset_class == "FT" && order.make.asset_type.contract == provider.config.wrapper && order.make.asset_type.token_id != undefined && order.make.asset_type.token_id.isZero()) {
-    arg = arg.concat(await unwrap_arg(provider, order.make.value))
+  if (unwrap && order.make.asset_type.asset_class == "FT" && order.make.asset_type.contract == provider.config.wrapper && order.make.asset_type.token_id != undefined && order.make.asset_type.token_id.isZero()) {
+    arg = arg.concat(await unwrap_arg(provider, unwrap_amount || order.make.value))
   }
   return send_batch(provider, arg)
 }
