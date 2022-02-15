@@ -1,5 +1,5 @@
 import { MichelsonData } from "@taquito/michel-codec"
-import { Provider, send_batch, get_public_key, OperationResult, Asset, get_address } from "@rarible/tezos-common"
+import { Provider, send_batch, get_public_key, OperationResult, Asset, get_address, FTAssetType } from "@rarible/tezos-common"
 import { Part, OrderForm, order_to_json, salt, fill_offchain_royalties } from "./utils"
 import { invert_order } from "./invert-order"
 import { get_make_fee } from "./get-make-fee"
@@ -73,6 +73,19 @@ async function use_permit(provider: Provider, asset: Asset) : Promise<undefined 
   }
 }
 
+async function fill_order_unwrap_amount(provider: Provider, right: OrderForm, asset_type: FTAssetType) : Promise<BigNumber> {
+  const payout_part = right.data.payouts.find((p) => p.account == right.taker)
+  if (payout_part==undefined) return new BigNumber(0)
+  else {
+    const fees = get_make_fee(provider.config.fees, right)
+    let value = (await add_fee(provider, right.take, fees, true)).value
+    value = value.times(payout_part.value).div(10000)
+    const decimals = await get_decimals(provider, asset_type.contract, asset_type.token_id)
+    const decimal_factor = new BigNumber(10).pow(decimals)
+    return value.times(decimal_factor).integerValue().div(decimal_factor)
+  }
+}
+
 export async function fill_order(
   provider: Provider,
   left: OrderForm,
@@ -108,12 +121,11 @@ export async function fill_order(
     const parameter = await match_order_to_struct(provider, left, right)
     args = args.concat({
       destination: provider.config.exchange, entrypoint: "match_orders", parameter, amount })
-    if (unwrap && left.make.asset_type.asset_class == "FT" && left.make.asset_type.contract == provider.config.wrapper && left.make.asset_type.token_id != undefined && left.make.asset_type.token_id.isZero()) {
-      args = args.concat(await unwrap_arg(provider, unwrap_amount || left.make.value))
+    if (unwrap && right.take.asset_type.asset_class == "FT" && right.take.asset_type.contract == provider.config.wrapper && right.take.asset_type.token_id != undefined && right.take.asset_type.token_id.isZero()) {
+      args = args.concat(await unwrap_arg(provider, unwrap_amount || await fill_order_unwrap_amount(provider, right, right.take.asset_type)))
     }
     return send_batch(provider, args)
   }
-
   else {
     const right_salt = salt()
     right = { ...right, salt: right_salt }

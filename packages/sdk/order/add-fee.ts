@@ -2,10 +2,14 @@ import { Asset, Provider } from "@rarible/tezos-common"
 import { get_decimals } from "./sign-order"
 import BigNumber from "bignumber.js"
 
-export async function add_fee(provider: Provider, asset: Asset, fee: BigNumber) : Promise<Asset> {
-  const v = new BigNumber(asset.value)
-    .times(new BigNumber(10000).plus(fee))
-    .div(10000)
+export async function add_fee(provider: Provider, asset: Asset, fee: BigNumber, remove=false) : Promise<Asset> {
+  const v = (!remove)
+    ? new BigNumber(asset.value)
+      .times(new BigNumber(10000).plus(fee))
+      .div(10000)
+    : new BigNumber(asset.value)
+      .times(new BigNumber(10000).minus(fee))
+      .div(10000)
   let decimals: BigNumber
   switch (asset.asset_type.asset_class) {
     case 'XTZ':
@@ -18,7 +22,7 @@ export async function add_fee(provider: Provider, asset: Asset, fee: BigNumber) 
       decimals = await get_decimals(provider, asset.asset_type.contract, asset.asset_type.token_id)
       break
   }
-  const factor = new BigNumber(10).pow(decimals)
-  const value = v.times(factor).integerValue().div(factor)
+  const decimal_factor = new BigNumber(10).pow(decimals)
+  const value = v.times(decimal_factor).integerValue().div(decimal_factor)
   return { ...asset, value }
 }
