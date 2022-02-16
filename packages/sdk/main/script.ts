@@ -65,7 +65,6 @@ async function main() {
 
   const provider = {
     tezos,
-
     config
   }
   const to = (argv.to) ? argv.to : await provider.tezos.address()

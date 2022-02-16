@@ -3,16 +3,16 @@ import fetch from 'node-fetch'
 import BigNumber from "bignumber.js"
 
 export async function get_balance(
-  provider: Provider,
+  config: Config,
   owner: string,
   asset_type: XTZAssetType | FTAssetType) : Promise<string> {
   switch (asset_type.asset_class) {
     case "XTZ":
-      const b_tz = await provider.tezos.balance()
+      const b_tz = await get_xtz_balance(config, owner)
       return b_tz.toString()
     case "FT":
       const tokenIdQuery = asset_type.token_id !== undefined ? `?tokenId=${asset_type.token_id.toString()}` : ""
-      const r = await fetch(`${provider.config.api}/balances/${asset_type.contract}/${owner}${tokenIdQuery}`)
+      const r = await fetch(`${config.api}/balances/${asset_type.contract}/${owner}${tokenIdQuery}`)
       if (r.ok) {
         const json = await r.json()
         return json.balance
