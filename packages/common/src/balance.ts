@@ -1,5 +1,6 @@
-import { Provider, XTZAssetType, FTAssetType } from "./base"
+import { Provider, Config, XTZAssetType, FTAssetType } from "./base"
 import fetch from 'node-fetch'
+import BigNumber from "bignumber.js"
 
 export async function get_balance(
   provider: Provider,
@@ -18,5 +19,15 @@ export async function get_balance(
       } else {
         throw new Error(r.statusText)
       }
+  }
+}
+
+export async function get_xtz_balance(config: Config, account: string) : Promise<BigNumber> {
+  const r = await fetch(`${config.node_url}/chains/main/blocks/head/context/contracts/${account}/balance`)
+  if (r.ok) {
+    const json = await r.json()
+    return (new BigNumber(json)).div(1000000)
+  } else {
+    throw new Error(r.statusText)
   }
 }

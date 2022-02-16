@@ -60,6 +60,7 @@ async function main() {
     wrapper: argv.wrapper,
     auction: "",
     auction_storage: "",
+    node_url: argv.endpoint,
   }
 
   const provider = {

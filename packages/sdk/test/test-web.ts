@@ -95,6 +95,7 @@ async function provider(node: string, api:string, wallet: 'temple' | 'beacon' | 
     wrapper: 'KT1LkKaeLBvTBo6knGeN5RsEunERCaqVcLr9',
     auction: 'KT1KXNLp8eRuXnrS33G4fyZRLB33618ViUJq',
     auction_storage: 'KT1DbtDvhYGXeHHixUBsnsKrT1Q5APVWDDya',
+    node_url: node
   }
   return { tezos, config }
 }

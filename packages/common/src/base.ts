@@ -85,6 +85,7 @@ export interface Config {
   wrapper: string;
   auction: string;
   auction_storage: string;
+  node_url: string;
 }
 
 export interface Provider {
