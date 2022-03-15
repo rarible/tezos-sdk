@@ -321,4 +321,4 @@ export function op_to_kt1(hash: string) : string {
   return b58enc(hash_kt1, kt1_prefix)
 }
 
-export type TezosNetwork = "mainnet" | "hangzhou"
+export type TezosNetwork = "mainnet" | "dev" | "hangzhou"
