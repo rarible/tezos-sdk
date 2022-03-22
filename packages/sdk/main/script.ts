@@ -1,16 +1,28 @@
-import { transfer, mint, burn, deploy_nft_public, set_token_metadata, set_metadata } from "./index"
+import {
+  transfer,
+  mint,
+  burn,
+  deploy_nft_public,
+  set_token_metadata,
+  set_metadata,
+  sell,
+  get_public_key,
+  SellRequest, pk_to_pkh, fill_order, OrderForm, order_of_json
+} from "./index"
 import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
 import BigNumber from "bignumber.js"
 import { deploy_exchange, deploy_fill, deploy_royalties, deploy_transfer_manager, deploy_transfer_proxy } from "@rarible/tezos-contracts"
-import { send, TransactionArg } from "@rarible/tezos-common"
+import {check_asset_type, send, TransactionArg, UnknownTokenAssetType} from "@rarible/tezos-common"
+import fetch from "node-fetch"
 
 async function main() {
   const argv = await yargs(process.argv.slice(2)).options({
-    edsk: {type: 'string', default: 'edsk4CmgW9r4fwqtsT6x2bB7BdVcERxLPt6poFXGpk1gTKbqR43G5H'},
-    endpoint: {type: 'string', default: 'https://hangzhou.tz.functori.com'},
-    exchange: {type: 'string', default: 'KT1ULGjK8FtaJ9QqCgJVN14B6tY76Ykaz6M8'},
-    contract: {type: 'string', default: ''},
+    edsk: {type: 'string', default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'},
+    endpoint: {type: 'string', default: 'https://dev-tezos-node.rarible.org'},
+    exchange: {type: 'string', default: 'KT1JwjYHgiM5YDGju6g3PhSoSSmpeSMwyTMF'},
+    // contract: {type: 'string', default: 'KT1VnhPmUJnEH5dfeD8WW87LCoxdhGUUVfMV'},
+    contract: {type: 'string', default: 'KT1RiPFXDqb5TW43mX3zZSPCTtbNLCJVVRdR'},
     royalties_contract: {type: 'string', default: 'KT1WKRXswxEpTbVg2pGgofzwZCNKjAVcuMgh'},
     token_id: {type : 'number'},
     royalties: {type: 'string', default: '{}'},
@@ -24,11 +36,13 @@ async function main() {
     fee: {type: 'number', default: 0},
     operator: {type: 'string', default: ''},
     fill: {type: 'string', default: 'KT1FAndThSQsVqYQVPHGSG5sQPk1XZycNBvL'},
-    transfer_proxy: {type: 'string', default: 'KT1Qypf9A7DHoAeesu5hj8v6iKwHsJb1RUR2'},
+    transfer_proxy: {type: 'string', default: 'KT1KDAErX2DE1n8Xs6KQU6A3trxsFCh44X4a'},
     transfer_manager: {type: 'string', default: 'KT1DyDkW16XBuFzpLkXKraD46SAxQDrha5gm'},
     fee_receiver: {type: 'string'},
     protocol_fee: {type: 'number', default: 0},
     wrapper: {type: 'string', default: 'KT1LkKaeLBvTBo6knGeN5RsEunERCaqVcLr9'},
+    item_id: {type: 'string', default: ''},
+    order_id: {type: 'string', default: ''},
   }).argv
 
   const token_id_opt = (argv.token_id!=undefined) ? new BigNumber(argv.token_id) : undefined
@@ -54,8 +68,8 @@ async function main() {
     fees: new BigNumber(argv.protocol_fee),
     nft_public: "",
     mt_public: "",
-    api: "https://localhost:8080/v0.1",
-    api_permit: "https://localhost:8081/v0.1",
+    api: "https://dev-tezos-api.rarible.org/v0.1",
+    api_permit: "https://dev-tezos-api.rarible.org/v0.1",
     permit_whitelist: [],
     wrapper: argv.wrapper,
     auction: "",
@@ -84,7 +98,7 @@ async function main() {
       console.log("mint")
       const op_mint = await mint(provider, argv.contract, royalties, amount, token_id_opt, metadata, argv.owner)
       await op_mint.confirmation()
-      console.log(op_mint.hash)
+      console.log(`minted item=${argv.contract}:${op_mint.token_id.toString()} hash=${op_mint.hash}`)
       break
 
     case 'burn':
@@ -128,6 +142,57 @@ async function main() {
       await op_deploy_fill.confirmation()
       console.log(op_deploy_fill.contract)
       break
+
+    case 'sell': {
+      console.log("sell")
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      const maker = pk_to_pkh(publicKey)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const asset: UnknownTokenAssetType = {
+        contract: contract,
+        token_id: new BigNumber(tokenId),
+      }
+      const request: SellRequest = {
+        maker,
+        maker_edpk: publicKey,
+        make_asset_type: await check_asset_type(provider, asset),
+        take_asset_type: {
+          asset_class: "XTZ"
+        },
+        amount: new BigNumber("1"),
+        price: new BigNumber("0.02"),
+        payouts: [],
+        origin_fees: []
+      }
+      const order = await sell(provider, request)
+      console.log('order=', order)
+      break
+    }
+
+    case "fill": {
+      try {
+        console.log("fill order")
+        const response = await fetch(`${provider.config.api}/orders/${argv.orderId}`)
+        if (response.ok) {
+          const order = order_of_json(await response.json())
+          const op = await fill_order(provider, order as OrderForm, {
+            amount: new BigNumber(order.make.value)
+          })
+          await op.confirmation()
+          console.log(op)
+        } else {
+          throw new Error(response.statusText)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+      break
+    }
 
     case 'deploy_exchange':
       console.log("deploy exchange")
