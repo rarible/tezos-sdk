@@ -116,7 +116,7 @@ export async function set_expiry(
   expiry: Date,
   global=false) : Promise<OperationResult> {
   const parameter : MichelsonData = [
-    { prim: "Some", args: [ { int: (expiry.valueOf() / 1000).toString() } ] },
+    { prim: "Some", args: [ { int: Math.floor(expiry.valueOf() / 1000).toString() } ] },
     (global) ? { prim: "None" } : { prim: "Some", args: [ { bytes: permit.hash } ] }
   ]
   const arg = {
