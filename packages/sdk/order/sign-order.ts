@@ -162,9 +162,9 @@ export async function order_to_struct(p: Provider, order: OrderForm) : Promise<M
             { prim: "Pair", args: [
               { int: order.salt },
               { prim: "Pair", args: [
-                (order.start) ? some_struct({int: Math.floor(order.start.valueOf() / 1000).toString()}) : none_struct(),
+                (order.start) ? some_struct({int: order.start.toString()}) : none_struct(),
                 { prim: "Pair", args: [
-                  (order.end) ? some_struct({int: Math.floor(order.end.valueOf() / 1000).toString()}) : none_struct(),
+                  (order.end) ? some_struct({int: order.end.toString()}) : none_struct(),
                   { prim: "Pair", args: [
                     { bytes: data_type },
                     { bytes: data } ] } ] } ] } ] } ] } ] } ] } ] }
