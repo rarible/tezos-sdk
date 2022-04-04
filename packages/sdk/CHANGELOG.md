@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.5](https://github.com/rarible/tezos-sdk/compare/v0.1.4...v0.1.5) (2022-04-04)
+
+
+### Features
+
+* sell and mint ([4bd4aa9](https://github.com/rarible/tezos-sdk/commit/4bd4aa9bf709aa64ec74496e1e8a5b0ea3502cc3))
+* updated contracts ([ba5ce90](https://github.com/rarible/tezos-sdk/commit/ba5ce90f87e85c59e728fdf27d108156c03f4f4b))
+
+
+
+
+
 ## [0.1.4](https://github.com/rarible/tezos-sdk/compare/v0.1.3...v0.1.4) (2022-03-15)
 
 **Note:** Version bump only for package @rarible/tezos-sdk
