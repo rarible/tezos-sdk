@@ -19,10 +19,10 @@ import fetch from "node-fetch"
 async function main() {
   const argv = await yargs(process.argv.slice(2)).options({
     edsk: {type: 'string', default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'},
-    endpoint: {type: 'string', default: 'https://dev-tezos-node.rarible.org'},
-    exchange: {type: 'string', default: 'KT1JwjYHgiM5YDGju6g3PhSoSSmpeSMwyTMF'},
+    endpoint: {type: 'string', default: 'https://tezos-hangzhou-node.rarible.org'},
+    exchange: {type: 'string', default: 'KT1ULGjK8FtaJ9QqCgJVN14B6tY76Ykaz6M8'},
     // contract: {type: 'string', default: 'KT1VnhPmUJnEH5dfeD8WW87LCoxdhGUUVfMV'},
-    contract: {type: 'string', default: 'KT1RiPFXDqb5TW43mX3zZSPCTtbNLCJVVRdR'},
+    contract: {type: 'string', default: 'KT1Ctz9vuC6uxsBPD4GbdbPaJvZogWhE9SLu'},
     royalties_contract: {type: 'string', default: 'KT1WKRXswxEpTbVg2pGgofzwZCNKjAVcuMgh'},
     token_id: {type : 'number'},
     royalties: {type: 'string', default: '{}'},
@@ -36,11 +36,11 @@ async function main() {
     fee: {type: 'number', default: 0},
     operator: {type: 'string', default: ''},
     fill: {type: 'string', default: 'KT1FAndThSQsVqYQVPHGSG5sQPk1XZycNBvL'},
-    transfer_proxy: {type: 'string', default: 'KT1KDAErX2DE1n8Xs6KQU6A3trxsFCh44X4a'},
+    transfer_proxy: {type: 'string', default: 'KT1Qypf9A7DHoAeesu5hj8v6iKwHsJb1RUR2'},
     transfer_manager: {type: 'string', default: 'KT1DyDkW16XBuFzpLkXKraD46SAxQDrha5gm'},
     fee_receiver: {type: 'string'},
     protocol_fee: {type: 'number', default: 0},
-    wrapper: {type: 'string', default: 'KT1LkKaeLBvTBo6knGeN5RsEunERCaqVcLr9'},
+    wrapper: {type: 'string', default: 'KT1RggVJ1mMaLJezpdsJ6YtBfL7sBfcaGD1H'},
     item_id: {type: 'string', default: ''},
     order_id: {type: 'string', default: ''},
   }).argv
@@ -68,9 +68,9 @@ async function main() {
     fees: new BigNumber(argv.protocol_fee),
     nft_public: "",
     mt_public: "",
-    api: "https://dev-tezos-api.rarible.org/v0.1",
-    api_permit: "https://dev-tezos-api.rarible.org/v0.1",
-    permit_whitelist: [],
+    api: "https://tezos-hangzhou-api.rarible.org/v0.1",
+    api_permit: "https://tezos-hangzhou-api.rarible.org/v0.1",
+    permit_whitelist: ["KT1VY7fDqc2FxhfCPM1DrELKFz6EHwudAXQb"],
     wrapper: argv.wrapper,
     auction: "",
     auction_storage: "",
@@ -176,7 +176,7 @@ async function main() {
 
     case "fill": {
       try {
-        console.log("fill order")
+        console.log("fill order", await provider.tezos.address())
         const response = await fetch(`${provider.config.api}/orders/${argv.orderId}`)
         if (response.ok) {
           const order = order_of_json(await response.json())
