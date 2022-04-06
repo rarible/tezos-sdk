@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.7](https://github.com/rarible/tezos-sdk/compare/v0.1.6...v0.1.7) (2022-04-06)
+
+
+### Features
+
+* new dapp version ([8551f6e](https://github.com/rarible/tezos-sdk/commit/8551f6e94413929226de23b41d50e8cb1faeffbf))
+
+
+
+
+
 ## [0.1.6](https://github.com/rarible/tezos-sdk/compare/v0.1.5...v0.1.6) (2022-04-06)
 
 
