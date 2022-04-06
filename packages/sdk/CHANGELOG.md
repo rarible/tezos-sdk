@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.6](https://github.com/rarible/tezos-sdk/compare/v0.1.5...v0.1.6) (2022-04-06)
+
+
+### Bug Fixes
+
+* approve confirmation on sell ([629ceb8](https://github.com/rarible/tezos-sdk/commit/629ceb8e47c224a18fb7a2dafbabd670075e92a8))
+
+
+### Features
+
+* script improves for using as function, new contracts for script, simple sell test ([d846d57](https://github.com/rarible/tezos-sdk/commit/d846d575b1d7063e4034cb42a6f96fc4c0255166))
+
+
+
+
+
 ## [0.1.5](https://github.com/rarible/tezos-sdk/compare/v0.1.4...v0.1.5) (2022-04-04)
 
 
