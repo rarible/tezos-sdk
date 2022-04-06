@@ -103,5 +103,5 @@ export async function fill_offchain_royalties(provider : Provider, order: OrderF
     })
     let data = { ...order.data, origin_fees: order.data.origin_fees.concat(royalties) }
     return { ...order, data }
-  } else throw new Error("cannot get royalties for " + id)
+  } else throw new Error(`cannot get royalties for ${id}, reason:${r.statusText}`)
 }

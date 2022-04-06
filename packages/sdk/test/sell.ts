@@ -11,28 +11,37 @@ import BigNumber from "bignumber.js"
 // edsk4RqeRTrhdKfJKBTndA9x1RLp4A3wtNL1iMFRXDvfs5ANeZAncZ ibJ
 // edsk368NmXyps5vKts1TrFTTAgReC5VN9NtPmL9Er86XUdHm2yWiaU aMw
 // edskRsg6YnXooVuL1mdBfiJYkH2sAbeVTLUxBGNiqhbAc76QwStLg61QDHoxV6F2ckfmWv7uBFSmQgRhoDVfhmGZ4CRnvKLG7W iA1
+export function createTestWallet(edsk: string) {
+  return in_memory_provider(
+    edsk,
+    'https://test-tezos-node.rarible.org'
+  )
+}
 async function main() {
 
   try {
     const config = {
-      exchange: "KT1AguExF32Z9UEKzD5nuixNmqrNs1jBKPT8",
+      exchange: "KT1S6H2FWxrpaD7aPRSW1cTTE1xPucXBSTL5",
+      transfer_proxy: "KT1WbVjXdmBpzzVoYSSUiNt6QFnSC3W768d1",
       fees: new BigNumber(0),
       nft_public: "",
       mt_public: "",
+      api: `https://test-tezos-api.rarible.org/v0.1`,
+      api_permit: `https://test-tezos-api.rarible.org/v0.1`,
+      permit_whitelist: [],
+      wrapper: "",
+      auction: "",
+      auction_storage: "",
+      node_url: "https://test-tezos-node.rarible.org",
     }
 
-    const tezos_seller = in_memory_provider(
-      'edsk3UUamwmemNBJgDvS8jXCgKsvjL2NoTwYRFpGSRPut4Hmfs6dG8',
-      'https://hangzhou.tz.functori.com')
+    const tezos_seller = createTestWallet('edsk3UUamwmemNBJgDvS8jXCgKsvjL2NoTwYRFpGSRPut4Hmfs6dG8')
     const provider_seller = {
       tezos: tezos_seller,
-      api: "https://rarible-api.functori.com/v0.1",
       config
     }
 
-    const tezos_buyer = in_memory_provider(
-      'edsk4RqeRTrhdKfJKBTndA9x1RLp4A3wtNL1iMFRXDvfs5ANeZAncZ',
-      'https://hangzhou.tz.functori.com')
+    const tezos_buyer = createTestWallet('edsk4RqeRTrhdKfJKBTndA9x1RLp4A3wtNL1iMFRXDvfs5ANeZAncZ')
     const provider_buyer = {
       tezos: tezos_buyer,
       api: "https://rarible-api.functori.com/v0.1",
@@ -41,6 +50,7 @@ async function main() {
 
     // await mint(provider, "KT1VYBd25dw5GjYqPM8T8My6b4g5c4cd4hwu", {tz1ibJRnL6hHjAfmEzM7QtGyTsS6ZtHdgE2S: 10000n}, 100n, 101n)
 
+    /*
     console.log('before deploy')
     const deployOp = await deploy_nft_public(
       provider_seller,
@@ -50,11 +60,12 @@ async function main() {
 
     console.log('deploy nft contract=', deployOp.contract)
     if (!deployOp.contract) throw new Error("Contract does not exist")
-    // const deployOp = { contract: "KT1QwMQkzcYYGucBQMyAZ9VMmWp6dSNAp1rb" }
+
+     */
+    const deployOp = { contract: "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43" }
 
     const mintOp = await mint(
       provider_seller,
-      // "KT1QwMQkzcYYGucBQMyAZ9VMmWp6dSNAp1rb",
       deployOp.contract,
       {},
       undefined,

@@ -16,14 +16,14 @@ import { deploy_exchange, deploy_fill, deploy_royalties, deploy_transfer_manager
 import {check_asset_type, send, TransactionArg, UnknownTokenAssetType} from "@rarible/tezos-common"
 import fetch from "node-fetch"
 
-async function main() {
-  const argv = await yargs(process.argv.slice(2)).options({
+export async function testScript(operation?: string, options: any = {}) {
+  let argv = await yargs(process.argv.slice(2)).options({
     edsk: {type: 'string', default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'},
-    endpoint: {type: 'string', default: 'https://tezos-hangzhou-node.rarible.org'},
-    exchange: {type: 'string', default: 'KT1ULGjK8FtaJ9QqCgJVN14B6tY76Ykaz6M8'},
+    endpoint: {type: 'string', default: 'https://test-tezos-node.rarible.org'},
+    exchange: {type: 'string', default: 'KT1S6H2FWxrpaD7aPRSW1cTTE1xPucXBSTL5'},
     // contract: {type: 'string', default: 'KT1VnhPmUJnEH5dfeD8WW87LCoxdhGUUVfMV'},
-    contract: {type: 'string', default: 'KT1Ctz9vuC6uxsBPD4GbdbPaJvZogWhE9SLu'},
-    royalties_contract: {type: 'string', default: 'KT1WKRXswxEpTbVg2pGgofzwZCNKjAVcuMgh'},
+    contract: {type: 'string', default: 'KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43'},
+    royalties_contract: {type: 'string', default: 'KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya'},
     token_id: {type : 'number'},
     royalties: {type: 'string', default: '{}'},
     amount: {type: 'number'},
@@ -36,14 +36,19 @@ async function main() {
     fee: {type: 'number', default: 0},
     operator: {type: 'string', default: ''},
     fill: {type: 'string', default: 'KT1FAndThSQsVqYQVPHGSG5sQPk1XZycNBvL'},
-    transfer_proxy: {type: 'string', default: 'KT1Qypf9A7DHoAeesu5hj8v6iKwHsJb1RUR2'},
-    transfer_manager: {type: 'string', default: 'KT1DyDkW16XBuFzpLkXKraD46SAxQDrha5gm'},
+    transfer_proxy: {type: 'string', default: 'KT1WbVjXdmBpzzVoYSSUiNt6QFnSC3W768d1'},
+    transfer_manager: {type: 'string', default: 'KT1L1WfmvjQRTRqT8Zv4qey4vdZbyML43UT4'},
     fee_receiver: {type: 'string'},
     protocol_fee: {type: 'number', default: 0},
-    wrapper: {type: 'string', default: 'KT1RggVJ1mMaLJezpdsJ6YtBfL7sBfcaGD1H'},
+    wrapper: {type: 'string', default: ''},
     item_id: {type: 'string', default: ''},
     order_id: {type: 'string', default: ''},
   }).argv
+  argv = {
+    ...argv,
+    ...options
+  }
+  const action = operation ?? argv._[0]
 
   const token_id_opt = (argv.token_id!=undefined) ? new BigNumber(argv.token_id) : undefined
   const token_id = (argv.token_id!=undefined) ? new BigNumber(argv.token_id) : new BigNumber(0)
@@ -68,9 +73,9 @@ async function main() {
     fees: new BigNumber(argv.protocol_fee),
     nft_public: "",
     mt_public: "",
-    api: "https://tezos-hangzhou-api.rarible.org/v0.1",
-    api_permit: "https://tezos-hangzhou-api.rarible.org/v0.1",
-    permit_whitelist: ["KT1VY7fDqc2FxhfCPM1DrELKFz6EHwudAXQb"],
+    api: "https://test-tezos-api.rarible.org/v0.1",
+    api_permit: "https://test-tezos-api.rarible.org/v0.1",
+    permit_whitelist: [],
     wrapper: argv.wrapper,
     auction: "",
     auction_storage: "",
@@ -86,7 +91,7 @@ async function main() {
   const fee_receiver = (argv.fee_receiver) ? argv.fee_receiver : await provider.tezos.address()
   const asset_class = (amount==undefined) ? "NFT" : "MT"
 
-  switch(argv._[0]) {
+  switch(action) {
     case 'transfer' :
       console.log("transfer")
       const op_transfer = await transfer(provider, { asset_class, contract: argv.contract, token_id }, to, amount)
@@ -99,7 +104,7 @@ async function main() {
       const op_mint = await mint(provider, argv.contract, royalties, amount, token_id_opt, metadata, argv.owner)
       await op_mint.confirmation()
       console.log(`minted item=${argv.contract}:${op_mint.token_id.toString()} hash=${op_mint.hash}`)
-      break
+      return `${argv.contract}:${op_mint.token_id.toString()}`
 
     case 'burn':
       console.log("burn")
@@ -144,7 +149,7 @@ async function main() {
       break
 
     case 'sell': {
-      console.log("sell")
+      console.log("sell item", argv.item_id)
       const publicKey = await get_public_key(provider)
       if (!publicKey) {
         throw new Error("publicKey is undefined")
@@ -171,13 +176,13 @@ async function main() {
       }
       const order = await sell(provider, request)
       console.log('order=', order)
-      break
+      return order
     }
 
     case "fill": {
       try {
-        console.log("fill order", await provider.tezos.address())
-        const response = await fetch(`${provider.config.api}/orders/${argv.orderId}`)
+        console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
+        const response = await fetch(`${provider.config.api}/orders/${argv.order_id}`)
         if (response.ok) {
           const order = order_of_json(await response.json())
           const op = await fill_order(provider, order as OrderForm, {
@@ -231,4 +236,4 @@ async function main() {
 }
 
 
-main()
+testScript()
