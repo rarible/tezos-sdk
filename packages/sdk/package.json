@@ -18,10 +18,10 @@
     "clean": "rimraf ./dist"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "^2.3.10",
+    "@airgap/beacon-sdk": "2.3.12",
     "@rarible/tezos-common": "^0.1.5",
     "@rarible/tezos-contracts": "^0.1.5",
-    "@taquito/beacon-wallet": "^12.0.0",
+    "@taquito/beacon-wallet": "12.0.3",
     "@taquito/signer": "^12.0.0",
     "@taquito/taquito": "^12.0.0",
     "@temple-wallet/dapp": "^7.0.0",
@@ -33,7 +33,6 @@
     "bs58check": "^2.1.2",
     "get-random-values": "^1.2.2",
     "keccak": "^3.0.2",
-    "kukai-embed": "^0.7.0",
     "node-fetch": "2.6.1",
     "text-encoder": "^0.0.4",
     "yargs": "^17.2.1"

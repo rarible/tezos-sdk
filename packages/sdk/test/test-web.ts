@@ -1,14 +1,12 @@
 import { Provider, transfer, mint, burn, deploy_nft_private, deploy_mt_private, upsert_order, bid, sell, Part, AssetType, OrderForm, SellRequest, BidRequest, ExtendedAssetType, XTZAssetType, FTAssetType, TokenAssetType, fill_order, get_public_key, order_of_json, salt, pk_to_pkh, DeployResult, sign, TezosProvider, approve } from "../main"
 import { beacon_provider } from '../providers/beacon/beacon_provider'
 import { temple_provider } from '../providers/temple/temple_provider'
-import { kukai_provider } from '../providers/kukai/kukai_provider'
 import { BeaconWallet } from "@taquito/beacon-wallet"
 import { TezosToolkit } from "@taquito/taquito"
 import JSONFormatter from "json-formatter-js"
 import Vue from "vue"
 import BigNumber from "bignumber.js"
 import { NetworkType } from "@airgap/beacon-sdk"
-import { Networks, KukaiEmbed } from "kukai-embed"
 import { TempleWallet } from "@temple-wallet/dapp"
 import fetch from "node-fetch"
 
@@ -78,10 +76,6 @@ async function provider(node: string, api:string, wallet: 'temple' | 'beacon' | 
       const wallet_temple = new TempleWallet('rarible')
       await wallet_temple.connect({name: 'hangzhounet', rpc: node})
       tezos = await temple_provider(wallet_temple, tk)
-      break
-    case 'kukai':
-      const wallet_kukai = new KukaiEmbed({net: Networks.dev, enableLogging:true})
-      tezos = await kukai_provider(wallet_kukai, tk)
       break
   }
   const config = {
