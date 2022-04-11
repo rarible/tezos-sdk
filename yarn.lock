@@ -5573,11 +5573,6 @@ kind-of@^6.0.2, kind-of@^6.0.3:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-kukai-embed@^0.7.0:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/kukai-embed/-/kukai-embed-0.7.1.tgz#47371eeab3f917b7b71cc484dc997055d1e7e98b"
-  integrity sha512-2QNU/9Qy3XnKAsOWmxTN+XbgtyKBcud1xZp4r/XmvqrAwzn0uasH5EhVBJAfRwYodWazOXp3x6tpQn9YzdymUA==
-
 lerna@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/lerna/-/lerna-4.0.0.tgz#b139d685d50ea0ca1be87713a7c2f44a5b678e9e"
