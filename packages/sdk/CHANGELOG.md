@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.8](https://github.com/rarible/tezos-sdk/compare/v0.1.7...v0.1.8) (2022-04-11)
+
+
+### Bug Fixes
+
+* airgap beacon sdk version ([4511a88](https://github.com/rarible/tezos-sdk/commit/4511a88a8429244911841b53e9b4fce7c724e1ab))
+
+
+
+
+
 ## [0.1.7](https://github.com/rarible/tezos-sdk/compare/v0.1.6...v0.1.7) (2022-04-06)
 
 
