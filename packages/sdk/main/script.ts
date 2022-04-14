@@ -7,7 +7,7 @@ import {
   set_metadata,
   sell,
   get_public_key,
-  SellRequest, pk_to_pkh, fill_order, OrderForm, order_of_json
+  SellRequest, pk_to_pkh, fill_order, OrderForm, order_of_json, get_decimals
 } from "./index"
 import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
@@ -232,6 +232,14 @@ export async function testScript(operation?: string, options: any = {}) {
         console.error(e)
       }
       break
+    }
+
+    case "get_decimals": {
+      try {
+        return get_decimals(provider, argv.ft_contract, argv.ft_token_id)
+      } catch (e) {
+        console.error(e)
+      }
     }
 
     case 'deploy_exchange':
