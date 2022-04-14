@@ -45,6 +45,7 @@ export async function testScript(operation?: string, options: any = {}) {
     order_id: {type: 'string', default: ''},
     ft_contract: {type: 'string', default: 'KT1LJSq4mhyLtPKrncLXerwAF2Xvk7eU3KJX'},
     ft_token_id: {type: 'string', default: undefined},
+    is_dev: {type: 'boolean', default: false}
   }).argv
   argv = {
     ...argv,
@@ -67,7 +68,8 @@ export async function testScript(operation?: string, options: any = {}) {
   const amount = (argv.amount) ? new BigNumber(argv.amount as number) : undefined
   const metadata = JSON.parse(argv.metadata) as { [_: string] : string }
 
-  const tezos = in_memory_provider(argv.edsk, argv.endpoint)
+  const devNode = "https://dev-tezos-node.rarible.org"
+  const tezos = in_memory_provider(argv.edsk, argv.is_dev ? devNode : argv.endpoint)
 
   const config = {
     exchange: argv.exchange,
@@ -84,10 +86,27 @@ export async function testScript(operation?: string, options: any = {}) {
     node_url: argv.endpoint,
   }
 
+  const devConfig = {
+    exchange: "KT1KDFn2Rfg597Rq14xrD2gtEEy2PP4F6kag",
+    transfer_proxy: "KT1PZGQqjcL3ww2zNyvbZY4SwBDNumTr6bmz",
+    fees: new BigNumber(argv.protocol_fee),
+    nft_public: "",
+    mt_public: "",
+    api: "https://dev-tezos-api.rarible.org/v0.1",
+    api_permit: "https://dev-tezos-api.rarible.org/v0.1",
+    permit_whitelist: [],
+    wrapper: "",
+    auction: "",
+    auction_storage: "",
+    node_url: devNode,
+  }
+
   const provider = {
     tezos,
-    config
+    config: argv.is_dev ? devConfig : config
   }
+  console.log('is_dev=', !!argv.is_dev)
+
   const to = (argv.to) ? argv.to : await provider.tezos.address()
   const owner = (argv.owner) ? argv.owner : await provider.tezos.address()
   const fee_receiver = (argv.fee_receiver) ? argv.fee_receiver : await provider.tezos.address()
@@ -117,7 +136,13 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case 'deploy_nft':
       console.log("deploy nft")
-      const op_deploy_fa2 = await deploy_nft_public(provider, owner)
+      const meta = {
+        name: 'My NFT collection',
+        symbol: 'MYNFT',
+        contractURI: 'https://ipfs.io/ipfs/QmTKxwnqqxTxH4HE3UVM9yoJFZgbsZ8CuqqRFZCSWBF53m'
+      }
+      console.log(provider, owner, meta)
+      const op_deploy_fa2 = await deploy_nft_public(provider, owner, meta)
       await op_deploy_fa2.confirmation()
       console.log(op_deploy_fa2.contract)
       break
@@ -278,5 +303,4 @@ export async function testScript(operation?: string, options: any = {}) {
   }
 }
 
-
-testScript()
+// testScript()
