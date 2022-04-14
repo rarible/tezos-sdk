@@ -33,5 +33,8 @@ export async function upsert_order(
     body: JSON.stringify(order_to_json({...order2, signature}))
   })
   if (r.ok) { return r.json() }
-  else throw new Error("/orders failed")
+  else {
+    console.error(r.statusText, await r.json())
+    throw new Error("/orders failed")
+  }
 }

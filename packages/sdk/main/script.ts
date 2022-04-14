@@ -43,6 +43,8 @@ export async function testScript(operation?: string, options: any = {}) {
     wrapper: {type: 'string', default: ''},
     item_id: {type: 'string', default: ''},
     order_id: {type: 'string', default: ''},
+    ft_contract: {type: 'string', default: 'KT1LJSq4mhyLtPKrncLXerwAF2Xvk7eU3KJX'},
+    ft_token_id: {type: 'string', default: undefined},
   }).argv
   argv = {
     ...argv,
@@ -168,6 +170,39 @@ export async function testScript(operation?: string, options: any = {}) {
         make_asset_type: await check_asset_type(provider, asset),
         take_asset_type: {
           asset_class: "XTZ"
+        },
+        amount: new BigNumber("1"),
+        price: new BigNumber("0.02"),
+        payouts: [],
+        origin_fees: []
+      }
+      const order = await sell(provider, request)
+      console.log('order=', order)
+      return order
+    }
+
+    case 'sell_with_ft': {
+      console.log("sell item", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      const maker = pk_to_pkh(publicKey)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const asset: UnknownTokenAssetType = {
+        contract: contract,
+        token_id: new BigNumber(tokenId),
+      }
+      const request: SellRequest = {
+        maker,
+        maker_edpk: publicKey,
+        make_asset_type: await check_asset_type(provider, asset),
+        take_asset_type: {
+          asset_class: "FT",
+          contract: argv.ft_contract,
+          token_id: argv.ft_token_id ? new BigNumber(argv.ft_token_id): undefined,
         },
         amount: new BigNumber("1"),
         price: new BigNumber("0.02"),
