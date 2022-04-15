@@ -17,7 +17,7 @@ async function sale() {
   const sellOrder = await testScript('sell_with_ft', {
     edsk: sellerEdsk,
     item_id: mintedItemId,
-    ft_contract: "KT1LJSq4mhyLtPKrncLXerwAF2Xvk7eU3KJX",
+    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
     ft_token_id: "0",
   })
   console.log('sellOrder', sellOrder)

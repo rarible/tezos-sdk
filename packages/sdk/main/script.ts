@@ -254,7 +254,11 @@ export async function testScript(operation?: string, options: any = {}) {
           throw new Error(response.statusText)
         }
       } catch (e) {
-        console.error(e)
+        try {
+          console.error(JSON.stringify(e, null, ' '))
+        } catch (e) {
+          console.error(e)
+        }
       }
       break
     }
