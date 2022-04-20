@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "FT SALE",
+        "type": "node",
+        "request": "launch",
+        "runtimeExecutable": "ts-node",
+        "runtimeArgs": ["packages/sdk/test/sale-with-ft.ts"],
+        "args": [],
+        "cwd": "${workspaceRoot}",
+        "internalConsoleOptions": "openOnSessionStart",
+        "skipFiles": ["<node_internals>/**", "node_modules/**"]
+      }
+    ]
+  }

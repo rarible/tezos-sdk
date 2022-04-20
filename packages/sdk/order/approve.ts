@@ -25,7 +25,6 @@ export async function approve_fa1_2_arg(
   owner: string,
   contract: string,
   value: BigNumber,
-  infinite: boolean = true,
   spender?: string
 ) : Promise<TransactionArg | undefined > {
   spender = spender || provider.config.transfer_proxy
@@ -33,15 +32,21 @@ export async function approve_fa1_2_arg(
   let key_exists = false
   let balance = undefined
   try {
-    let r : any = await st.ledger.get(owner)
+    let r : any = await st.allowance.get(
+      {
+        0: owner,
+        1: spender
+      }
+    )
     key_exists = r!=undefined
     if (r!=undefined) balance = r[Object.keys(r)[0]]
-  } catch {
+  } catch(error) {
+    console.log(error)
     key_exists = false
   }
   if (!key_exists) {
     let v =
-      (!infinite) ? value.toString() :
+      (value) ? value.toString() :
       (balance) ? balance.toString() :
       Number.MAX_SAFE_INTEGER.toString()
     const parameter : MichelsonData = [ { prim: 'Pair', args : [ { string: spender }, { int: v } ] } ]
@@ -54,9 +59,8 @@ export async function approve_fa1_2(
   owner: string,
   contract: string,
   value: BigNumber,
-  infinite: boolean = true,
 ) : Promise<OperationResult | undefined> {
-  const arg = await approve_fa1_2_arg(provider, owner, contract, value, infinite)
+  const arg = await approve_fa1_2_arg(provider, owner, contract, value)
   if (arg) {
     try { return send(provider, arg) } catch(e) { return undefined }
   }
@@ -129,11 +133,10 @@ export async function approve_arg(
   owner: string,
   asset: Asset,
   use_all = false,
-  infinite?: boolean,
   operator?: string,
 ): Promise<TransactionArg | undefined> {
   if (asset.asset_type.asset_class == "FT" && asset.asset_type.token_id==undefined) {
-    return approve_fa1_2_arg(provider, owner, asset.asset_type.contract, asset.value, infinite, operator)
+    return approve_fa1_2_arg(provider, owner, asset.asset_type.contract, asset.value, operator)
   } else if (asset.asset_type.asset_class == "FT" && asset.asset_type.token_id!=undefined) {
     return approve_fa2_arg(provider, owner, asset.asset_type.contract, asset.asset_type.token_id, undefined, operator)
   } else if (asset.asset_type.asset_class == "NFT") {
@@ -148,10 +151,9 @@ export async function approve(
   provider: Provider,
   owner: string,
   asset: Asset,
-  use_all = false,
-  infinite?: boolean,
+  use_all = false
 ): Promise<OperationResult | undefined> {
-  const arg = await approve_arg(provider, owner, asset, use_all, infinite)
+  const arg = await approve_arg(provider, owner, asset, use_all)
   if (arg) {
     return send(provider, arg)
   }

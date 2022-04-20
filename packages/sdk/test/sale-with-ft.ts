@@ -18,7 +18,6 @@ async function sale() {
     edsk: sellerEdsk,
     item_id: mintedItemId,
     ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
-    ft_token_id: "0",
   })
   console.log('sellOrder', sellOrder)
 

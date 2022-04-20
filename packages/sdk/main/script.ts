@@ -227,10 +227,10 @@ export async function testScript(operation?: string, options: any = {}) {
         take_asset_type: {
           asset_class: "FT",
           contract: argv.ft_contract,
-          token_id: argv.ft_token_id ? new BigNumber(argv.ft_token_id): undefined,
+          token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id): undefined,
         },
         amount: new BigNumber("1"),
-        price: new BigNumber("0.02"),
+        price: new BigNumber("2"),
         payouts: [],
         origin_fees: []
       }

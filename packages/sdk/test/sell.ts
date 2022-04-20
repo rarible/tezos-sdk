@@ -144,7 +144,6 @@ async function main() {
         payouts: sellOp.data.payouts.length === 0 ? [{ account: maker, value: new BigNumber(10000) }] : sellOp.data.payouts,
         // origin_fees: [],
         origin_fees: sellOp.data.originFees || [],
-        infinite: true,
         edpk: fillMakerEdpk
       }
     )
