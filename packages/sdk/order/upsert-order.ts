@@ -19,7 +19,7 @@ export async function upsert_order(
   //   args = args.concat(await wrap_arg(provider, make.value, order.maker))
   //   make = { asset_type: { asset_class: "FT", contract: provider.config.wrapper, token_id: new BigNumber(0) }, value: make.value }
   // }
-  const approve_a = await approve_arg(provider, order.maker, make, use_all)
+  const approve_a = await approve_arg(provider, order.maker, make, undefined, use_all)
   if (approve_a) args = args.concat(approve_a)
   if (args.length!=0) {
     const op = await send_batch(provider, args)

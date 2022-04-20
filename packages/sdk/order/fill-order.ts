@@ -106,17 +106,20 @@ export async function fill_order(
   }
   right = await fill_offchain_royalties(provider, right)
   if (up==undefined) {
-    const arg_approve =
-      (make.asset_type.asset_class != "XTZ")
-      ? await approve_arg(provider, await get_address(provider), make, request.use_all)
-      : undefined
-    let args = (arg_approve) ? [ arg_approve ] : []
+
     const amount =
       (left.make.asset_type.asset_class === "XTZ" && left.salt == '0')
       ? await get_real_value(provider, left)
       : (right.make.asset_type.asset_class === "XTZ" && right.salt == '0')
       ? await get_real_value(provider, right)
       : undefined
+
+    const arg_approve =
+      (make.asset_type.asset_class != "XTZ")
+      ? await approve_arg(provider, await get_address(provider), make, amount!, request.use_all)
+      : undefined
+    let args = (arg_approve) ? [ arg_approve ] : []
+
     const parameter = await match_order_to_struct(provider, left, right)
     args = args.concat({
       destination: provider.config.exchange, entrypoint: "match_orders", parameter, amount })

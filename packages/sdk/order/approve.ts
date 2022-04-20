@@ -132,11 +132,12 @@ export async function approve_arg(
   provider: Provider,
   owner: string,
   asset: Asset,
+  real_amount?: BigNumber,
   use_all = false,
   operator?: string,
 ): Promise<TransactionArg | undefined> {
   if (asset.asset_type.asset_class == "FT" && asset.asset_type.token_id==undefined) {
-    return approve_fa1_2_arg(provider, owner, asset.asset_type.contract, asset.value, operator)
+    return approve_fa1_2_arg(provider, owner, asset.asset_type.contract, real_amount!, operator)
   } else if (asset.asset_type.asset_class == "FT" && asset.asset_type.token_id!=undefined) {
     return approve_fa2_arg(provider, owner, asset.asset_type.contract, asset.asset_type.token_id, undefined, operator)
   } else if (asset.asset_type.asset_class == "NFT") {
@@ -151,9 +152,10 @@ export async function approve(
   provider: Provider,
   owner: string,
   asset: Asset,
+  real_amount?: BigNumber,
   use_all = false
 ): Promise<OperationResult | undefined> {
-  const arg = await approve_arg(provider, owner, asset, use_all)
+  const arg = await approve_arg(provider, owner, asset, real_amount, use_all)
   if (arg) {
     return send(provider, arg)
   }
