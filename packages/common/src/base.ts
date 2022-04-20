@@ -17,6 +17,7 @@ export interface StorageFA2 {
 export interface StorageFA1_2 {
   ledger: BigMapAbstraction;
   token_metadata: BigMapAbstraction;
+  allowance: BigMapAbstraction;
 }
 
 export interface XTZAssetType  {
