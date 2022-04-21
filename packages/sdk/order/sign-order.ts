@@ -105,7 +105,7 @@ export async function get_decimals(p: Provider, contract: string, token_id = new
       v2 = v[Object.keys(v)[1]].get('')
       if (v2==undefined) return new BigNumber(0)
       let url = of_hex(v2)
-      const url_http = (url.substring(0, 4) == 'ipfs') ? "https://rarible.mypinata.cloud/ipfs/" + url.substring(7) : url
+      const url_http = (url.substring(0, 4) == 'ipfs') ? "https://ipfs.io/ipfs/" + url.substring(7) : url
       const r = await fetch(url_http)
       if (!r.ok) return new BigNumber(0)
       const json = await r.json()

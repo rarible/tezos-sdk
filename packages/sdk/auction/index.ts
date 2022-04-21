@@ -94,7 +94,7 @@ export async function start_auction(provider: Provider, auction: Auction, use_al
   const sell_asset_type = asset_type_to_struct(provider, auction.sell_asset.asset_type)
   const buy_asset_type = asset_type_to_struct(provider, auction.buy_asset_type)
   const seller = auction.seller || await get_address(provider)
-  const arg_approve = await approve_arg(provider, seller, auction.sell_asset, use_all, false, provider.config.auction)
+  const arg_approve = await approve_arg(provider, seller, auction.sell_asset, undefined, use_all, provider.config.auction)
   const parameter : MichelsonData = [
     sell_asset_type,
     {int: auction.sell_asset.value.toString()},
@@ -198,7 +198,7 @@ export async function auction_bid(provider: Provider, bid: AuctionBid) : Promise
   let amount = await absolute_amount(provider, bid.amount, bidding_asset_type)
   amount = calculate_amount(amount, provider.config.fees, bid.origin_fees)
   if (bidding_asset_type.asset_class=='FT') {
-    arg_approve = await approve_arg(provider, bidder, {asset_type: bidding_asset_type, value: amount }, false, false, provider.config.auction_storage)
+    arg_approve = await approve_arg(provider, bidder, {asset_type: bidding_asset_type, value: amount }, amount, false, provider.config.auction_storage)
   }
   const parameter : MichelsonData = [
     {string: contract},
@@ -221,7 +221,7 @@ export async function auction_bid(provider: Provider, bid: AuctionBid) : Promise
 export async function cancel_auction(provider: Provider, asset_type: (NFTAssetType | MTAssetType), seller?: string, use_all = false) : Promise<OperationResult> {
   seller = seller || await get_address(provider)
   const asset = { asset_type, value: new BigNumber(0) }
-  const arg_approve = await approve_arg(provider, seller, asset, use_all, false, provider.config.auction_storage)
+  const arg_approve = await approve_arg(provider, seller, asset, undefined, use_all, provider.config.auction_storage)
   const contract = asset_type_contract(provider, asset_type)
   const parameter : MichelsonData = [
     {string: contract},

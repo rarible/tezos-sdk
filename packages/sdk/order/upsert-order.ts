@@ -11,8 +11,7 @@ import BigNumber from "bignumber.js"
 export async function upsert_order(
   provider: Provider,
   order: OrderForm,
-  use_all = false,
-  infinite = false) {
+  use_all = false) {
   const make_fee = get_make_fee(provider.config.fees, order)
   let make = await add_fee(provider, order.make, make_fee)
   let args : TransactionArg[] = []
@@ -20,7 +19,7 @@ export async function upsert_order(
   //   args = args.concat(await wrap_arg(provider, make.value, order.maker))
   //   make = { asset_type: { asset_class: "FT", contract: provider.config.wrapper, token_id: new BigNumber(0) }, value: make.value }
   // }
-  const approve_a = await approve_arg(provider, order.maker, make, use_all, infinite)
+  const approve_a = await approve_arg(provider, order.maker, make, undefined, use_all)
   if (approve_a) args = args.concat(approve_a)
   if (args.length!=0) {
     const op = await send_batch(provider, args)
