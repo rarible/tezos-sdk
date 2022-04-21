@@ -24,9 +24,6 @@
   "devDependencies": {
     "typescript": "^4.4.4"
   },
-  "resolutions": {
-    "axios": "0.21.2"
-  },
   "publishConfig": {
     "access": "public"
   }
