@@ -1,6 +1,6 @@
 import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-codec"
 import { Provider, send, StorageFA1_2, StorageFA2,
-         Asset, TransactionArg, OperationResult, hex_to_uint8array, b58enc } from "@rarible/tezos-common"
+         Asset, TransactionArg, OperationResult, hex_to_uint8array, b58enc, AssetTypeV2 } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 const blake = require('blakejs')
 
@@ -146,6 +146,23 @@ export async function approve_arg(
     return approve_fa2_arg(provider, owner, asset.asset_type.contract || provider.config.mt_public, asset.asset_type.token_id, use_all, operator)
   }else
     throw new Error("Asset class " + asset.asset_type.asset_class + " not handled for approve")
+}
+
+export async function approve_v2(
+  provider: Provider,
+  owner: string,
+  asset_type: AssetTypeV2,
+  operator: string,
+  asset_contract?: string,
+  asset_token_id?: BigNumber,
+  amount?: BigNumber,
+  use_all = false,
+): Promise<TransactionArg | undefined> {
+  if (asset_type == AssetTypeV2.FA12) {
+    return approve_fa1_2_arg(provider, owner, asset_contract!, amount!, operator)
+  } else if (asset_type == AssetTypeV2.FA2) {
+    return approve_fa2_arg(provider, owner, asset_contract!, asset_token_id!, use_all, operator)
+  }
 }
 
 export async function approve(

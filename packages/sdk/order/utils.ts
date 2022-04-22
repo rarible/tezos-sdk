@@ -1,7 +1,8 @@
-import { Provider, Asset, NFTAssetType, MTAssetType, asset_to_json, asset_of_json } from "@rarible/tezos-common"
+import { Provider, Asset, NFTAssetType, MTAssetType, asset_to_json, asset_of_json, AssetTypeV2 } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
 const getRandomValues = require('get-random-values')
+import { MichelsonData, packDataBytes } from "@taquito/michel-codec"
 
 export interface Part {
   account: string;
@@ -27,6 +28,59 @@ export declare type OrderForm = {
   end?: number;
   signature?: string;
   data: OrderRaribleV2DataV1;
+}
+
+export declare type OrderFormV2 = {
+  s_asset_contract: string;
+  s_asset_token_id: BigNumber;
+  s_sale_type: AssetTypeV2;
+  s_sale_asset_contract?: string;
+  s_sale_asset_token_id?: BigNumber;
+  s_sale: RaribleSaleDataV2;
+}
+
+export declare type RaribleSaleDataV2 = {
+  sale_origin_fees: Array<Part>;
+  sale_payouts: Array<Part>;
+  sale_amount: BigNumber;
+  sale_asset_qty: BigNumber;
+  sale_start?: number;
+  sale_end?: number;
+  sale_max_fees_base_boint: number;
+  sale_data_type?: string;
+  sale_data?: string;
+}
+
+
+export function parts_to_micheline(p : Array<Part>): MichelsonData[]{
+  let parts: MichelsonData[] = []
+  for (let part of p) {
+    parts.concat([
+      {
+        prim: "Pair",
+        args: [{
+            string: part.account
+        }, {
+            int: `${part.value}`
+        }]
+      }])
+    }
+  return parts
+}
+
+export function optional_date_arg(date? : number): MichelsonData {
+  if(date){
+    return {
+      prim: "Some",
+      args: [{
+          int: `${date}`
+      }]
+    }
+  } else {
+    return {
+      prim: "None"
+    }
+  }
 }
 
 function part_to_json(p: Part) {
@@ -104,4 +158,46 @@ export async function fill_offchain_royalties(provider : Provider, order: OrderF
     let data = { ...order.data, origin_fees: order.data.origin_fees.concat(royalties) }
     return { ...order, data }
   } else throw new Error(`cannot get royalties for ${id}, reason:${r.statusText}`)
+}
+
+export function packFA2Asset(assetContract: String, assetId: BigNumber) {
+  return packDataBytes({
+      prim: "Pair",
+      args: [
+          {
+              string: `${assetContract}`,
+          },
+          {
+              int: `${assetId}`,
+          },
+      ],
+  }, {
+      prim: "pair",
+      args: [
+          {
+              prim: "address",
+          },
+          {
+              prim: "nat",
+          },
+      ],
+  });
+};
+
+export function packFA12Asset(assetContract: string){
+  return packDataBytes({
+      string: `${assetContract}`,
+  }, {
+      prim: "address",
+  });
+};
+
+export function getAsset(sale_type: AssetTypeV2, assetContract?: string, assetId?: BigNumber): string {
+  let asset = ""
+  if(sale_type == AssetTypeV2.FA2){
+	asset = packFA2Asset(assetContract!, assetId!).bytes
+  } else if(sale_type == AssetTypeV2.FA12){
+	asset = packFA12Asset(assetContract!).bytes
+  }
+  return asset
 }

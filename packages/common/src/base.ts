@@ -20,6 +20,11 @@ export interface StorageFA1_2 {
   allowance: BigMapAbstraction;
 }
 
+export interface StorageSalesV2 {
+  sales: BigMapAbstraction;
+  bundle_sales: BigMapAbstraction;
+}
+
 export interface XTZAssetType  {
   asset_class: "XTZ";
 }
@@ -44,6 +49,12 @@ export interface MTAssetType {
 
 export type TokenAssetType = FTAssetType | NFTAssetType | MTAssetType
 export type AssetType = XTZAssetType | TokenAssetType
+
+export enum AssetTypeV2 {
+  XTZ = 0,
+  FA12 = 1,
+  FA2 = 2
+}
 
 export interface AssetBase<T> {
   asset_type: T;
@@ -87,6 +98,9 @@ export interface Config {
   auction: string;
   auction_storage: string;
   node_url: string;
+  sales: string,
+  sales_storage: string,
+  transfer_manager: string
 }
 
 export interface Provider {

@@ -1,10 +1,10 @@
 import { MichelsonData } from "@taquito/michel-codec"
-import { Provider, send_batch, get_public_key, OperationResult, Asset, get_address, FTAssetType } from "@rarible/tezos-common"
-import { Part, OrderForm, order_to_json, salt, fill_offchain_royalties } from "./utils"
+import { Provider, send_batch, get_public_key, OperationResult, Asset, get_address, FTAssetType, AssetTypeV2, TransactionArg } from "@rarible/tezos-common"
+import { Part, OrderForm, order_to_json, salt, fill_offchain_royalties, packFA12Asset, packFA2Asset, parts_to_micheline } from "./utils"
 import { invert_order } from "./invert-order"
 import { get_make_fee } from "./get-make-fee"
 import { add_fee } from "./add-fee"
-import { approve_arg } from "./approve"
+import { approve_arg, approve_v2 } from "./approve"
 import { order_to_struct, some_struct, none_struct, get_decimals, sign_order } from "./sign-order"
 import { make_permit } from "../nft/permit"
 import { unwrap_arg } from "./wrapper"
@@ -149,4 +149,101 @@ export async function fill_order(
     const { hash } = JSON.parse(json)
     return { hash, confirmation: (async() => { return undefined }) }
   }
+}
+
+export declare type BuyRequest = {
+  asset_contract: string;
+  asset_token_id: BigNumber;
+  asset_seller: string;
+  sale_type: AssetTypeV2;
+  sale_asset_contract?: string;
+  sale_asset_token_id?: BigNumber;
+  sale_amount: BigNumber;
+  sale_payouts: Array<Part>;
+  sale_origin_fees: Array<Part>;
+  use_all?: boolean;
+}
+
+export async function buyV2(
+  provider: Provider,
+  sale: BuyRequest,
+  use_all = false
+) {
+  let args: TransactionArg[] = [];
+  const seller = await provider.tezos.address();
+  const approve_a = await approve_v2(
+    provider,
+    seller,
+    sale.sale_type,
+    provider.config.transfer_manager,
+    sale.sale_asset_contract,
+    sale.sale_asset_token_id,
+    sale.sale_amount,
+    use_all
+  );
+  if (approve_a) args = args.concat(approve_a);
+  args = args.concat(buy_arg_v2(provider, sale));
+  console.log(args)
+  if (args.length != 0) {
+    const op = await send_batch(provider, args);
+    await op.confirmation();
+    console.log(op)
+    return op
+  }
+}
+
+export function buy_arg_v2(
+  provider: Provider,
+  sale: BuyRequest
+): TransactionArg {
+  let asset = ""
+  if(sale.sale_type == AssetTypeV2.FA2){
+	asset = packFA2Asset(sale.asset_contract, sale.asset_token_id).bytes
+  } else if(sale.sale_type == AssetTypeV2.FA12){
+	asset = packFA12Asset(sale.asset_contract).bytes
+  }
+
+  const parameter: MichelsonData = {
+    prim: "Pair",
+    args: [{
+        string: `${sale.asset_contract}`
+      },
+      {
+        prim: "Pair",
+        args: [{
+            int: `${sale.asset_token_id}`
+          },
+          {
+            prim: "Pair",
+            args: [{
+                string: `${sale.asset_seller}`
+              },
+              {
+                prim: "Pair",
+                args: [{
+                    int: `${sale.sale_type}`
+                  },
+                  {
+                    prim: "Pair",
+                    args: [{
+                        bytes: `${asset}`
+                      },
+                      {
+                        prim: "Pair",
+                        args: [
+                          parts_to_micheline(sale.sale_origin_fees),
+                          parts_to_micheline(sale.sale_payouts)
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  return { destination: provider.config.sales, entrypoint: "buy", parameter, amount: sale.sale_amount };
 }

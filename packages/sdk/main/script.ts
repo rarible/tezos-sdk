@@ -7,14 +7,15 @@ import {
   set_metadata,
   sell,
   get_public_key,
-  SellRequest, pk_to_pkh, fill_order, OrderForm, order_of_json, get_decimals
+  SellRequest, pk_to_pkh, fill_order, OrderForm, order_of_json, get_decimals, buyV2
 } from "./index"
 import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
 import BigNumber from "bignumber.js"
 import { deploy_exchange, deploy_fill, deploy_royalties, deploy_transfer_manager, deploy_transfer_proxy } from "@rarible/tezos-contracts"
-import {check_asset_type, send, TransactionArg, UnknownTokenAssetType} from "@rarible/tezos-common"
+import {AssetTypeV2, check_asset_type, send, StorageSalesV2, TransactionArg, UnknownTokenAssetType} from "@rarible/tezos-common"
 import fetch from "node-fetch"
+import { BuyRequest, getAsset, OrderFormV2, sellV2 } from "../order"
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -45,7 +46,8 @@ export async function testScript(operation?: string, options: any = {}) {
     order_id: {type: 'string', default: ''},
     ft_contract: {type: 'string', default: 'KT1LJSq4mhyLtPKrncLXerwAF2Xvk7eU3KJX'},
     ft_token_id: {type: 'string', default: undefined},
-    is_dev: {type: 'boolean', default: false}
+    is_dev: {type: 'boolean', default: false},
+    sale_type : {type: 'number', default: 0},
   }).argv
   argv = {
     ...argv,
@@ -84,6 +86,9 @@ export async function testScript(operation?: string, options: any = {}) {
     auction: "",
     auction_storage: "",
     node_url: argv.endpoint,
+    sales: "KT1Ti93UWgWwwbSie2uAPwkV2nCA56dEgWpt",
+    sales_storage: "KT19aDadbhmsuYibxw42SUYtoiuP8J3VSLx4",
+    transfer_manager: "KT1N9a58sYKeW85jCmCSUtgHugdYwFcThBcN"
   }
 
   const devConfig = {
@@ -99,6 +104,9 @@ export async function testScript(operation?: string, options: any = {}) {
     auction: "",
     auction_storage: "",
     node_url: devNode,
+    sales: "KT1DB1SBpxLvrwQMz1Np6WTc9yyTqaRv7qAS",
+    sales_storage: "KT1QnXxx9NJDsQWv2xpbSfVCfHB8K5MHnqnm",
+    transfer_manager: "KT1KkcdxtxUGLPv9H6uDev2e55udHYXeBb2x"
   }
 
   const provider = {
@@ -206,6 +214,40 @@ export async function testScript(operation?: string, options: any = {}) {
       return order
     }
 
+    case 'sell_v2': {
+      console.log("sell item", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const sell_request: OrderFormV2 = {
+        s_asset_contract: contract,
+        s_asset_token_id: new BigNumber(tokenId),
+        s_sale_type: AssetTypeV2.XTZ,
+        s_sale_asset_contract: undefined,
+        s_sale_asset_token_id: undefined,
+        s_sale: {
+          sale_amount: new BigNumber("200"),
+          sale_asset_qty: new BigNumber("1"),
+          sale_max_fees_base_boint: 10000,
+          sale_end: undefined,
+          sale_start: undefined,
+          sale_origin_fees: [],
+          sale_payouts: [],
+          sale_data: undefined,
+          sale_data_type: undefined
+        }
+
+      }
+      const order = await sellV2(provider, sell_request)
+      console.log('order=', order)
+      return order
+    }
+
     case 'sell_with_ft_fa12': {
       console.log("sell item", argv.item_id)
       const publicKey = await get_public_key(provider)
@@ -285,6 +327,58 @@ export async function testScript(operation?: string, options: any = {}) {
           console.log(op)
         } else {
           throw new Error(response.statusText)
+        }
+      } catch (e) {
+        try {
+          console.error(JSON.stringify(e, null, ' '))
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      break
+    }
+
+    case "buy_v2": {
+      try {
+        if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+        const [contract, tokenId] = argv.item_id.split(":")
+        const st : StorageSalesV2 = await provider.tezos.storage(provider.config.sales_storage)
+        let key_exists = false
+        const ft_token_id = (argv.ft_token_id!=undefined) ? new BigNumber(argv.ft_token_id) : new BigNumber(0)
+        const amount = (argv.amount!=undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
+        try {
+          let order : any = await st.sales.get(
+            {
+              0: contract,
+              1: tokenId,
+              2: argv.owner,
+              3: argv.sale_type,
+              4: getAsset(argv.sale_type, argv.ft_contract, ft_token_id),
+            }
+          )
+          key_exists = order!=undefined
+        } catch(error) {
+          console.log(error)
+          key_exists = false
+          throw new Error("Error order does not exist")
+        }
+        if (key_exists) {
+          const buyRequest: BuyRequest = {
+            asset_contract: contract,
+            asset_token_id: new BigNumber(tokenId),
+            asset_seller: argv.owner!,
+            sale_type: argv.sale_type,
+            sale_asset_contract: argv.ft_contract,
+            sale_asset_token_id: ft_token_id,
+            sale_amount: new BigNumber("0.0002"),
+            sale_payouts: [],
+            sale_origin_fees: [],
+            use_all: false,
+          }
+          const op = await buyV2(provider, buyRequest)
+          console.log(op)
+        } else {
+          throw new Error("Error order does not exist")
         }
       } catch (e) {
         try {
