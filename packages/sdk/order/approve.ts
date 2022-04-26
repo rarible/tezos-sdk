@@ -30,7 +30,6 @@ export async function approve_fa1_2_arg(
   spender = spender || provider.config.transfer_proxy
   const st : StorageFA1_2 = await provider.tezos.storage(contract)
   let key_exists = false
-  let balance = undefined
   try {
     let r : any = await st.allowance.get(
       {
@@ -39,17 +38,12 @@ export async function approve_fa1_2_arg(
       }
     )
     key_exists = r!=undefined
-    if (r!=undefined) balance = r[Object.keys(r)[0]]
   } catch(error) {
     console.log(error)
     key_exists = false
   }
   if (!key_exists) {
-    let v =
-      (value) ? value.toString() :
-      (balance) ? balance.toString() :
-      Number.MAX_SAFE_INTEGER.toString()
-    const parameter : MichelsonData = [ { prim: 'Pair', args : [ { string: spender }, { int: v } ] } ]
+    const parameter : MichelsonData = { prim: 'Pair', args : [ { string: spender }, { int: value.toString() } ] }
     return { destination: contract, entrypoint: "approve", parameter }
   }
 }
