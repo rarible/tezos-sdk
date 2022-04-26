@@ -14,7 +14,9 @@ export interface SellRequest {
   take_asset_type: XTZAssetType | FTAssetType
   price: BigNumber
   payouts: Array<Part>
-  origin_fees: Array<Part>
+  origin_fees: Array<Part>,
+  start?: number;
+  end?: number;
 }
 
 export async function sell(
@@ -38,7 +40,9 @@ export async function sell(
       payouts: request.payouts,
       origin_fees: request.origin_fees,
     },
-    salt: salt()
+    salt: salt(),
+    start: request.start,
+    end: request.end
   }
   order = await fill_offchain_royalties(provider, order)
   return upsert_order(provider, order, false)

@@ -183,7 +183,6 @@ export async function buyV2(
   );
   if (approve_a) args = args.concat(approve_a);
   args = args.concat(buy_arg_v2(provider, sale));
-  console.log(args)
   if (args.length != 0) {
     const op = await send_batch(provider, args);
     await op.confirmation();
@@ -198,9 +197,15 @@ export function buy_arg_v2(
 ): TransactionArg {
   let asset = ""
   if(sale.sale_type == AssetTypeV2.FA2){
-	asset = packFA2Asset(sale.asset_contract, sale.asset_token_id).bytes
+	asset = packFA2Asset(sale.sale_asset_contract!, sale.sale_asset_token_id!).bytes
   } else if(sale.sale_type == AssetTypeV2.FA12){
-	asset = packFA12Asset(sale.asset_contract).bytes
+	asset = packFA12Asset(sale.sale_asset_contract!).bytes
+  }
+
+  let amount: BigNumber = new BigNumber(0)
+
+  if(sale.sale_type == AssetTypeV2.XTZ){
+    amount = new BigNumber(sale.sale_amount)
   }
 
   const parameter: MichelsonData = {
@@ -245,5 +250,5 @@ export function buy_arg_v2(
       }
     ]
   }
-  return { destination: provider.config.sales, entrypoint: "buy", parameter, amount: sale.sale_amount };
+  return { destination: provider.config.sales, entrypoint: "buy", parameter, amount: amount };
 }

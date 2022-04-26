@@ -13,10 +13,12 @@ async function sale() {
   console.log('mintedItemId', mintedItemId)
 
   await awaitItem(mintedItemId)
-  // const mintedItemId = ""
-  const sellOrder = await testScript('sell_v2', {
+  //const mintedItemId = "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43:216"
+  const sellOrder = await testScript('sell_v2_with_fa2', {
     edsk: sellerEdsk,
-    item_id: mintedItemId
+    item_id: mintedItemId,
+    ft_contract: "KT1PEBh9oKkQosYuw4tvzigps5p7uqXMgdez",
+    ft_token_id: 0,
   })
   console.log('sellOrder', sellOrder)
 
@@ -24,10 +26,10 @@ async function sale() {
     edsk: buyerEdsk,
     item_id: mintedItemId,
     owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
-    sale_type: AssetTypeV2.XTZ,
-    ft_contract: undefined,
-    ft_token_id: undefined,
-    amount: 0.000002
+    sale_type: AssetTypeV2.FA2,
+    ft_contract: "KT1PEBh9oKkQosYuw4tvzigps5p7uqXMgdez",
+    ft_token_id: 0,
+    amount: 2
   })
   console.log('buyOrder', buyOrder)
 }

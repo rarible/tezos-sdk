@@ -27,7 +27,7 @@ export async function testScript(operation?: string, options: any = {}) {
     royalties_contract: {type: 'string', default: 'KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya'},
     token_id: {type : 'number'},
     royalties: {type: 'string', default: '{}'},
-    amount: {type: 'number'},
+    amount: {type: 'number', default: 0},
     metadata: {type: 'string', default: '{}'},
     metadata_key: {type: 'string', default: ''},
     metadata_value: {type: 'string', default: ''},
@@ -86,9 +86,9 @@ export async function testScript(operation?: string, options: any = {}) {
     auction: "",
     auction_storage: "",
     node_url: argv.endpoint,
-    sales: "KT1Ti93UWgWwwbSie2uAPwkV2nCA56dEgWpt",
-    sales_storage: "KT19aDadbhmsuYibxw42SUYtoiuP8J3VSLx4",
-    transfer_manager: "KT1N9a58sYKeW85jCmCSUtgHugdYwFcThBcN"
+    sales: "KT1QaGwLxoBqeQaWpe7HUyEFnXQfGi9P2g6a",
+    sales_storage: "KT1S3AAy7XH7qtmYHkvvPtxJj8MLxUX1FrVH",
+    transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP"
   }
 
   const devConfig = {
@@ -207,43 +207,10 @@ export async function testScript(operation?: string, options: any = {}) {
         amount: new BigNumber("1"),
         price: new BigNumber("0.02"),
         payouts: [],
-        origin_fees: []
+        origin_fees: [],
+        start: Math.floor(Date.now()/1000 + 100)
       }
       const order = await sell(provider, request)
-      console.log('order=', order)
-      return order
-    }
-
-    case 'sell_v2': {
-      console.log("sell item", argv.item_id)
-      const publicKey = await get_public_key(provider)
-      if (!publicKey) {
-        throw new Error("publicKey is undefined")
-      }
-      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
-
-      const [contract, tokenId] = argv.item_id.split(":")
-
-      const sell_request: OrderFormV2 = {
-        s_asset_contract: contract,
-        s_asset_token_id: new BigNumber(tokenId),
-        s_sale_type: AssetTypeV2.XTZ,
-        s_sale_asset_contract: undefined,
-        s_sale_asset_token_id: undefined,
-        s_sale: {
-          sale_amount: new BigNumber("200"),
-          sale_asset_qty: new BigNumber("1"),
-          sale_max_fees_base_boint: 10000,
-          sale_end: undefined,
-          sale_start: undefined,
-          sale_origin_fees: [],
-          sale_payouts: [],
-          sale_data: undefined,
-          sale_data_type: undefined
-        }
-
-      }
-      const order = await sellV2(provider, sell_request)
       console.log('order=', order)
       return order
     }
@@ -314,6 +281,108 @@ export async function testScript(operation?: string, options: any = {}) {
       return order
     }
 
+    case 'sell_v2': {
+      console.log("sell item", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const sell_request: OrderFormV2 = {
+        s_asset_contract: contract,
+        s_asset_token_id: new BigNumber(tokenId),
+        s_sale_type: AssetTypeV2.XTZ,
+        s_sale_asset_contract: undefined,
+        s_sale_asset_token_id: undefined,
+        s_sale: {
+          sale_amount: new BigNumber("2"),
+          sale_asset_qty: new BigNumber("1"),
+          sale_max_fees_base_boint: 10000,
+          sale_end: undefined,
+          sale_start: undefined,
+          sale_origin_fees: [],
+          sale_payouts: [],
+          sale_data: undefined,
+          sale_data_type: undefined
+        }
+
+      }
+      const order = await sellV2(provider, sell_request)
+      console.log('order=', order)
+      return order
+    }
+
+    case 'sell_v2_with_fa2': {
+      console.log("sell item", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const sell_request: OrderFormV2 = {
+        s_asset_contract: contract,
+        s_asset_token_id: new BigNumber(tokenId),
+        s_sale_type: AssetTypeV2.FA2,
+        s_sale_asset_contract: argv.ft_contract,
+        s_sale_asset_token_id: argv.ft_token_id,
+        s_sale: {
+          sale_amount: new BigNumber("2"),
+          sale_asset_qty: new BigNumber("1"),
+          sale_max_fees_base_boint: 10000,
+          sale_end: undefined,
+          sale_start: undefined,
+          sale_origin_fees: [],
+          sale_payouts: [],
+          sale_data: undefined,
+          sale_data_type: undefined
+        }
+
+      }
+      const order = await sellV2(provider, sell_request)
+      console.log('order=', order)
+      return order
+    }
+
+    case 'sell_v2_with_fa12': {
+      console.log("sell item", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const sell_request: OrderFormV2 = {
+        s_asset_contract: contract,
+        s_asset_token_id: new BigNumber(tokenId),
+        s_sale_type: AssetTypeV2.FA12,
+        s_sale_asset_contract: argv.ft_contract,
+        s_sale_asset_token_id: undefined,
+        s_sale: {
+          sale_amount: new BigNumber("2"),
+          sale_asset_qty: new BigNumber("1"),
+          sale_max_fees_base_boint: 10000,
+          sale_end: undefined,
+          sale_start: undefined,
+          sale_origin_fees: [],
+          sale_payouts: [],
+          sale_data: undefined,
+          sale_data_type: undefined
+        }
+
+      }
+      const order = await sellV2(provider, sell_request)
+      console.log('order=', order)
+      return order
+    }
+
     case "fill": {
       try {
         console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
@@ -370,7 +439,7 @@ export async function testScript(operation?: string, options: any = {}) {
             sale_type: argv.sale_type,
             sale_asset_contract: argv.ft_contract,
             sale_asset_token_id: ft_token_id,
-            sale_amount: new BigNumber("0.0002"),
+            sale_amount: amount,
             sale_payouts: [],
             sale_origin_fees: [],
             use_all: false,
