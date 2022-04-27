@@ -10,7 +10,7 @@ export interface StorageFA2 {
   ledger: BigMapAbstraction;
   operator: BigMapAbstraction;
   operators: BigMapAbstraction;
-  operator_for_all: BigMapAbstraction;
+  operators_for_all: BigMapAbstraction;
   token_metadata: BigMapAbstraction;
 }
 
