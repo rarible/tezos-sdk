@@ -92,8 +92,8 @@ export async function testScript(operation?: string, options: any = {}) {
   }
 
   const devConfig = {
-    exchange: "KT1KDFn2Rfg597Rq14xrD2gtEEy2PP4F6kag",
-    transfer_proxy: "KT1PZGQqjcL3ww2zNyvbZY4SwBDNumTr6bmz",
+    exchange: "KT1V1FP839LnLBT7bUaR9vgTyKwoLgwH7Eni",
+    transfer_proxy: "KT1UR39jhgCStFkvriwx6QWPWiH4HHfWxorB",
     fees: new BigNumber(argv.protocol_fee),
     nft_public: "",
     mt_public: "",
@@ -104,9 +104,9 @@ export async function testScript(operation?: string, options: any = {}) {
     auction: "",
     auction_storage: "",
     node_url: devNode,
-    sales: "KT1DB1SBpxLvrwQMz1Np6WTc9yyTqaRv7qAS",
-    sales_storage: "KT1QnXxx9NJDsQWv2xpbSfVCfHB8K5MHnqnm",
-    transfer_manager: "KT1KkcdxtxUGLPv9H6uDev2e55udHYXeBb2x"
+    sales: "KT1RTGCiZnCVW6EtDK71NWkKTyCxT2HVkGK1",
+    sales_storage: "KT1Wcizh9JHA2j6EmCSLJQQmMuYq3FfgPCRb",
+    transfer_manager: "KT1Kq8dR8qjRWEFbzyyYdaKAG7nAtk2amnJg"
   }
 
   const provider = {

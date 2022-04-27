@@ -71,9 +71,9 @@ export async function approve_fa2_arg(
   operator = operator || provider.config.transfer_proxy
   const st : StorageFA2 = await provider.tezos.storage(contract)
   let key_exists = false
-  if (use_all && st.operator_for_all) {
+  if (use_all && st.operators_for_all) {
     try {
-      let r = await st.operator_for_all.get({ 0 : operator, 1 : owner })
+      let r = await st.operators_for_all.get({ 0 : operator, 1 : owner })
       key_exists = (r!=undefined)
     } catch {
       key_exists = false
