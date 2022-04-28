@@ -207,8 +207,7 @@ export async function testScript(operation?: string, options: any = {}) {
         amount: new BigNumber("1"),
         price: new BigNumber("0.02"),
         payouts: [],
-        origin_fees: [],
-        start: Math.floor(Date.now()/1000 + 100)
+        origin_fees: []
       }
       const order = await sell(provider, request)
       console.log('order=', order)
