@@ -1,6 +1,6 @@
 import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-codec"
 import { Provider, send, StorageFA1_2, StorageFA2,
-         Asset, TransactionArg, OperationResult, hex_to_uint8array, b58enc } from "@rarible/tezos-common"
+         Asset, TransactionArg, OperationResult, hex_to_uint8array, b58enc, AssetTypeV2 } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 const blake = require('blakejs')
 
@@ -30,7 +30,7 @@ export async function approve_fa1_2_arg(
   spender = spender || provider.config.transfer_proxy
   const st : StorageFA1_2 = await provider.tezos.storage(contract)
   let key_exists = false
-  let balance = undefined
+  let allowance = 0
   try {
     let r : any = await st.allowance.get(
       {
@@ -39,17 +39,13 @@ export async function approve_fa1_2_arg(
       }
     )
     key_exists = r!=undefined
-    if (r!=undefined) balance = r[Object.keys(r)[0]]
+    if (key_exists) allowance = r!.toNumber()
   } catch(error) {
     console.log(error)
     key_exists = false
   }
-  if (!key_exists) {
-    let v =
-      (value) ? value.toString() :
-      (balance) ? balance.toString() :
-      Number.MAX_SAFE_INTEGER.toString()
-    const parameter : MichelsonData = [ { prim: 'Pair', args : [ { string: spender }, { int: v } ] } ]
+  if (!key_exists || allowance == 0) {
+    const parameter : MichelsonData = { prim: 'Pair', args : [ { string: spender }, { int: value.toString() } ] }
     return { destination: contract, entrypoint: "approve", parameter }
   }
 }
@@ -77,9 +73,9 @@ export async function approve_fa2_arg(
   operator = operator || provider.config.transfer_proxy
   const st : StorageFA2 = await provider.tezos.storage(contract)
   let key_exists = false
-  if (use_all && st.operator_for_all) {
+  if (use_all && st.operators_for_all) {
     try {
-      let r = await st.operator_for_all.get({ 0 : operator, 1 : owner })
+      let r = await st.operators_for_all.get({ 0 : operator, 1 : owner })
       key_exists = (r!=undefined)
     } catch {
       key_exists = false
@@ -146,6 +142,23 @@ export async function approve_arg(
     return approve_fa2_arg(provider, owner, asset.asset_type.contract || provider.config.mt_public, asset.asset_type.token_id, use_all, operator)
   }else
     throw new Error("Asset class " + asset.asset_type.asset_class + " not handled for approve")
+}
+
+export async function approve_v2(
+  provider: Provider,
+  owner: string,
+  asset_type: AssetTypeV2,
+  operator: string,
+  asset_contract?: string,
+  asset_token_id?: BigNumber,
+  amount?: BigNumber,
+  use_all = false,
+): Promise<TransactionArg | undefined> {
+  if (asset_type == AssetTypeV2.FA12) {
+    return approve_fa1_2_arg(provider, owner, asset_contract!, amount!, operator)
+  } else if (asset_type == AssetTypeV2.FA2) {
+    return approve_fa2_arg(provider, owner, asset_contract!, asset_token_id!, use_all, operator)
+  }
 }
 
 export async function approve(

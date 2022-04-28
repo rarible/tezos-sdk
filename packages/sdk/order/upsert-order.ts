@@ -4,9 +4,7 @@ import { get_make_fee } from "./get-make-fee"
 import { add_fee } from "./add-fee"
 import { approve_arg } from "./approve"
 import { sign_order } from "./sign-order"
-import { wrap_arg } from "./wrapper"
 import fetch from "node-fetch"
-import BigNumber from "bignumber.js"
 
 export async function upsert_order(
   provider: Provider,
