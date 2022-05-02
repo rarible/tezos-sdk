@@ -1,6 +1,14 @@
-import { Provider, XTZAssetType, FTAssetType, TransactionArg, AssetTypeV2, send_batch } from "@rarible/tezos-common"
+import {
+  Provider,
+  XTZAssetType,
+  FTAssetType,
+  TransactionArg,
+  AssetTypeV2,
+  send_batch,
+  getAsset
+} from "@rarible/tezos-common"
 import { ExtendedAssetType, check_asset_type } from "@rarible/tezos-common"
-import { Part, OrderForm, salt, fill_offchain_royalties, OrderFormV2, parts_to_micheline, optional_date_arg, getAsset } from "./utils"
+import { Part, OrderForm, salt, fill_offchain_royalties, OrderFormV2, parts_to_micheline, optional_date_arg } from "./utils"
 import { upsert_order } from "./upsert-order"
 import BigNumber from "bignumber.js"
 import { approve_v2 } from "./approve"

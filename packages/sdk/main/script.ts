@@ -7,15 +7,32 @@ import {
   set_metadata,
   sell,
   get_public_key,
-  SellRequest, pk_to_pkh, fill_order, OrderForm, order_of_json, get_decimals, buyV2, Part, Auction, start_auction
+  SellRequest,
+  pk_to_pkh,
+  fill_order,
+  OrderForm,
+  order_of_json,
+  buyV2,
+  Part,
+  Auction,
+  start_auction,
+  get_auction, put_bid, AuctionBid
 } from "./index"
 import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
 import BigNumber from "bignumber.js"
 import { deploy_exchange, deploy_fill, deploy_royalties, deploy_transfer_manager, deploy_transfer_proxy } from "@rarible/tezos-contracts"
-import {AssetTypeV2, check_asset_type, send, StorageSalesV2, TransactionArg, UnknownTokenAssetType} from "@rarible/tezos-common"
+import {
+  AssetTypeV2,
+  check_asset_type, get_decimals,
+  getAsset,
+  send,
+  StorageSalesV2,
+  TransactionArg,
+  UnknownTokenAssetType
+} from "@rarible/tezos-common"
 import fetch from "node-fetch"
-import { BuyRequest, getAsset, OrderFormV2, sellV2 } from "../order"
+import { BuyRequest, OrderFormV2, sellV2 } from "../order"
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -83,8 +100,8 @@ export async function testScript(operation?: string, options: any = {}) {
     api_permit: "https://test-tezos-api.rarible.org/v0.1",
     permit_whitelist: [],
     wrapper: argv.wrapper,
-    auction: "KT1VRk2ysZQoa1LJLdYwBuK2dsihry7xfeGe",
-    auction_storage: "KT1FEfKCL2oThvkhgkVgixiajc74pnKHktpp",
+    auction: "KT1CB5JBSC7kTxRV3ir2xsooMA1FLieiD4Mt",
+    auction_storage: "KT1KWAPPjuDq4ZeX67rzZWsf6eAeqwtuAfSP",
     node_url: argv.endpoint,
     sales: "KT1QaGwLxoBqeQaWpe7HUyEFnXQfGi9P2g6a",
     sales_storage: "KT1S3AAy7XH7qtmYHkvvPtxJj8MLxUX1FrVH",
@@ -486,6 +503,44 @@ export async function testScript(operation?: string, options: any = {}) {
       }
 
       const auction = await start_auction(provider, auction_request)
+      console.log('auction=', auction)
+      return auction
+    }
+
+    case 'put_bid': {
+      console.log("put bid", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const bid: AuctionBid = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        amount: new BigNumber("0.00001"),
+        payouts: [],
+        origin_fees: [],
+        bidder: await provider.tezos.address(),
+        asset_seller: argv.owner!
+      }
+      const auction = await put_bid(provider, bid, contract, new BigNumber(tokenId), argv.owner!)
+      console.log('auction=', auction)
+      return auction
+    }
+
+    case 'get_auction': {
+      console.log("auction item", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const auction = await get_auction(provider, contract, new BigNumber(tokenId), "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC")
       console.log('auction=', auction)
       return auction
     }

@@ -1,5 +1,5 @@
 import { BigMapAbstraction, TransferParams, OriginateParams, TezosToolkit } from "@taquito/taquito"
-import { MichelsonData } from "@taquito/michel-codec"
+import {MichelsonData, packDataBytes, unpackDataBytes} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
 const {TextEncoder, TextDecoder} = require("text-encoder")
@@ -23,6 +23,16 @@ export interface StorageFA1_2 {
 export interface StorageSalesV2 {
   sales: BigMapAbstraction;
   bundle_sales: BigMapAbstraction;
+}
+
+export interface StorageAuctions {
+  auctions: BigMapAbstraction;
+  bundle_auctions: BigMapAbstraction;
+}
+
+export type AssetData = {
+  contract?: string;
+  token_id?: BigNumber;
 }
 
 export interface XTZAssetType  {
@@ -334,6 +344,130 @@ export function op_to_kt1(hash: string) : string {
   const data = new Uint8Array([...op, 0, 0, 0, 0])
   const hash_kt1 = blake.blake2b(data, null, 20)
   return b58enc(hash_kt1, kt1_prefix)
+}
+
+export async function asset_factor(provider: Provider, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
+  let decimals: BigNumber
+  switch (asset_type) {
+    case AssetTypeV2.FA12, AssetTypeV2.FA2:
+      decimals = await get_decimals(provider, asset_contract!, asset_token_id)
+      break
+    default:
+      decimals = new BigNumber(6)
+      break
+  }
+  return new BigNumber(10).pow(decimals)
+}
+
+export async function absolute_amount(provider: Provider, amount: BigNumber, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
+  const factor = await asset_factor(provider, asset_type, asset_contract, asset_token_id)
+  return amount.times(factor).integerValue()
+}
+
+export function packFA2Asset(assetContract: String, assetId: BigNumber) {
+  return packDataBytes({
+    prim: "Pair",
+    args: [
+      {
+        string: `${assetContract}`,
+      },
+      {
+        int: `${assetId}`,
+      },
+    ],
+  }, {
+    prim: "pair",
+    args: [
+      {
+        prim: "address",
+      },
+      {
+        prim: "nat",
+      },
+    ],
+  });
+};
+
+export function unpackFA2Asset(data: string) {
+  const unpackedData: MichelsonData = unpackDataBytes({
+    bytes: data,
+  }, {
+    prim: "pair",
+    args: [
+      {
+        prim: "address",
+      },
+      {
+        prim: "nat",
+      },
+    ],
+  });
+  const raw_result = JSON.parse(JSON.stringify(unpackedData))
+  try{
+    const result: AssetData = {
+      contract: raw_result.args[0].string,
+      token_id: raw_result.args[1].int
+    }
+    return result
+  } catch(e){
+    throw new Error("Can't un pack FA2 asset: " + data)
+  }
+};
+
+export function packFA12Asset(assetContract: string){
+  return packDataBytes({
+    string: `${assetContract}`,
+  }, {
+    prim: "address",
+  });
+};
+
+export function unpackFA12Asset(data: string): AssetData {
+  const unpackedData = unpackDataBytes({
+    bytes: data,
+  }, {
+    prim: "address",
+  });
+  const result: AssetData = {
+    contract: "string" in unpackedData ? unpackedData.string : undefined
+  }
+  if(result.contract == undefined){
+    throw new Error("Can't unpack FA12 asset: " + data)
+  }
+  return result
+}
+
+export function getAsset(sale_type: AssetTypeV2, assetContract?: string, assetId?: BigNumber): string {
+  let asset = ""
+  if(sale_type == AssetTypeV2.FA2){
+    asset = packFA2Asset(assetContract!, assetId!).bytes
+  } else if(sale_type == AssetTypeV2.FA12){
+    asset = packFA12Asset(assetContract!).bytes
+  }
+  return asset
+}
+
+export async function get_decimals(p: Provider, contract: string, token_id = new BigNumber(0)) : Promise<BigNumber> {
+  if (p.config.wrapper == contract) return new BigNumber(6)
+  const st : StorageFA1_2 | StorageFA2 = await p.tezos.storage(contract)
+  if (st.token_metadata==undefined) return new BigNumber(0)
+  else {
+    let v : any = await st.token_metadata.get(token_id.toString())
+    if (v==undefined) return new BigNumber(0)
+    else {
+      let v2 = v[Object.keys(v)[1]].get('decimals')
+      if (v2!=undefined) return new BigNumber(of_hex(v2))
+      v2 = v[Object.keys(v)[1]].get('')
+      if (v2==undefined) return new BigNumber(0)
+      let url = of_hex(v2)
+      const url_http = (url.substring(0, 4) == 'ipfs') ? "https://ipfs.io/ipfs/" + url.substring(7) : url
+      const r = await fetch(url_http)
+      if (!r.ok) return new BigNumber(0)
+      const json = await r.json()
+      if (json.decimals==undefined) return new BigNumber(0)
+      else return new BigNumber(json.decimals)
+    }
+  }
 }
 
 export type TezosNetwork = "mainnet" | "dev" | "hangzhou"

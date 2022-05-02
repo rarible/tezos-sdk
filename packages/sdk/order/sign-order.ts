@@ -1,5 +1,5 @@
 import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-codec"
-import { Provider, AssetType, Asset, StorageFA1_2, StorageFA2, of_hex } from "@rarible/tezos-common"
+import {Provider, AssetType, Asset, get_decimals} from "@rarible/tezos-common"
 import { OrderForm, OrderRaribleV2DataV1 } from "./utils"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
@@ -89,29 +89,6 @@ export function asset_type_to_struct(p: Provider, a : AssetType) : MichelsonData
       return { prim: 'Pair', args: [ FA_2,  {
         bytes: pack({ prim: "Pair", args: [
           { string: a.contract || p.config.mt_public  }, { int: a.token_id.toString() } ] }, fa_2_type) } ] }
-  }
-}
-
-export async function get_decimals(p: Provider, contract: string, token_id = new BigNumber(0)) : Promise<BigNumber> {
-  if (p.config.wrapper == contract) return new BigNumber(6)
-  const st : StorageFA1_2 | StorageFA2 = await p.tezos.storage(contract)
-  if (st.token_metadata==undefined) return new BigNumber(0)
-  else {
-    let v : any = await st.token_metadata.get(token_id.toString())
-    if (v==undefined) return new BigNumber(0)
-    else {
-      let v2 = v[Object.keys(v)[1]].get('decimals')
-      if (v2!=undefined) return new BigNumber(of_hex(v2))
-      v2 = v[Object.keys(v)[1]].get('')
-      if (v2==undefined) return new BigNumber(0)
-      let url = of_hex(v2)
-      const url_http = (url.substring(0, 4) == 'ipfs') ? "https://ipfs.io/ipfs/" + url.substring(7) : url
-      const r = await fetch(url_http)
-      if (!r.ok) return new BigNumber(0)
-      const json = await r.json()
-      if (json.decimals==undefined) return new BigNumber(0)
-      else return new BigNumber(json.decimals)
-    }
   }
 }
 

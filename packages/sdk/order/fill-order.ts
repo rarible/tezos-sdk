@@ -1,11 +1,22 @@
 import { MichelsonData } from "@taquito/michel-codec"
-import { Provider, send_batch, get_public_key, OperationResult, Asset, get_address, FTAssetType, AssetTypeV2, TransactionArg } from "@rarible/tezos-common"
-import { Part, OrderForm, order_to_json, salt, fill_offchain_royalties, packFA12Asset, packFA2Asset, parts_to_micheline } from "./utils"
+import {
+  Provider,
+  send_batch,
+  get_public_key,
+  OperationResult,
+  Asset,
+  get_address,
+  FTAssetType,
+  AssetTypeV2,
+  TransactionArg,
+  get_decimals, packFA2Asset, packFA12Asset
+} from "@rarible/tezos-common"
+import { Part, OrderForm, order_to_json, salt, fill_offchain_royalties, parts_to_micheline } from "./utils"
 import { invert_order } from "./invert-order"
 import { get_make_fee } from "./get-make-fee"
 import { add_fee } from "./add-fee"
 import { approve_arg, approve_v2 } from "./approve"
-import { order_to_struct, some_struct, none_struct, get_decimals, sign_order } from "./sign-order"
+import { order_to_struct, some_struct, none_struct, sign_order } from "./sign-order"
 import { make_permit } from "../nft/permit"
 import { unwrap_arg } from "./wrapper"
 import BigNumber from "bignumber.js"
