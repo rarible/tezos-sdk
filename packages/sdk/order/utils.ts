@@ -73,7 +73,7 @@ export function optional_date_arg(date? : number): MichelsonData {
     return {
       prim: "Some",
       args: [{
-          int: `${date}`
+          int: new BigNumber(date).toFixed()
       }]
     }
   } else {

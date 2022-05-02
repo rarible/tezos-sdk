@@ -7,7 +7,7 @@ import {
   set_metadata,
   sell,
   get_public_key,
-  SellRequest, pk_to_pkh, fill_order, OrderForm, order_of_json, get_decimals, buyV2
+  SellRequest, pk_to_pkh, fill_order, OrderForm, order_of_json, get_decimals, buyV2, Part, Auction, start_auction
 } from "./index"
 import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
@@ -83,8 +83,8 @@ export async function testScript(operation?: string, options: any = {}) {
     api_permit: "https://test-tezos-api.rarible.org/v0.1",
     permit_whitelist: [],
     wrapper: argv.wrapper,
-    auction: "",
-    auction_storage: "",
+    auction: "KT1VRk2ysZQoa1LJLdYwBuK2dsihry7xfeGe",
+    auction_storage: "KT1FEfKCL2oThvkhgkVgixiajc74pnKHktpp",
     node_url: argv.endpoint,
     sales: "KT1QaGwLxoBqeQaWpe7HUyEFnXQfGi9P2g6a",
     sales_storage: "KT1S3AAy7XH7qtmYHkvvPtxJj8MLxUX1FrVH",
@@ -92,8 +92,8 @@ export async function testScript(operation?: string, options: any = {}) {
   }
 
   const devConfig = {
-    exchange: "KT1V1FP839LnLBT7bUaR9vgTyKwoLgwH7Eni",
-    transfer_proxy: "KT1UR39jhgCStFkvriwx6QWPWiH4HHfWxorB",
+    exchange: "KT18isH58SBp7UaRWB652UwLMPxCe1bsjMMe",
+    transfer_proxy: "KT1LmiHVNjfbZvPx9qvASVk8mzFcaJNtfj8q",
     fees: new BigNumber(argv.protocol_fee),
     nft_public: "",
     mt_public: "",
@@ -101,12 +101,12 @@ export async function testScript(operation?: string, options: any = {}) {
     api_permit: "https://dev-tezos-api.rarible.org/v0.1",
     permit_whitelist: [],
     wrapper: "",
-    auction: "",
-    auction_storage: "",
+    auction: "KT1UThqUUyAM9g8Nk6u74ke6XAFZNycAWU7c",
+    auction_storage: "KT1AJXNtHfFMB4kuJJexdevH2XeULivjThEX",
     node_url: devNode,
-    sales: "KT1RTGCiZnCVW6EtDK71NWkKTyCxT2HVkGK1",
-    sales_storage: "KT1Wcizh9JHA2j6EmCSLJQQmMuYq3FfgPCRb",
-    transfer_manager: "KT1Kq8dR8qjRWEFbzyyYdaKAG7nAtk2amnJg"
+    sales: "KT1Kgi6KFHbPLg6WfUJqQpUGpdQ4VLrrEXAe",
+    sales_storage: "KT1TQPSPCJpnDbErXY9x2jGBmGj8bgbodZVc",
+    transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK"
   }
 
   const provider = {
@@ -456,6 +456,38 @@ export async function testScript(operation?: string, options: any = {}) {
         }
       }
       break
+    }
+
+    case 'auction': {
+      console.log("auction item", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const auction_request: Auction = {
+        sell_asset_contract: contract,
+        sell_asset_token_id: new BigNumber(tokenId),
+        sell_asset_amount: new BigNumber("1"),
+        buy_asset_type: AssetTypeV2.XTZ,
+        buy_asset_contract: undefined,
+        buy_asset_token_id: undefined,
+        start: undefined,
+        duration: new BigNumber("10000"),
+        minimal_price: new BigNumber("10"),
+        max_seller_fees: new BigNumber("10000"),
+        buyout_price: new BigNumber("100000"),
+        minimal_step: new BigNumber("1"),
+        payouts: [],
+        origin_fees: []
+      }
+
+      const auction = await start_auction(provider, auction_request)
+      console.log('auction=', auction)
+      return auction
     }
 
     case "get_decimals": {

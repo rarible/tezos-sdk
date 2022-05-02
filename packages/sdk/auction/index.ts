@@ -1,17 +1,35 @@
-import { Provider, send_batch, OperationResult, AssetBase, AssetType, FTAssetType, XTZAssetType, NFTAssetType, MTAssetType, get_address, asset_type_contract, TransactionArg } from "@rarible/tezos-common"
-import { MichelsonType, MichelsonData } from "@taquito/michel-codec"
+import {
+  asset_type_contract,
+  AssetBase,
+  AssetType,
+  AssetTypeV2,
+  FTAssetType,
+  get_address,
+  MTAssetType,
+  NFTAssetType,
+  OperationResult,
+  Provider,
+  send_batch,
+  TransactionArg,
+  XTZAssetType
+} from "@rarible/tezos-common"
+import {MichelsonData, MichelsonType} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
-import { Part } from "../order/utils"
-import { XTZ, FA_1_2, FT_FA_2, FA_2, get_decimals } from "../order/sign-order"
-import { get_big_map_value, approve_arg } from "../order/approve"
+import {getAsset, optional_date_arg, Part, parts_to_micheline} from "../order/utils"
+import {FA_1_2, FA_2, FT_FA_2, get_decimals, XTZ} from "../order/sign-order"
+import {approve_arg, approve_v2, get_big_map_value} from "../order/approve"
 
 export interface Auction {
-  sell_asset: AssetBase<NFTAssetType | MTAssetType>;
-  buy_asset_type: FTAssetType | XTZAssetType;
-  seller?: string;
-  start?: Date;
+  sell_asset_contract: string,
+  sell_asset_token_id: BigNumber,
+  sell_asset_amount: BigNumber,
+  buy_asset_type: AssetTypeV2;
+  buy_asset_contract?: string;
+  buy_asset_token_id?: BigNumber;
+  start?: number;
   duration: BigNumber;
   minimal_price: BigNumber;
+  max_seller_fees: BigNumber;
   buyout_price: BigNumber;
   minimal_step: BigNumber;
   payouts: Array<Part>;
@@ -90,29 +108,14 @@ async function decimal_amount(provider: Provider, amount: BigNumber, asset_type:
   return amount.div(factor)
 }
 
-export async function start_auction(provider: Provider, auction: Auction, use_all = false) : Promise<OperationResult> {
-  const sell_asset_type = asset_type_to_struct(provider, auction.sell_asset.asset_type)
-  const buy_asset_type = asset_type_to_struct(provider, auction.buy_asset_type)
-  const seller = auction.seller || await get_address(provider)
-  const arg_approve = await approve_arg(provider, seller, auction.sell_asset, undefined, use_all, provider.config.auction)
-  const parameter : MichelsonData = [
-    sell_asset_type,
-    {int: auction.sell_asset.value.toString()},
-    buy_asset_type,
-    {string: seller},
-    option_struct([ auction.start, (d : Date) => { return {string: d.toISOString()} } ]),
-    {int: auction.duration.toString()},
-    {int: absolute_amount(provider, auction.minimal_price, auction.buy_asset_type).toString()},
-    {int: absolute_amount(provider, auction.buyout_price, auction.buy_asset_type).toString()},
-    {int: absolute_amount(provider, auction.minimal_step, auction.buy_asset_type).toString()},
-    auction.payouts.map((p) => {
-      return [ {string: p.account}, {int: p.value.toString()} ] }),
-    auction.origin_fees.map((p) => {
-      return [ {string: p.account}, {int: p.value.toString()} ] }),
-  ]
-  const arg = { destination: provider.config.auction, entrypoint: "start_auction", parameter }
+export async function start_auction(provider: Provider, auction: Auction) : Promise<OperationResult> {
+  const seller = await get_address(provider)
+  const arg_approve = await approve_v2(provider, seller, AssetTypeV2.FA2, provider.config.transfer_manager, auction.sell_asset_contract, auction.sell_asset_token_id)
+  const arg = auction_arg(provider, auction)
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
-  return send_batch(provider, args)
+  const op = await send_batch(provider, args);
+  await op.confirmation();
+  return op
 }
 
 function parse_asset_type(m: any) : AssetType {
@@ -229,4 +232,109 @@ export async function cancel_auction(provider: Provider, asset_type: (NFTAssetTy
   const arg = { destination: provider.config.auction, entrypoint: "cancel_auction", parameter }
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   return send_batch(provider, args)
+}
+
+export function auction_arg(
+    provider: Provider,
+    auction: Auction
+): TransactionArg {
+  const parameter: MichelsonData = {
+    prim: "Pair",
+    args: [{
+      string: auction.sell_asset_contract
+    },
+      {
+        prim: "Pair",
+        args: [{
+          int: `${auction.sell_asset_token_id}`
+        },
+          {
+            prim: "Pair",
+            args: [{
+              int: `${auction.sell_asset_amount}`
+            },
+              {
+                prim: "Pair",
+                args: [{
+                  int: `${auction.buy_asset_type}`
+                },
+                  {
+                    prim: "Pair",
+                    args: [{
+                      bytes: getAsset(auction.buy_asset_type, auction.buy_asset_contract, auction.buy_asset_token_id)
+                    },
+                      {
+                        prim: "Pair",
+                        args: [
+                            optional_date_arg(auction.start),
+                          {
+                            prim: "Pair",
+                            args: [{
+                              int: `${auction.duration}`
+                            },
+                              {
+                                prim: "Pair",
+                                args: [{
+                                  int: `${auction.minimal_price}`
+                                },
+                                  {
+                                    prim: "Pair",
+                                    args: [{
+                                      int: `${auction.buyout_price}`
+                                    },
+                                      {
+                                        prim: "Pair",
+                                        args: [{
+                                          int: `${auction.minimal_step}`
+                                        },
+                                          {
+                                            prim: "Pair",
+                                            args: [{
+                                              int: `${auction.max_seller_fees}`
+                                            },
+                                              {
+                                                prim: "Pair",
+                                                args: [
+                                                  parts_to_micheline(auction.origin_fees),
+                                                  {
+                                                    prim: "Pair",
+                                                    args: [
+                                                      parts_to_micheline(auction.payouts),
+                                                      {
+                                                        prim: "Pair",
+                                                        args: [{
+                                                          prim: "None"
+                                                        },
+                                                          {
+                                                            prim: "None"
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+  return { destination: provider.config.auction, entrypoint: "start_auction", parameter };
 }
