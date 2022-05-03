@@ -472,4 +472,40 @@ export async function get_decimals(p: Provider, contract: string, token_id = new
   }
 }
 
+export interface Part {
+  account: string;
+  value: BigNumber;
+}
+
+export function parts_to_micheline(p : Array<Part>): MichelsonData[]{
+  let parts: MichelsonData[] = []
+  for (let part of p) {
+    parts.concat([
+      {
+        prim: "Pair",
+        args: [{
+          string: part.account
+        }, {
+          int: `${part.value}`
+        }]
+      }])
+  }
+  return parts
+}
+
+export function optional_date_arg(date? : number): MichelsonData {
+  if(date){
+    return {
+      prim: "Some",
+      args: [{
+        int: new BigNumber(date).toFixed()
+      }]
+    }
+  } else {
+    return {
+      prim: "None"
+    }
+  }
+}
+
 export type TezosNetwork = "mainnet" | "dev" | "hangzhou"

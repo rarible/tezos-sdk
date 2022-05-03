@@ -1,7 +1,16 @@
 import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-codec"
-import { Provider, send, StorageFA1_2, StorageFA2,
-         Asset, TransactionArg, OperationResult, hex_to_uint8array, b58enc, AssetTypeV2 } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
+import {
+  Asset, AssetTypeV2,
+  b58enc,
+  hex_to_uint8array,
+  OperationResult,
+  Provider,
+  send,
+  StorageFA1_2,
+  StorageFA2,
+  TransactionArg
+} from "./base";
 const blake = require('blakejs')
 
 function key_expr(value: MichelsonData, type: MichelsonType) : string {

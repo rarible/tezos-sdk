@@ -2,21 +2,17 @@ import {
   Auction,
   AuctionBid,
   burn,
-  buyV2,
   cancel_auction,
   deploy_nft_public,
   fill_order,
   finish_auction,
   get_auction,
-  get_public_key,
   mint,
   order_of_json,
   OrderForm,
-  pk_to_pkh,
   put_auction_bid,
   sell,
   SellRequest,
-  set_metadata,
   set_token_metadata,
   start_auction,
   transfer
@@ -32,18 +28,18 @@ import {
   deploy_transfer_proxy
 } from "@rarible/tezos-contracts"
 import {
-  AssetTypeV2,
   check_asset_type,
-  get_decimals,
-  getAsset,
-  send,
+  get_decimals, get_public_key,
+  getAsset, pk_to_pkh,
+  send, set_metadata,
   StorageSalesV2,
   TransactionArg,
   UnknownTokenAssetType
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
-import {BuyRequest, OrderFormV2, sellV2} from "../order"
 import {accept_bid, AcceptBid, Bid, FloorBid, put_bid, put_floor_bid} from "../bids";
+import {OrderFormV2, sellV2} from "../order_v2/sell";
+import {BuyRequest, buyV2} from "../order_v2/buy";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -325,79 +321,11 @@ export async function testScript(operation?: string, options: any = {}) {
       const sell_request: OrderFormV2 = {
         s_asset_contract: contract,
         s_asset_token_id: new BigNumber(tokenId),
-        s_sale_type: AssetTypeV2.XTZ,
-        s_sale_asset_contract: undefined,
-        s_sale_asset_token_id: undefined,
-        s_sale: {
-          sale_amount: new BigNumber("2"),
-          sale_asset_qty: new BigNumber("1"),
-          sale_max_fees_base_boint: 10000,
-          sale_end: undefined,
-          sale_start: undefined,
-          sale_origin_fees: [],
-          sale_payouts: [],
-          sale_data: undefined,
-          sale_data_type: undefined
-        }
-
-      }
-      const order = await sellV2(provider, sell_request)
-      console.log('order=', order)
-      return order
-    }
-
-    case 'sell_v2_with_fa2': {
-      console.log("sell item", argv.item_id)
-      const publicKey = await get_public_key(provider)
-      if (!publicKey) {
-        throw new Error("publicKey is undefined")
-      }
-      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
-
-      const [contract, tokenId] = argv.item_id.split(":")
-
-      const sell_request: OrderFormV2 = {
-        s_asset_contract: contract,
-        s_asset_token_id: new BigNumber(tokenId),
-        s_sale_type: AssetTypeV2.FA2,
+        s_sale_type: argv.sale_type,
         s_sale_asset_contract: argv.ft_contract,
         s_sale_asset_token_id: argv.ft_token_id,
         s_sale: {
-          sale_amount: new BigNumber("2"),
-          sale_asset_qty: new BigNumber("1"),
-          sale_max_fees_base_boint: 10000,
-          sale_end: undefined,
-          sale_start: undefined,
-          sale_origin_fees: [],
-          sale_payouts: [],
-          sale_data: undefined,
-          sale_data_type: undefined
-        }
-
-      }
-      const order = await sellV2(provider, sell_request)
-      console.log('order=', order)
-      return order
-    }
-
-    case 'sell_v2_with_fa12': {
-      console.log("sell item", argv.item_id)
-      const publicKey = await get_public_key(provider)
-      if (!publicKey) {
-        throw new Error("publicKey is undefined")
-      }
-      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
-
-      const [contract, tokenId] = argv.item_id.split(":")
-
-      const sell_request: OrderFormV2 = {
-        s_asset_contract: contract,
-        s_asset_token_id: new BigNumber(tokenId),
-        s_sale_type: AssetTypeV2.FA12,
-        s_sale_asset_contract: argv.ft_contract,
-        s_sale_asset_token_id: undefined,
-        s_sale: {
-          sale_amount: new BigNumber("2"),
+          sale_amount: new BigNumber("0.02"),
           sale_asset_qty: new BigNumber("1"),
           sale_max_fees_base_boint: 10000,
           sale_end: undefined,

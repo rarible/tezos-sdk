@@ -1,6 +1,6 @@
-import { Provider, XTZAssetType, FTAssetType } from "@rarible/tezos-common"
+import {Provider, XTZAssetType, FTAssetType, Part} from "@rarible/tezos-common"
 import { ExtendedAssetType, check_asset_type } from "@rarible/tezos-common"
-import { Part, OrderForm, salt } from "./utils"
+import { OrderForm, salt } from "./utils"
 import { upsert_order } from "./upsert-order"
 import BigNumber from "bignumber.js"
 

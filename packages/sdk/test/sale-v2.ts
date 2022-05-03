@@ -16,7 +16,10 @@ async function saleV2() {
   // const mintedItemId = ""
   const sellOrder = await testScript('sell_v2', {
     edsk: sellerEdsk,
-    item_id: mintedItemId
+    item_id: mintedItemId,
+    sale_type: AssetTypeV2.XTZ,
+    ft_contract: undefined,
+    ft_token_id: undefined,
   })
   console.log('sellOrder', sellOrder)
 
@@ -27,7 +30,7 @@ async function saleV2() {
     sale_type: AssetTypeV2.XTZ,
     ft_contract: undefined,
     ft_token_id: undefined,
-    amount: 0.000002
+    amount: 0.02
   })
   console.log('buyOrder', buyOrder)
 }

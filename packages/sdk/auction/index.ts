@@ -1,13 +1,10 @@
 import {
   absolute_amount,
-  asset_type_contract,
   AssetData,
   AssetTypeV2,
   get_address,
   getAsset,
-  MTAssetType,
-  NFTAssetType,
-  OperationResult,
+  OperationResult, optional_date_arg, Part, parts_to_micheline,
   Provider,
   send_batch,
   StorageAuctions,
@@ -16,8 +13,7 @@ import {
 } from "@rarible/tezos-common"
 import {MichelsonData} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
-import {optional_date_arg, Part, parts_to_micheline} from "../order/utils"
-import {approve_arg, approve_v2} from "../order/approve"
+import {approve_v2} from "@rarible/tezos-common/build/approve";
 
 export interface Auction {
   sell_asset_contract: string,

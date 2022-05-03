@@ -3,15 +3,14 @@ import {
   AssetTypeV2,
   get_address,
   getAsset,
-  OperationResult,
+  OperationResult, Part, parts_to_micheline,
   Provider,
   send_batch,
   TransactionArg
 } from "@rarible/tezos-common"
 import {MichelsonData} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
-import {Part, parts_to_micheline} from "../order/utils"
-import {approve_v2} from "../order";
+import {approve_v2} from "@rarible/tezos-common/build/approve";
 
 export interface Bid {
   asset_contract: string,
