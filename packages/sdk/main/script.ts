@@ -43,7 +43,7 @@ import {
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {BuyRequest, OrderFormV2, sellV2} from "../order"
-import {accept_bid, AcceptBid, Bid, put_bid} from "../bids";
+import {accept_bid, AcceptBid, Bid, FloorBid, put_bid, put_floor_bid} from "../bids";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -608,6 +608,47 @@ export async function testScript(operation?: string, options: any = {}) {
         bidder: argv.owner!
       }
       const result = await accept_bid(provider, bid_data)
+      return result
+    }
+
+    case 'put_floor_bid': {
+      console.log("put_floor_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const bid: FloorBid = {
+        asset_contract: contract,
+        bid_asset: "",
+        bid_type: AssetTypeV2.XTZ,
+        bid: {
+          bid_amount: new BigNumber("0.01"),
+          bid_asset_qty: new BigNumber("1"),
+          bid_payouts: [],
+          bid_origin_fees: [],
+          bid_data: undefined,
+          bid_data_type: undefined
+        }
+      }
+      const bid_op = await put_floor_bid(provider, bid)
+      return bid_op
+    }
+
+    case 'accept_floor_bid': {
+      console.log("accept_floor_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const bid_data: AcceptBid = {
+        bid_asset: "",
+        bid_type: AssetTypeV2.XTZ,
+        bid_payouts: [],
+        bid_origin_fees: [],
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        bidder: argv.owner!
+      }
+      const result = await accept_bid(provider, bid_data, true)
       return result
     }
 
