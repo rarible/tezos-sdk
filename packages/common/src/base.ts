@@ -348,7 +348,7 @@ export function op_to_kt1(hash: string) : string {
   return b58enc(hash_kt1, kt1_prefix)
 }
 
-export async function asset_factor(provider: Provider, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
+async function asset_factor(provider: Provider, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
   let decimals: BigNumber
   switch (asset_type) {
     case AssetTypeV2.FA12, AssetTypeV2.FA2:

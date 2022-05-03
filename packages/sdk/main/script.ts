@@ -577,8 +577,9 @@ export async function testScript(operation?: string, options: any = {}) {
       const bid: Bid = {
         asset_contract: contract,
         asset_token_id: new BigNumber(tokenId),
-        bid_asset: "",
-        bid_type: AssetTypeV2.XTZ,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
         bid: {
           bid_amount: new BigNumber("0.01"),
           bid_asset_qty: new BigNumber("1"),
@@ -599,8 +600,9 @@ export async function testScript(operation?: string, options: any = {}) {
       const [contract, tokenId] = argv.item_id.split(":")
 
       const bid_data: AcceptBid = {
-        bid_asset: "",
-        bid_type: AssetTypeV2.XTZ,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
         bid_payouts: [],
         bid_origin_fees: [],
         asset_contract: contract,
@@ -618,8 +620,9 @@ export async function testScript(operation?: string, options: any = {}) {
       const [contract, tokenId] = argv.item_id.split(":")
       const bid: FloorBid = {
         asset_contract: contract,
-        bid_asset: "",
-        bid_type: AssetTypeV2.XTZ,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
         bid: {
           bid_amount: new BigNumber("0.01"),
           bid_asset_qty: new BigNumber("1"),
@@ -640,8 +643,9 @@ export async function testScript(operation?: string, options: any = {}) {
       const [contract, tokenId] = argv.item_id.split(":")
 
       const bid_data: AcceptBid = {
-        bid_asset: "",
-        bid_type: AssetTypeV2.XTZ,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
         bid_payouts: [],
         bid_origin_fees: [],
         asset_contract: contract,

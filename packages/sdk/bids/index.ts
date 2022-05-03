@@ -1,14 +1,12 @@
 import {
   absolute_amount,
-  AssetData,
   AssetTypeV2,
   get_address,
+  getAsset,
   OperationResult,
   Provider,
   send_batch,
-  TransactionArg,
-  unpackFA12Asset,
-  unpackFA2Asset
+  TransactionArg
 } from "@rarible/tezos-common"
 import {MichelsonData} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
@@ -19,14 +17,16 @@ export interface Bid {
   asset_contract: string,
   asset_token_id: BigNumber,
   bid_type: AssetTypeV2;
-  bid_asset: string;
+  bid_asset_contract?: string;
+  bid_asset_token_id?: BigNumber
   bid: BidInfo
 }
 
 export interface FloorBid {
   asset_contract: string,
   bid_type: AssetTypeV2;
-  bid_asset: string;
+  bid_asset_contract?: string;
+  bid_asset_token_id?: BigNumber;
   bid: BidInfo
 }
 
@@ -44,7 +44,8 @@ export interface AcceptBid {
   asset_token_id: BigNumber,
   bidder: string
   bid_type: AssetTypeV2;
-  bid_asset: string;
+  bid_asset_contract?: string;
+  bid_asset_token_id?: BigNumber;
   bid_origin_fees : Array<Part>;
   bid_payouts : Array<Part>;
 }
@@ -52,16 +53,10 @@ export interface AcceptBid {
 export async function put_bid(provider: Provider, bid: Bid) : Promise<OperationResult> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
-  let asset: AssetData = {}
-  if(bid.bid_type== AssetTypeV2.FA2){
-    asset = unpackFA2Asset(bid.bid_asset)
-  } else if (bid.bid_type == AssetTypeV2.FA12){
-    asset = unpackFA12Asset(bid.bid_asset)
-  }
+  const processed_amount = await absolute_amount(provider, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
   if (bid.bid_type == AssetTypeV2.FA2 || bid.bid_type == AssetTypeV2.FA12) {
-    arg_approve = await approve_v2(provider, bidder, bid.bid_type, provider.config.transfer_manager, asset.contract, asset.token_id, bid.bid.bid_amount)
+    arg_approve = await approve_v2(provider, bidder, bid.bid_type, provider.config.transfer_manager, bid.bid_asset_contract, bid.bid_asset_token_id, processed_amount)
   }
-  const processed_amount = await absolute_amount(provider, bid.bid.bid_amount, bid.bid_type, asset.contract, asset.token_id)
   const arg = bid_arg(provider, bid, bid.bid_type, processed_amount)
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
@@ -72,16 +67,10 @@ export async function put_bid(provider: Provider, bid: Bid) : Promise<OperationR
 export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise<OperationResult> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
-  let asset: AssetData = {}
-  if(bid.bid_type== AssetTypeV2.FA2){
-    asset = unpackFA2Asset(bid.bid_asset)
-  } else if (bid.bid_type == AssetTypeV2.FA12){
-    asset = unpackFA12Asset(bid.bid_asset)
-  }
+  const processed_amount = await absolute_amount(provider, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
   if (bid.bid_type == AssetTypeV2.FA2 || bid.bid_type == AssetTypeV2.FA12) {
-    arg_approve = await approve_v2(provider, bidder, bid.bid_type, provider.config.transfer_manager, asset.contract, asset.token_id, bid.bid.bid_amount)
+    arg_approve = await approve_v2(provider, bidder, bid.bid_type, provider.config.transfer_manager, bid.bid_asset_contract, bid.bid_asset_token_id, processed_amount)
   }
-  const processed_amount = await absolute_amount(provider, bid.bid.bid_amount, bid.bid_type, asset.contract, asset.token_id)
   const arg = floor_bid_arg(provider, bid, bid.bid_type, processed_amount)
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
@@ -105,10 +94,9 @@ function bid_arg(
     bid_type: AssetTypeV2,
     processed_amount: BigNumber
 ): TransactionArg {
-  let amount: BigNumber = new BigNumber(0)
-
+  let tx_amount = new BigNumber(0)
   if(bid_type == AssetTypeV2.XTZ){
-    amount = processed_amount
+    tx_amount = bid.bid.bid_amount
   }
 
   const parameter: MichelsonData = {
@@ -133,7 +121,7 @@ function bid_arg(
                 prim: "Pair",
                 args: [
                   {
-                    "bytes": `${bid.bid_asset}`
+                    "bytes": `${getAsset(bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)}`
                   },
                   {
                     prim: "Pair",
@@ -147,7 +135,7 @@ function bid_arg(
                             prim: "Pair",
                             args: [
                               {
-                                int: `${amount}`
+                                int: `${processed_amount}`
                               },
                               {
                                 prim: "Pair",
@@ -182,7 +170,7 @@ function bid_arg(
       }
     ]
   };
-  return { destination: provider.config.bid, entrypoint: "put_bid", parameter, amount: bid.bid.bid_amount };
+  return { destination: provider.config.bid, entrypoint: "put_bid", parameter, amount: tx_amount };
 }
 
 function floor_bid_arg(
@@ -191,10 +179,9 @@ function floor_bid_arg(
     bid_type: AssetTypeV2,
     processed_amount: BigNumber
 ): TransactionArg {
-  let amount: BigNumber = new BigNumber(0)
-
+  let tx_amount = new BigNumber(0)
   if(bid_type == AssetTypeV2.XTZ){
-    amount = processed_amount
+    tx_amount = bid.bid.bid_amount
   }
 
   const parameter: MichelsonData = {
@@ -213,7 +200,7 @@ function floor_bid_arg(
             prim: "Pair",
             args: [
               {
-                "bytes": `${bid.bid_asset}`
+                "bytes": `${getAsset(bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)}`
               },
               {
                 prim: "Pair",
@@ -227,7 +214,7 @@ function floor_bid_arg(
                         prim: "Pair",
                         args: [
                           {
-                            int: `${amount}`
+                            int: `${processed_amount}`
                           },
                           {
                             prim: "Pair",
@@ -260,7 +247,7 @@ function floor_bid_arg(
       }
     ]
   };
-  return { destination: provider.config.bid, entrypoint: "put_floor_bid", parameter, amount: bid.bid.bid_amount };
+  return { destination: provider.config.bid, entrypoint: "put_floor_bid", parameter, amount: tx_amount };
 }
 
 function accept_bid_arg(
@@ -301,7 +288,7 @@ function accept_bid_arg(
                     prim: "Pair",
                     args: [
                       {
-                        "bytes": `${bid_data.bid_asset}`
+                        "bytes": `${getAsset(bid_data.bid_type, bid_data.bid_asset_contract, bid_data.bid_asset_token_id)}`
                       },
                       {
                         prim: "Pair",
