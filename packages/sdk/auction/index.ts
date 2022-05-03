@@ -108,10 +108,11 @@ export async function put_auction_bid(provider: Provider, bid: AuctionBid, aucti
     asset = unpackFA12Asset(auction.auction_buy_asset)
   }
 
-  if (auction.auction_buy_asset_type == AssetTypeV2.FA2 || auction.auction_buy_asset_type == AssetTypeV2.FA12) {
-    arg_approve = await approve_v2(provider, bidder, auction.auction_buy_asset_type, provider.config.transfer_manager, asset.contract, asset.token_id, bid.amount)
-  }
   const processed_amount = await absolute_amount(provider, bid.amount, auction.auction_buy_asset_type, asset.contract, asset.token_id)
+
+  if (auction.auction_buy_asset_type == AssetTypeV2.FA2 || auction.auction_buy_asset_type == AssetTypeV2.FA12) {
+    arg_approve = await approve_v2(provider, bidder, auction.auction_buy_asset_type, provider.config.transfer_manager, asset.contract, asset.token_id, processed_amount)
+  }
   const arg = bid_arg(provider, bid, auction.auction_buy_asset_type, processed_amount)
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
@@ -251,10 +252,9 @@ function bid_arg(
     bid_type: AssetTypeV2,
     processed_amount: BigNumber
 ): TransactionArg {
-  let amount: BigNumber = new BigNumber(0)
-
+  let tx_amount: BigNumber = new BigNumber(0)
   if(bid_type == AssetTypeV2.XTZ){
-    amount = processed_amount
+    tx_amount = bid.amount
   }
 
   const parameter: MichelsonData = {
@@ -287,7 +287,7 @@ function bid_arg(
                         prim: "Pair",
                         args: [
                           {
-                            int: `${amount}`
+                            int: `${processed_amount}`
                           },
                           {
                             prim: "Pair",
@@ -320,5 +320,5 @@ function bid_arg(
       }
     ]
   };
-  return { destination: provider.config.auction, entrypoint: "put_bid", parameter, amount: bid.amount };
+  return { destination: provider.config.auction, entrypoint: "put_bid", parameter, amount: tx_amount };
 }

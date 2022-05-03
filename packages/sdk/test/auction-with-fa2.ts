@@ -32,7 +32,10 @@ async function auctionFA2() {
 
   const auctionOrder2 = await testScript('auction', {
     edsk: sellerEdsk,
-    item_id: mintedItemId
+    item_id: mintedItemId,
+    sale_type: AssetTypeV2.FA2,
+    ft_contract: "KT1PEBh9oKkQosYuw4tvzigps5p7uqXMgdez",
+    ft_token_id: 0,
   })
   console.log('auctionOrder2', auctionOrder2)
 
