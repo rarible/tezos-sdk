@@ -93,21 +93,23 @@ export async function get_auction(provider: Provider, auction_asset_contract: st
   return auction;
 }
 
-export async function put_bid(provider: Provider, bid: AuctionBid, auction_asset_contract: string, auction_asset_token_id: BigNumber, auction_seller: string) : Promise<OperationResult> {
+export async function put_auction_bid(provider: Provider, bid: AuctionBid, auction_asset_contract: string, auction_asset_token_id: BigNumber, auction_seller: string) : Promise<OperationResult> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
   const auction = await get_auction(provider, auction_asset_contract, auction_asset_token_id, auction_seller)
   if(auction == undefined){
     throw new Error("Missing auction")
   }
-  if (auction.auction_buy_asset_type == AssetTypeV2.FA2 || auction.auction_buy_asset_type == AssetTypeV2.FA12) {
-    arg_approve = await approve_v2(provider, bidder, auction.auction_buy_asset_type, provider.config.transfer_manager, bid.asset_contract, bid.asset_token_id, bid.amount)
-  }
+
   let asset: AssetData = {}
   if(auction.auction_buy_asset_type == AssetTypeV2.FA2){
     asset = unpackFA2Asset(auction.auction_buy_asset)
   } else if (auction.auction_buy_asset_type == AssetTypeV2.FA12){
     asset = unpackFA12Asset(auction.auction_buy_asset)
+  }
+
+  if (auction.auction_buy_asset_type == AssetTypeV2.FA2 || auction.auction_buy_asset_type == AssetTypeV2.FA12) {
+    arg_approve = await approve_v2(provider, bidder, auction.auction_buy_asset_type, provider.config.transfer_manager, asset.contract, asset.token_id, bid.amount)
   }
   const processed_amount = await absolute_amount(provider, bid.amount, auction.auction_buy_asset_type, asset.contract, asset.token_id)
   const arg = bid_arg(provider, bid, auction.auction_buy_asset_type, processed_amount)
@@ -138,7 +140,7 @@ export async function finish_auction(provider: Provider, auction_asset_contract:
   return op
 }
 
-export function auction_arg(
+function auction_arg(
     provider: Provider,
     auction: Auction
 ): TransactionArg {
@@ -243,7 +245,7 @@ export function auction_arg(
   return { destination: provider.config.auction, entrypoint: "start_auction", parameter };
 }
 
-export function bid_arg(
+function bid_arg(
     provider: Provider,
     bid: AuctionBid,
     bid_type: AssetTypeV2,

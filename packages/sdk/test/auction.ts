@@ -32,10 +32,10 @@ async function auction() {
   })
   console.log('auctionOrder2', auctionOrder2)
 
-  const bid = await testScript('put_bid', {
+  const bid = await testScript('put_auction_bid', {
     edsk: buyerEdsk,
     item_id: mintedItemId,
-    owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC"
+    owner: "v"
   })
   console.log('bid', bid)
 

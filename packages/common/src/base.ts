@@ -110,7 +110,9 @@ export interface Config {
   node_url: string;
   sales: string,
   sales_storage: string,
-  transfer_manager: string
+  transfer_manager: string,
+  bid: string,
+  bid_storage: string
 }
 
 export interface Provider {

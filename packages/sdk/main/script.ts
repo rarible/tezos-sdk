@@ -1,30 +1,40 @@
 import {
-  transfer,
-  mint,
-  burn,
-  deploy_nft_public,
-  set_token_metadata,
-  set_metadata,
-  sell,
-  get_public_key,
-  SellRequest,
-  pk_to_pkh,
-  fill_order,
-  OrderForm,
-  order_of_json,
-  buyV2,
-  Part,
   Auction,
+  AuctionBid,
+  burn,
+  buyV2,
+  cancel_auction,
+  deploy_nft_public,
+  fill_order,
+  finish_auction,
+  get_auction,
+  get_public_key,
+  mint,
+  order_of_json,
+  OrderForm,
+  pk_to_pkh,
+  put_auction_bid,
+  sell,
+  SellRequest,
+  set_metadata,
+  set_token_metadata,
   start_auction,
-  get_auction, put_bid, AuctionBid, cancel_auction, finish_auction
+  transfer
 } from "./index"
-import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
+import {in_memory_provider} from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
 import BigNumber from "bignumber.js"
-import { deploy_exchange, deploy_fill, deploy_royalties, deploy_transfer_manager, deploy_transfer_proxy } from "@rarible/tezos-contracts"
+import {
+  deploy_exchange,
+  deploy_fill,
+  deploy_royalties,
+  deploy_transfer_manager,
+  deploy_transfer_proxy
+} from "@rarible/tezos-contracts"
 import {
   AssetTypeV2,
-  check_asset_type, get_decimals,
+  check_asset_type,
+  get_decimals,
   getAsset,
   send,
   StorageSalesV2,
@@ -32,7 +42,8 @@ import {
   UnknownTokenAssetType
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
-import { BuyRequest, OrderFormV2, sellV2 } from "../order"
+import {BuyRequest, OrderFormV2, sellV2} from "../order"
+import {accept_bid, AcceptBid, Bid, put_bid} from "../bids";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -105,7 +116,9 @@ export async function testScript(operation?: string, options: any = {}) {
     node_url: argv.endpoint,
     sales: "KT1QaGwLxoBqeQaWpe7HUyEFnXQfGi9P2g6a",
     sales_storage: "KT1S3AAy7XH7qtmYHkvvPtxJj8MLxUX1FrVH",
-    transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP"
+    transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
+    bid: "KT1UcBbv2D84mZ9tZx4MVLbCNyC5ihJERED2",
+    bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2"
   }
 
   const devConfig = {
@@ -123,7 +136,9 @@ export async function testScript(operation?: string, options: any = {}) {
     node_url: devNode,
     sales: "KT1Kgi6KFHbPLg6WfUJqQpUGpdQ4VLrrEXAe",
     sales_storage: "KT1TQPSPCJpnDbErXY9x2jGBmGj8bgbodZVc",
-    transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK"
+    transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
+    bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
+    bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr"
   }
 
   const provider = {
@@ -502,8 +517,8 @@ export async function testScript(operation?: string, options: any = {}) {
       return auction
     }
 
-    case 'put_bid': {
-      console.log("put bid", argv.item_id)
+    case 'put_auction_bid': {
+      console.log("put_auction_bid", argv.item_id)
       if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
 
       const [contract, tokenId] = argv.item_id.split(":")
@@ -516,7 +531,7 @@ export async function testScript(operation?: string, options: any = {}) {
         bidder: await provider.tezos.address(),
         asset_seller: argv.owner!
       }
-      const auction = await put_bid(provider, bid, contract, new BigNumber(tokenId), argv.owner!)
+      const auction = await put_auction_bid(provider, bid, contract, new BigNumber(tokenId), argv.owner!)
       return auction
     }
 
@@ -527,7 +542,6 @@ export async function testScript(operation?: string, options: any = {}) {
       const [contract, tokenId] = argv.item_id.split(":")
 
       const auction = await cancel_auction(provider, contract, new BigNumber(tokenId))
-      console.log('auction=', auction)
       return auction
     }
 
@@ -538,7 +552,6 @@ export async function testScript(operation?: string, options: any = {}) {
       const [contract, tokenId] = argv.item_id.split(":")
 
       const auction = await finish_auction(provider, contract, new BigNumber(tokenId), argv.owner!)
-      console.log('auction=', auction)
       return auction
     }
 
@@ -553,8 +566,49 @@ export async function testScript(operation?: string, options: any = {}) {
       const [contract, tokenId] = argv.item_id.split(":")
 
       const auction = await get_auction(provider, contract, new BigNumber(tokenId), "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC")
-      console.log('auction=', auction)
       return auction
+    }
+
+    case 'put_bid': {
+      console.log("put_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const bid: Bid = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        bid_asset: "",
+        bid_type: AssetTypeV2.XTZ,
+        bid: {
+          bid_amount: new BigNumber("0.01"),
+          bid_asset_qty: new BigNumber("1"),
+          bid_payouts: [],
+          bid_origin_fees: [],
+          bid_data: undefined,
+          bid_data_type: undefined
+        }
+      }
+      const bid_op = await put_bid(provider, bid)
+      return bid_op
+    }
+
+    case 'accept_bid': {
+      console.log("accept_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const bid_data: AcceptBid = {
+        bid_asset: "",
+        bid_type: AssetTypeV2.XTZ,
+        bid_payouts: [],
+        bid_origin_fees: [],
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        bidder: argv.owner!
+      }
+      const result = await accept_bid(provider, bid_data)
+      return result
     }
 
     case "get_decimals": {
