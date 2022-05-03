@@ -111,24 +111,31 @@ export async function put_bid(provider: Provider, bid: AuctionBid, auction_asset
   }
   const processed_amount = await absolute_amount(provider, bid.amount, auction.auction_buy_asset_type, asset.contract, asset.token_id)
   const arg = bid_arg(provider, bid, auction.auction_buy_asset_type, processed_amount)
-  console.log(JSON.stringify(arg))
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
   await op.confirmation();
   return op
 }
 
-export async function cancel_auction(provider: Provider, asset_type: (NFTAssetType | MTAssetType), seller?: string, use_all = false) : Promise<OperationResult> {
-  seller = seller || await get_address(provider)
-  const asset = { asset_type, value: new BigNumber(0) }
-  const arg_approve = await approve_arg(provider, seller, asset, undefined, use_all, provider.config.auction_storage)
-  const contract = asset_type_contract(provider, asset_type)
+export async function cancel_auction(provider: Provider, auction_asset_contract: string, auction_asset_token_id: BigNumber) : Promise<OperationResult> {
   const parameter : MichelsonData = [
-    {string: contract},
-    {int: asset_type.token_id.toString() } ]
+    {string: auction_asset_contract},
+    {int: auction_asset_token_id.toString() } ]
   const arg = { destination: provider.config.auction, entrypoint: "cancel_auction", parameter }
-  const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
-  return send_batch(provider, args)
+  const op = await send_batch(provider, [ arg ]);
+  await op.confirmation();
+  return op
+}
+
+export async function finish_auction(provider: Provider, auction_asset_contract: string, auction_asset_token_id: BigNumber, auction_seller: string) : Promise<OperationResult> {
+  const parameter : MichelsonData = [
+    {string: auction_asset_contract},
+    {int: auction_asset_token_id.toString() },
+    {string: auction_seller}]
+  const arg = { destination: provider.config.auction, entrypoint: "finish_auction", parameter }
+  const op = await send_batch(provider, [ arg ]);
+  await op.confirmation();
+  return op
 }
 
 export function auction_arg(

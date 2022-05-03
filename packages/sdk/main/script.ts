@@ -16,7 +16,7 @@ import {
   Part,
   Auction,
   start_auction,
-  get_auction, put_bid, AuctionBid
+  get_auction, put_bid, AuctionBid, cancel_auction, finish_auction
 } from "./index"
 import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
@@ -477,10 +477,6 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case 'auction': {
       console.log("auction item", argv.item_id)
-      const publicKey = await get_public_key(provider)
-      if (!publicKey) {
-        throw new Error("publicKey is undefined")
-      }
       if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
 
       const [contract, tokenId] = argv.item_id.split(":")
@@ -493,7 +489,7 @@ export async function testScript(operation?: string, options: any = {}) {
         buy_asset_contract: undefined,
         buy_asset_token_id: undefined,
         start: undefined,
-        duration: new BigNumber("10000"),
+        duration: new BigNumber("30"),
         minimal_price: new BigNumber("10"),
         max_seller_fees: new BigNumber("10000"),
         buyout_price: new BigNumber("100000"),
@@ -503,16 +499,11 @@ export async function testScript(operation?: string, options: any = {}) {
       }
 
       const auction = await start_auction(provider, auction_request)
-      console.log('auction=', auction)
       return auction
     }
 
     case 'put_bid': {
       console.log("put bid", argv.item_id)
-      const publicKey = await get_public_key(provider)
-      if (!publicKey) {
-        throw new Error("publicKey is undefined")
-      }
       if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
 
       const [contract, tokenId] = argv.item_id.split(":")
@@ -526,6 +517,27 @@ export async function testScript(operation?: string, options: any = {}) {
         asset_seller: argv.owner!
       }
       const auction = await put_bid(provider, bid, contract, new BigNumber(tokenId), argv.owner!)
+      return auction
+    }
+
+    case 'cancel_auction': {
+      console.log("cancel auction", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const auction = await cancel_auction(provider, contract, new BigNumber(tokenId))
+      console.log('auction=', auction)
+      return auction
+    }
+
+    case 'finish_auction': {
+      console.log("finish auction", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const auction = await finish_auction(provider, contract, new BigNumber(tokenId), argv.owner!)
       console.log('auction=', auction)
       return auction
     }
