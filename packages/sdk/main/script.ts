@@ -500,63 +500,9 @@ export async function testScript(operation?: string, options: any = {}) {
         sell_asset_contract: contract,
         sell_asset_token_id: new BigNumber(tokenId),
         sell_asset_amount: new BigNumber("1"),
-        buy_asset_type: AssetTypeV2.XTZ,
-        buy_asset_contract: undefined,
-        buy_asset_token_id: undefined,
-        start: undefined,
-        duration: new BigNumber("30"),
-        minimal_price: new BigNumber("10"),
-        max_seller_fees: new BigNumber("10000"),
-        buyout_price: new BigNumber("100000"),
-        minimal_step: new BigNumber("1"),
-        payouts: [],
-        origin_fees: []
-      }
-
-      const auction = await start_auction(provider, auction_request)
-      return auction
-    }
-
-    case 'auction_fa2': {
-      console.log("auction fa2 item", argv.item_id)
-      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
-
-      const [contract, tokenId] = argv.item_id.split(":")
-
-      const auction_request: Auction = {
-        sell_asset_contract: contract,
-        sell_asset_token_id: new BigNumber(tokenId),
-        sell_asset_amount: new BigNumber("1"),
-        buy_asset_type: AssetTypeV2.FA2,
+        buy_asset_type: argv.sale_type,
         buy_asset_contract: argv.ft_contract,
         buy_asset_token_id: argv.ft_token_id,
-        start: undefined,
-        duration: new BigNumber("30"),
-        minimal_price: new BigNumber("10"),
-        max_seller_fees: new BigNumber("10000"),
-        buyout_price: new BigNumber("100000"),
-        minimal_step: new BigNumber("1"),
-        payouts: [],
-        origin_fees: []
-      }
-
-      const auction = await start_auction(provider, auction_request)
-      return auction
-    }
-
-    case 'auction_fa12': {
-      console.log("auction fa12 item", argv.item_id)
-      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
-
-      const [contract, tokenId] = argv.item_id.split(":")
-
-      const auction_request: Auction = {
-        sell_asset_contract: contract,
-        sell_asset_token_id: new BigNumber(tokenId),
-        sell_asset_amount: new BigNumber("1"),
-        buy_asset_type: AssetTypeV2.FA12,
-        buy_asset_contract: argv.ft_contract,
-        buy_asset_token_id: undefined,
         start: undefined,
         duration: new BigNumber("30"),
         minimal_price: new BigNumber("10"),

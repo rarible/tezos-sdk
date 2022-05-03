@@ -1,5 +1,6 @@
 import {testScript} from "../main/script";
 import {awaitItem} from "./common/utils";
+import {AssetTypeV2} from "@rarible/tezos-common";
 
 async function auction() {
   const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
@@ -16,7 +17,8 @@ async function auction() {
   await awaitItem(mintedItemId)
   const auctionOrder = await testScript('auction', {
     edsk: sellerEdsk,
-    item_id: mintedItemId
+    item_id: mintedItemId,
+    sale_type: AssetTypeV2.XTZ
   })
   console.log('auctionOrder', auctionOrder)
 
