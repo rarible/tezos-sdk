@@ -35,7 +35,7 @@ async function auction() {
   const bid = await testScript('put_auction_bid', {
     edsk: buyerEdsk,
     item_id: mintedItemId,
-    owner: "v"
+    owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC"
   })
   console.log('bid', bid)
 
