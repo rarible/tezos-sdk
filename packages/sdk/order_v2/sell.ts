@@ -5,15 +5,24 @@ import {
     Part, parts_to_micheline,
     Provider,
     send_batch,
-    TransactionArg
+    TransactionArg,
+    BundleItem,
+    approve_v2
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
-import {approve_v2} from "@rarible/tezos-common/build/approve";
 
 export declare type OrderFormV2 = {
     s_asset_contract: string;
     s_asset_token_id: BigNumber;
+    s_sale_type: AssetTypeV2;
+    s_sale_asset_contract?: string;
+    s_sale_asset_token_id?: BigNumber;
+    s_sale: RaribleSaleDataV2;
+}
+
+export declare type BundleOrderForm = {
+    bundle: BundleItem[];
     s_sale_type: AssetTypeV2;
     s_sale_asset_contract?: string;
     s_sale_asset_token_id?: BigNumber;
