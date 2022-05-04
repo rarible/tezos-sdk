@@ -34,12 +34,13 @@ import {
   send, set_metadata,
   StorageSalesV2,
   TransactionArg,
-  UnknownTokenAssetType
+  UnknownTokenAssetType,
+  BundleItem
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {accept_bid, AcceptBid, Bid, FloorBid, put_bid, put_floor_bid} from "../bids";
-import {OrderFormV2, sellV2} from "../order_v2/sell";
-import {BuyRequest, buyV2} from "../order_v2/buy";
+import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../order_v2/sell";
+import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../order_v2/buy";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -342,6 +343,46 @@ export async function testScript(operation?: string, options: any = {}) {
       return order
     }
 
+    case 'sell_bundle': {
+      console.log("sell bundle", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+
+      const sell_request: BundleOrderForm = {
+        bundle: bundle,
+        s_sale_type: argv.sale_type,
+        s_sale_asset_contract: argv.ft_contract,
+        s_sale_asset_token_id: argv.ft_token_id,
+        s_sale: {
+          sale_amount: new BigNumber("0.02"),
+          sale_max_fees_base_boint: 10000,
+          sale_end: undefined,
+          sale_start: undefined,
+          sale_origin_fees: [],
+          sale_payouts: [],
+          sale_data: undefined,
+          sale_data_type: undefined
+        }
+
+      }
+      const order = await sellBundle(provider, sell_request)
+      console.log('order=', order)
+      return order
+    }
+
     case "fill": {
       try {
         console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
@@ -408,6 +449,43 @@ export async function testScript(operation?: string, options: any = {}) {
         } else {
           throw new Error("Error order does not exist")
         }
+      } catch (e) {
+        try {
+          console.error(JSON.stringify(e, null, ' '))
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      break
+    }
+
+    case "buy_bundle": {
+      try {
+        const items = argv.item_id.split(",")
+        const bundle: Array<BundleItem> = []
+        items.forEach(item => {
+          const [contract, tokenId] = item.split(":")
+          bundle.push({
+            asset_contract: contract,
+            asset_token_id: new BigNumber(tokenId),
+            asset_quantity: new BigNumber(1)
+          })
+        })
+        const amount = (argv.amount!=undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
+
+        const buyRequest: BuyBundleRequest = {
+          bundle: bundle,
+          asset_seller: argv.owner!,
+          sale_type: argv.sale_type,
+          sale_asset_contract: argv.ft_contract,
+          sale_asset_token_id: argv.ft_token_id,
+          sale_amount: amount,
+          sale_payouts: [],
+          sale_origin_fees: [],
+          use_all: false,
+        }
+        const op = await buy_bundle(provider, buyRequest)
+        return op
       } catch (e) {
         try {
           console.error(JSON.stringify(e, null, ' '))

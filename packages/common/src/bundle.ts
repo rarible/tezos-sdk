@@ -7,7 +7,7 @@ export declare type BundleItem = {
     asset_quantity: BigNumber
 }
 
-export function mkBundleItem(bundle_item: BundleItem): MichelsonData  {
+function mkBundleItem(bundle_item: BundleItem): MichelsonData {
     return {
         prim: "Pair",
         args: [
@@ -29,8 +29,16 @@ export function mkBundleItem(bundle_item: BundleItem): MichelsonData  {
     };
 };
 
-export function mkPackedBundle(bundle: MichelsonData): string {
-    return packDataBytes(bundle, {
+function mkMichelsonBundle(bundle: Array<BundleItem>): MichelsonData[] {
+    let michelson_bundle: MichelsonData[] = []
+    for (let item of bundle) {
+        michelson_bundle.push(mkBundleItem(item))
+    }
+    return michelson_bundle
+}
+
+export function mkPackedBundle(bundle: Array<BundleItem>): string {
+    return packDataBytes(mkMichelsonBundle(bundle), {
         "prim": "list",
         "args": [{
             "prim": "pair",
