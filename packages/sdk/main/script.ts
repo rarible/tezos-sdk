@@ -39,8 +39,8 @@ import {
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {accept_bid, AcceptBid, Bid, FloorBid, put_bid, put_floor_bid} from "../bids";
-import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../order_v2/sell";
-import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../order_v2/buy";
+import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
+import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../sales/buy";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
