@@ -38,7 +38,17 @@ import {
   BundleItem
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
-import {accept_bid, AcceptBid, Bid, FloorBid, put_bid, put_floor_bid} from "../bids";
+import {
+  accept_bid, accept_bundle_bid,
+  AcceptBid,
+  AcceptBundleBid,
+  Bid,
+  BundleBid,
+  FloorBid,
+  put_bid,
+  put_bundle_bid,
+  put_floor_bid
+} from "../bids";
 import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../sales/buy";
 
@@ -659,6 +669,62 @@ export async function testScript(operation?: string, options: any = {}) {
         bidder: argv.owner!
       }
       const result = await accept_bid(provider, bid_data, true)
+      return result
+    }
+
+    case 'put_bundle_bid': {
+      console.log("put_bundle_bid", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+      const bid: BundleBid = {
+        bundle: bundle,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
+        bid: {
+          bid_amount: new BigNumber("0.01"),
+          bid_payouts: [],
+          bid_origin_fees: [],
+          bid_data: undefined,
+          bid_data_type: undefined
+        }
+      }
+      const bid_op = await put_bundle_bid(provider, bid)
+      return bid_op
+    }
+
+    case 'accept_bundle_bid': {
+      console.log("accept_bundle_bid", argv.item_id)
+
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+
+      const bid_data: AcceptBundleBid = {
+        bundle: bundle,
+        bid_type: argv.sale_type,
+        bid_payouts: [],
+        bid_origin_fees: [],
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bidder: argv.owner!
+      }
+      const result = await accept_bundle_bid(provider, bid_data)
       return result
     }
 
