@@ -1,5 +1,5 @@
 import {
-    absolute_amount,
+    absolute_amount, approve_v2,
     AssetTypeV2,
     getAsset, optional_date_arg,
     Part, parts_to_micheline,
@@ -9,7 +9,6 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
-import {approve_v2} from "@rarible/tezos-common/build/approve";
 
 export declare type OrderFormV2 = {
     s_asset_contract: string;

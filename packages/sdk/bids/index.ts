@@ -1,5 +1,5 @@
 import {
-  absolute_amount,
+  absolute_amount, approve_v2,
   AssetTypeV2,
   get_address,
   getAsset,
@@ -10,7 +10,6 @@ import {
 } from "@rarible/tezos-common"
 import {MichelsonData} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
-import {approve_v2} from "@rarible/tezos-common/build/approve";
 
 export interface Bid {
   asset_contract: string,

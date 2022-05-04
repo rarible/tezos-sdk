@@ -1,10 +1,9 @@
-import { Provider, TransactionArg, send_batch } from "@rarible/tezos-common"
+import {Provider, TransactionArg, send_batch, approve_arg} from "@rarible/tezos-common"
 import { OrderForm, order_to_json } from "./utils"
 import { get_make_fee } from "./get-make-fee"
 import { add_fee } from "./add-fee"
 import { sign_order } from "./sign-order"
 import fetch from "node-fetch"
-import {approve_arg} from "@rarible/tezos-common/build/approve";
 
 export async function upsert_order(
   provider: Provider,

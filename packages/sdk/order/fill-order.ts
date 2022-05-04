@@ -8,7 +8,7 @@ import {
   get_address,
   FTAssetType,
   get_decimals,
-  Part
+  Part, approve_arg
 } from "@rarible/tezos-common"
 import { OrderForm, order_to_json, salt, fill_offchain_royalties } from "./utils"
 import { invert_order } from "./invert-order"
@@ -19,7 +19,6 @@ import { make_permit } from "../nft/permit"
 import { unwrap_arg } from "./wrapper"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
-import {approve_arg} from "@rarible/tezos-common/build/approve";
 
 export interface FillOrderRequest {
   amount: BigNumber;

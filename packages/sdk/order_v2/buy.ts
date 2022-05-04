@@ -1,5 +1,5 @@
 import {
-    absolute_amount,
+    absolute_amount, approve_v2,
     AssetTypeV2,
     packFA12Asset,
     packFA2Asset,
@@ -10,7 +10,6 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
-import {approve_v2} from "@rarible/tezos-common/build/approve";
 
 export declare type BuyRequest = {
     asset_contract: string;
