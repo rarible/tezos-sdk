@@ -9,11 +9,11 @@ import {
   send_batch,
   StorageAuctions,
   TransactionArg, unpackFA12Asset,
-  unpackFA2Asset
+  unpackFA2Asset,
+  approve_v2
 } from "@rarible/tezos-common"
 import {MichelsonData} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
-import {approve_v2} from "@rarible/tezos-common/build/approve";
 
 export interface Auction {
   sell_asset_contract: string,
