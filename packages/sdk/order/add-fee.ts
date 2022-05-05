@@ -1,5 +1,4 @@
-import { Asset, Provider } from "@rarible/tezos-common"
-import { get_decimals } from "./sign-order"
+import {Asset, get_decimals, Provider} from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 
 export async function add_fee(provider: Provider, asset: Asset, fee: BigNumber, remove=false) : Promise<Asset> {

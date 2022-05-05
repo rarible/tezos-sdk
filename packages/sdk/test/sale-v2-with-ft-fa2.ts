@@ -14,9 +14,10 @@ async function sale() {
 
   await awaitItem(mintedItemId)
   //const mintedItemId = "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43:216"
-  const sellOrder = await testScript('sell_v2_with_fa2', {
+  const sellOrder = await testScript('sell_v2', {
     edsk: sellerEdsk,
     item_id: mintedItemId,
+    sale_type: AssetTypeV2.FA2,
     ft_contract: "KT1PEBh9oKkQosYuw4tvzigps5p7uqXMgdez",
     ft_token_id: 0,
   })

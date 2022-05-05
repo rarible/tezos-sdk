@@ -1,21 +1,45 @@
 import {
-  transfer,
-  mint,
+  Auction,
+  AuctionBid,
   burn,
+  cancel_auction,
   deploy_nft_public,
-  set_token_metadata,
-  set_metadata,
+  fill_order,
+  finish_auction,
+  get_auction,
+  mint,
+  order_of_json,
+  OrderForm,
+  put_auction_bid,
   sell,
-  get_public_key,
-  SellRequest, pk_to_pkh, fill_order, OrderForm, order_of_json, get_decimals, buyV2
+  SellRequest,
+  set_token_metadata,
+  start_auction,
+  transfer
 } from "./index"
-import { in_memory_provider } from '../providers/in_memory/in_memory_provider'
+import {in_memory_provider} from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
 import BigNumber from "bignumber.js"
-import { deploy_exchange, deploy_fill, deploy_royalties, deploy_transfer_manager, deploy_transfer_proxy } from "@rarible/tezos-contracts"
-import {AssetTypeV2, check_asset_type, send, StorageSalesV2, TransactionArg, UnknownTokenAssetType} from "@rarible/tezos-common"
+import {
+  deploy_exchange,
+  deploy_fill,
+  deploy_royalties,
+  deploy_transfer_manager,
+  deploy_transfer_proxy
+} from "@rarible/tezos-contracts"
+import {
+  check_asset_type,
+  get_decimals, get_public_key,
+  getAsset, pk_to_pkh,
+  send, set_metadata,
+  StorageSalesV2,
+  TransactionArg,
+  UnknownTokenAssetType
+} from "@rarible/tezos-common"
 import fetch from "node-fetch"
-import { BuyRequest, getAsset, OrderFormV2, sellV2 } from "../order"
+import {accept_bid, AcceptBid, Bid, FloorBid, put_bid, put_floor_bid} from "../bids";
+import {OrderFormV2, sellV2} from "../order_v2/sell";
+import {BuyRequest, buyV2} from "../order_v2/buy";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -83,17 +107,19 @@ export async function testScript(operation?: string, options: any = {}) {
     api_permit: "https://test-tezos-api.rarible.org/v0.1",
     permit_whitelist: [],
     wrapper: argv.wrapper,
-    auction: "",
-    auction_storage: "",
+    auction: "KT1CB5JBSC7kTxRV3ir2xsooMA1FLieiD4Mt",
+    auction_storage: "KT1KWAPPjuDq4ZeX67rzZWsf6eAeqwtuAfSP",
     node_url: argv.endpoint,
     sales: "KT1QaGwLxoBqeQaWpe7HUyEFnXQfGi9P2g6a",
     sales_storage: "KT1S3AAy7XH7qtmYHkvvPtxJj8MLxUX1FrVH",
-    transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP"
+    transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
+    bid: "KT1UcBbv2D84mZ9tZx4MVLbCNyC5ihJERED2",
+    bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2"
   }
 
   const devConfig = {
-    exchange: "KT1V1FP839LnLBT7bUaR9vgTyKwoLgwH7Eni",
-    transfer_proxy: "KT1UR39jhgCStFkvriwx6QWPWiH4HHfWxorB",
+    exchange: "KT18isH58SBp7UaRWB652UwLMPxCe1bsjMMe",
+    transfer_proxy: "KT1LmiHVNjfbZvPx9qvASVk8mzFcaJNtfj8q",
     fees: new BigNumber(argv.protocol_fee),
     nft_public: "",
     mt_public: "",
@@ -101,12 +127,14 @@ export async function testScript(operation?: string, options: any = {}) {
     api_permit: "https://dev-tezos-api.rarible.org/v0.1",
     permit_whitelist: [],
     wrapper: "",
-    auction: "",
-    auction_storage: "",
+    auction: "KT1UThqUUyAM9g8Nk6u74ke6XAFZNycAWU7c",
+    auction_storage: "KT1AJXNtHfFMB4kuJJexdevH2XeULivjThEX",
     node_url: devNode,
-    sales: "KT1RTGCiZnCVW6EtDK71NWkKTyCxT2HVkGK1",
-    sales_storage: "KT1Wcizh9JHA2j6EmCSLJQQmMuYq3FfgPCRb",
-    transfer_manager: "KT1Kq8dR8qjRWEFbzyyYdaKAG7nAtk2amnJg"
+    sales: "KT1Kgi6KFHbPLg6WfUJqQpUGpdQ4VLrrEXAe",
+    sales_storage: "KT1TQPSPCJpnDbErXY9x2jGBmGj8bgbodZVc",
+    transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
+    bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
+    bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr"
   }
 
   const provider = {
@@ -293,79 +321,11 @@ export async function testScript(operation?: string, options: any = {}) {
       const sell_request: OrderFormV2 = {
         s_asset_contract: contract,
         s_asset_token_id: new BigNumber(tokenId),
-        s_sale_type: AssetTypeV2.XTZ,
-        s_sale_asset_contract: undefined,
-        s_sale_asset_token_id: undefined,
-        s_sale: {
-          sale_amount: new BigNumber("2"),
-          sale_asset_qty: new BigNumber("1"),
-          sale_max_fees_base_boint: 10000,
-          sale_end: undefined,
-          sale_start: undefined,
-          sale_origin_fees: [],
-          sale_payouts: [],
-          sale_data: undefined,
-          sale_data_type: undefined
-        }
-
-      }
-      const order = await sellV2(provider, sell_request)
-      console.log('order=', order)
-      return order
-    }
-
-    case 'sell_v2_with_fa2': {
-      console.log("sell item", argv.item_id)
-      const publicKey = await get_public_key(provider)
-      if (!publicKey) {
-        throw new Error("publicKey is undefined")
-      }
-      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
-
-      const [contract, tokenId] = argv.item_id.split(":")
-
-      const sell_request: OrderFormV2 = {
-        s_asset_contract: contract,
-        s_asset_token_id: new BigNumber(tokenId),
-        s_sale_type: AssetTypeV2.FA2,
+        s_sale_type: argv.sale_type,
         s_sale_asset_contract: argv.ft_contract,
         s_sale_asset_token_id: argv.ft_token_id,
         s_sale: {
-          sale_amount: new BigNumber("2"),
-          sale_asset_qty: new BigNumber("1"),
-          sale_max_fees_base_boint: 10000,
-          sale_end: undefined,
-          sale_start: undefined,
-          sale_origin_fees: [],
-          sale_payouts: [],
-          sale_data: undefined,
-          sale_data_type: undefined
-        }
-
-      }
-      const order = await sellV2(provider, sell_request)
-      console.log('order=', order)
-      return order
-    }
-
-    case 'sell_v2_with_fa12': {
-      console.log("sell item", argv.item_id)
-      const publicKey = await get_public_key(provider)
-      if (!publicKey) {
-        throw new Error("publicKey is undefined")
-      }
-      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
-
-      const [contract, tokenId] = argv.item_id.split(":")
-
-      const sell_request: OrderFormV2 = {
-        s_asset_contract: contract,
-        s_asset_token_id: new BigNumber(tokenId),
-        s_sale_type: AssetTypeV2.FA12,
-        s_sale_asset_contract: argv.ft_contract,
-        s_sale_asset_token_id: undefined,
-        s_sale: {
-          sale_amount: new BigNumber("2"),
+          sale_amount: new BigNumber("0.02"),
           sale_asset_qty: new BigNumber("1"),
           sale_max_fees_base_boint: 10000,
           sale_end: undefined,
@@ -456,6 +416,172 @@ export async function testScript(operation?: string, options: any = {}) {
         }
       }
       break
+    }
+
+    case 'auction': {
+      console.log("auction item", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const auction_request: Auction = {
+        sell_asset_contract: contract,
+        sell_asset_token_id: new BigNumber(tokenId),
+        sell_asset_amount: new BigNumber("1"),
+        buy_asset_type: argv.sale_type,
+        buy_asset_contract: argv.ft_contract,
+        buy_asset_token_id: argv.ft_token_id,
+        start: undefined,
+        duration: new BigNumber("30"),
+        minimal_price: new BigNumber("10"),
+        max_seller_fees: new BigNumber("10000"),
+        buyout_price: new BigNumber("100000"),
+        minimal_step: new BigNumber("1"),
+        payouts: [],
+        origin_fees: []
+      }
+
+      const auction = await start_auction(provider, auction_request)
+      return auction
+    }
+
+    case 'put_auction_bid': {
+      console.log("put_auction_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const bid: AuctionBid = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        amount: new BigNumber("0.00001"),
+        payouts: [],
+        origin_fees: [],
+        bidder: await provider.tezos.address(),
+        asset_seller: argv.owner!
+      }
+      const auction = await put_auction_bid(provider, bid, contract, new BigNumber(tokenId), argv.owner!)
+      return auction
+    }
+
+    case 'cancel_auction': {
+      console.log("cancel auction", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const auction = await cancel_auction(provider, contract, new BigNumber(tokenId))
+      return auction
+    }
+
+    case 'finish_auction': {
+      console.log("finish auction", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const auction = await finish_auction(provider, contract, new BigNumber(tokenId), argv.owner!)
+      return auction
+    }
+
+    case 'get_auction': {
+      console.log("auction item", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const auction = await get_auction(provider, contract, new BigNumber(tokenId), "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC")
+      return auction
+    }
+
+    case 'put_bid': {
+      console.log("put_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const bid: Bid = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
+        bid: {
+          bid_amount: new BigNumber("0.01"),
+          bid_asset_qty: new BigNumber("1"),
+          bid_payouts: [],
+          bid_origin_fees: [],
+          bid_data: undefined,
+          bid_data_type: undefined
+        }
+      }
+      const bid_op = await put_bid(provider, bid)
+      return bid_op
+    }
+
+    case 'accept_bid': {
+      console.log("accept_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const bid_data: AcceptBid = {
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
+        bid_payouts: [],
+        bid_origin_fees: [],
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        bidder: argv.owner!
+      }
+      const result = await accept_bid(provider, bid_data)
+      return result
+    }
+
+    case 'put_floor_bid': {
+      console.log("put_floor_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const bid: FloorBid = {
+        asset_contract: contract,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
+        bid: {
+          bid_amount: new BigNumber("0.01"),
+          bid_asset_qty: new BigNumber("1"),
+          bid_payouts: [],
+          bid_origin_fees: [],
+          bid_data: undefined,
+          bid_data_type: undefined
+        }
+      }
+      const bid_op = await put_floor_bid(provider, bid)
+      return bid_op
+    }
+
+    case 'accept_floor_bid': {
+      console.log("accept_floor_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const bid_data: AcceptBid = {
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
+        bid_payouts: [],
+        bid_origin_fees: [],
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        bidder: argv.owner!
+      }
+      const result = await accept_bid(provider, bid_data, true)
+      return result
     }
 
     case "get_decimals": {
