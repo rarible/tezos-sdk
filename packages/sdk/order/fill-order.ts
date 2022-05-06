@@ -8,7 +8,8 @@ import {
   get_address,
   FTAssetType,
   get_decimals,
-  Part, approve_arg
+  Part,
+  approve_arg
 } from "@rarible/tezos-common"
 import { OrderForm, order_to_json, salt, fill_offchain_royalties } from "./utils"
 import { invert_order } from "./invert-order"

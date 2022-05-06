@@ -1,20 +1,20 @@
 import {
   Auction,
-  AuctionBid,
+  AuctionBid, BundleAuction, BundleAuctionBid,
   burn,
-  cancel_auction,
+  cancel_auction, cancel_bundle_auction,
   deploy_nft_public,
   fill_order,
-  finish_auction,
+  finish_auction, finish_bundle_auction,
   get_auction,
   mint,
   order_of_json,
   OrderForm,
-  put_auction_bid,
+  put_auction_bid, put_bundle_auction_bid,
   sell,
   SellRequest,
   set_token_metadata,
-  start_auction,
+  start_auction, start_bundle_auction,
   transfer
 } from "./index"
 import {in_memory_provider} from '../providers/in_memory/in_memory_provider'
@@ -34,12 +34,23 @@ import {
   send, set_metadata,
   StorageSalesV2,
   TransactionArg,
-  UnknownTokenAssetType
+  UnknownTokenAssetType,
+  BundleItem
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
-import {accept_bid, AcceptBid, Bid, FloorBid, put_bid, put_floor_bid} from "../bids";
-import {OrderFormV2, sellV2} from "../order_v2/sell";
-import {BuyRequest, buyV2} from "../order_v2/buy";
+import {
+  accept_bid, accept_bundle_bid,
+  AcceptBid,
+  AcceptBundleBid,
+  Bid,
+  BundleBid,
+  FloorBid,
+  put_bid,
+  put_bundle_bid,
+  put_floor_bid
+} from "../bids";
+import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
+import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../sales/buy";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -342,6 +353,46 @@ export async function testScript(operation?: string, options: any = {}) {
       return order
     }
 
+    case 'sell_bundle': {
+      console.log("sell bundle", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+
+      const sell_request: BundleOrderForm = {
+        bundle: bundle,
+        s_sale_type: argv.sale_type,
+        s_sale_asset_contract: argv.ft_contract,
+        s_sale_asset_token_id: argv.ft_token_id,
+        s_sale: {
+          sale_amount: new BigNumber("0.02"),
+          sale_max_fees_base_boint: 10000,
+          sale_end: undefined,
+          sale_start: undefined,
+          sale_origin_fees: [],
+          sale_payouts: [],
+          sale_data: undefined,
+          sale_data_type: undefined
+        }
+
+      }
+      const order = await sellBundle(provider, sell_request)
+      console.log('order=', order)
+      return order
+    }
+
     case "fill": {
       try {
         console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
@@ -418,6 +469,43 @@ export async function testScript(operation?: string, options: any = {}) {
       break
     }
 
+    case "buy_bundle": {
+      try {
+        const items = argv.item_id.split(",")
+        const bundle: Array<BundleItem> = []
+        items.forEach(item => {
+          const [contract, tokenId] = item.split(":")
+          bundle.push({
+            asset_contract: contract,
+            asset_token_id: new BigNumber(tokenId),
+            asset_quantity: new BigNumber(1)
+          })
+        })
+        const amount = (argv.amount!=undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
+
+        const buyRequest: BuyBundleRequest = {
+          bundle: bundle,
+          asset_seller: argv.owner!,
+          sale_type: argv.sale_type,
+          sale_asset_contract: argv.ft_contract,
+          sale_asset_token_id: argv.ft_token_id,
+          sale_amount: amount,
+          sale_payouts: [],
+          sale_origin_fees: [],
+          use_all: false,
+        }
+        const op = await buy_bundle(provider, buyRequest)
+        return op
+      } catch (e) {
+        try {
+          console.error(JSON.stringify(e, null, ' '))
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      break
+    }
+
     case 'auction': {
       console.log("auction item", argv.item_id)
       if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
@@ -445,6 +533,38 @@ export async function testScript(operation?: string, options: any = {}) {
       return auction
     }
 
+    case 'bundle_auction': {
+      console.log("auction item", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+
+      const auction_request: BundleAuction = {
+        bundle: bundle,
+        buy_asset_type: argv.sale_type,
+        buy_asset_contract: argv.ft_contract,
+        buy_asset_token_id: argv.ft_token_id,
+        start: undefined,
+        duration: new BigNumber("30"),
+        minimal_price: new BigNumber("10"),
+        max_seller_fees: new BigNumber("10000"),
+        buyout_price: new BigNumber("100000"),
+        minimal_step: new BigNumber("1"),
+        payouts: [],
+        origin_fees: []
+      }
+
+      const auction = await start_bundle_auction(provider, auction_request)
+      return auction
+    }
+
     case 'put_auction_bid': {
       console.log("put_auction_bid", argv.item_id)
       if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
@@ -463,6 +583,30 @@ export async function testScript(operation?: string, options: any = {}) {
       return auction
     }
 
+    case 'put_bundle_auction_bid': {
+      console.log("put_bundle_auction_bid", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+      const bid: BundleAuctionBid = {
+        bundle: bundle,
+        amount: new BigNumber("0.00001"),
+        payouts: [],
+        origin_fees: [],
+        bidder: await provider.tezos.address(),
+        asset_seller: argv.owner!
+      }
+      const auction = await put_bundle_auction_bid(provider, bid, argv.owner!)
+      return auction
+    }
+
     case 'cancel_auction': {
       console.log("cancel auction", argv.item_id)
       if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
@@ -473,6 +617,23 @@ export async function testScript(operation?: string, options: any = {}) {
       return auction
     }
 
+    case 'cancel_bundle_auction': {
+      console.log("cancel_bundle_auction", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+
+      const auction = await cancel_bundle_auction(provider, bundle)
+      return auction
+    }
+
     case 'finish_auction': {
       console.log("finish auction", argv.item_id)
       if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
@@ -480,6 +641,23 @@ export async function testScript(operation?: string, options: any = {}) {
       const [contract, tokenId] = argv.item_id.split(":")
 
       const auction = await finish_auction(provider, contract, new BigNumber(tokenId), argv.owner!)
+      return auction
+    }
+
+    case 'finish_bundle_auction': {
+      console.log("finish_bundle_auction", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+
+      const auction = await finish_bundle_auction(provider, bundle, argv.owner!)
       return auction
     }
 
@@ -581,6 +759,62 @@ export async function testScript(operation?: string, options: any = {}) {
         bidder: argv.owner!
       }
       const result = await accept_bid(provider, bid_data, true)
+      return result
+    }
+
+    case 'put_bundle_bid': {
+      console.log("put_bundle_bid", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+      const bid: BundleBid = {
+        bundle: bundle,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type,
+        bid: {
+          bid_amount: new BigNumber("0.01"),
+          bid_payouts: [],
+          bid_origin_fees: [],
+          bid_data: undefined,
+          bid_data_type: undefined
+        }
+      }
+      const bid_op = await put_bundle_bid(provider, bid)
+      return bid_op
+    }
+
+    case 'accept_bundle_bid': {
+      console.log("accept_bundle_bid", argv.item_id)
+
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+
+      const bid_data: AcceptBundleBid = {
+        bundle: bundle,
+        bid_type: argv.sale_type,
+        bid_payouts: [],
+        bid_origin_fees: [],
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bidder: argv.owner!
+      }
+      const result = await accept_bundle_bid(provider, bid_data)
       return result
     }
 
