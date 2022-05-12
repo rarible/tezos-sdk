@@ -35,7 +35,7 @@ import {
   StorageSalesV2,
   TransactionArg,
   UnknownTokenAssetType,
-  BundleItem
+  BundleItem, check_signature
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {
@@ -83,6 +83,7 @@ export async function testScript(operation?: string, options: any = {}) {
     ft_token_id: {type: 'string', default: undefined},
     is_dev: {type: 'boolean', default: false},
     sale_type : {type: 'number', default: 0},
+    message: {type: 'string', default: ''}
   }).argv
   argv = {
     ...argv,
@@ -109,6 +110,7 @@ export async function testScript(operation?: string, options: any = {}) {
   const tezos = in_memory_provider(argv.edsk, argv.is_dev ? devNode : argv.endpoint)
 
   const config = {
+    chain_id: "NetXnHfVqm9iesp",
     exchange: argv.exchange,
     transfer_proxy: argv.transfer_proxy,
     fees: new BigNumber(argv.protocol_fee),
@@ -125,10 +127,12 @@ export async function testScript(operation?: string, options: any = {}) {
     sales_storage: "KT1S3AAy7XH7qtmYHkvvPtxJj8MLxUX1FrVH",
     transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
     bid: "KT1UcBbv2D84mZ9tZx4MVLbCNyC5ihJERED2",
-    bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2"
+    bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2",
+    sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs"
   }
 
   const devConfig = {
+    chain_id: "NetXfHjxW3qBoxi",
     exchange: "KT18isH58SBp7UaRWB652UwLMPxCe1bsjMMe",
     transfer_proxy: "KT1LmiHVNjfbZvPx9qvASVk8mzFcaJNtfj8q",
     fees: new BigNumber(argv.protocol_fee),
@@ -145,7 +149,8 @@ export async function testScript(operation?: string, options: any = {}) {
     sales_storage: "KT1TQPSPCJpnDbErXY9x2jGBmGj8bgbodZVc",
     transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
     bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
-    bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr"
+    bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr",
+    sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT"
   }
 
   const provider = {
@@ -821,6 +826,19 @@ export async function testScript(operation?: string, options: any = {}) {
     case "get_decimals": {
       try {
         return get_decimals(provider, argv.ft_contract, argv.ft_token_id)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "check_signature": {
+      try {
+        const signature = await provider.tezos.sign(argv.message, "operation")
+        const pk = await provider.tezos.public_key()
+        if (pk == undefined) {
+          throw new Error("publicKey is undefined")
+        }
+        return check_signature(argv.message, signature.signature, pk, provider)
       } catch (e) {
         console.error(e)
       }

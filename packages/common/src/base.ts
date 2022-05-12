@@ -96,6 +96,7 @@ export interface TezosProvider {
 }
 
 export interface Config {
+  chain_id: string;
   exchange: string;
   transfer_proxy: string;
   fees: BigNumber;
@@ -112,7 +113,8 @@ export interface Config {
   sales_storage: string,
   transfer_manager: string,
   bid: string,
-  bid_storage: string
+  bid_storage: string,
+  sig_checker: string
 }
 
 export interface Provider {
