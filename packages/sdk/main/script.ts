@@ -35,7 +35,7 @@ import {
   StorageSalesV2,
   TransactionArg,
   UnknownTokenAssetType,
-  BundleItem
+  BundleItem, get_ft_type
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {
@@ -83,6 +83,7 @@ export async function testScript(operation?: string, options: any = {}) {
     ft_token_id: {type: 'string', default: undefined},
     is_dev: {type: 'boolean', default: false},
     sale_type : {type: 'number', default: 0},
+    tzkt: {type: 'string', default: ''}
   }).argv
   argv = {
     ...argv,
@@ -125,7 +126,8 @@ export async function testScript(operation?: string, options: any = {}) {
     sales_storage: "KT1S3AAy7XH7qtmYHkvvPtxJj8MLxUX1FrVH",
     transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
     bid: "KT1UcBbv2D84mZ9tZx4MVLbCNyC5ihJERED2",
-    bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2"
+    bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2",
+    tzkt: "https://api.ithacanet.tzkt.io"
   }
 
   const devConfig = {
@@ -145,7 +147,8 @@ export async function testScript(operation?: string, options: any = {}) {
     sales_storage: "KT1TQPSPCJpnDbErXY9x2jGBmGj8bgbodZVc",
     transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
     bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
-    bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr"
+    bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr",
+    tzkt: "https://api.ithacanet.tzkt.io"
   }
 
   const provider = {
@@ -821,6 +824,14 @@ export async function testScript(operation?: string, options: any = {}) {
     case "get_decimals": {
       try {
         return get_decimals(provider, argv.ft_contract, argv.ft_token_id)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "get_ft_type": {
+      try {
+        return get_ft_type(provider, argv.ft_contract)
       } catch (e) {
         console.error(e)
       }
