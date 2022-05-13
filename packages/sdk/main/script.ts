@@ -35,7 +35,7 @@ import {
   StorageSalesV2,
   TransactionArg,
   UnknownTokenAssetType,
-  BundleItem, get_ft_type
+  BundleItem, get_ft_type, get_balance
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {
@@ -832,6 +832,14 @@ export async function testScript(operation?: string, options: any = {}) {
     case "get_ft_type": {
       try {
         return get_ft_type(provider, argv.ft_contract)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "get_balance": {
+      try {
+        return get_balance(provider, argv.owner!, argv.sale_type, argv.ft_contract, argv.ft_token_id)
       } catch (e) {
         console.error(e)
       }
