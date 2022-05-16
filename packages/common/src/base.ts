@@ -112,7 +112,8 @@ export interface Config {
   sales_storage: string,
   transfer_manager: string,
   bid: string,
-  bid_storage: string
+  bid_storage: string,
+  tzkt: string
 }
 
 export interface Provider {
@@ -348,7 +349,7 @@ export function op_to_kt1(hash: string) : string {
   return b58enc(hash_kt1, kt1_prefix)
 }
 
-async function asset_factor(provider: Provider, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
+export async function asset_factor(provider: Provider, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
   let decimals: BigNumber
   switch (asset_type) {
     case AssetTypeV2.FA12, AssetTypeV2.FA2:
@@ -447,6 +448,22 @@ export function getAsset(sale_type: AssetTypeV2, assetContract?: string, assetId
     asset = packFA12Asset(assetContract!).bytes
   }
   return asset
+}
+
+export async function get_ft_type(provider: Provider, assetContract: string): Promise<AssetTypeV2 | undefined> {
+  const result = await fetch(provider.config.tzkt + '/v1/contracts/' + assetContract)
+  let assetType = undefined
+  if (result.ok) {
+    const data = await result.json()
+    const tzips = data.tzips as Array<string>
+    if(tzips.includes("fa2")){
+      assetType = AssetTypeV2.FA2
+    } else if (tzips.includes("fa12")){
+      assetType = AssetTypeV2.FA12
+    }
+    return assetType
+  }
+  else throw new Error("Could not identifiy type for " + assetContract + ": " + JSON.stringify(result))
 }
 
 export async function get_decimals(p: Provider, contract: string, token_id = new BigNumber(0)) : Promise<BigNumber> {
