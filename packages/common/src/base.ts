@@ -525,4 +525,4 @@ export function optional_date_arg(date? : number): MichelsonData {
   }
 }
 
-export type TezosNetwork = "mainnet" | "dev" | "hangzhou"
+export type TezosNetwork = "mainnet" | "dev" | "hangzhou" | "ithaca"
