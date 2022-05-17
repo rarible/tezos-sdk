@@ -35,7 +35,10 @@ import {
   StorageSalesV2,
   TransactionArg,
   UnknownTokenAssetType,
-  BundleItem, check_signature
+  BundleItem,
+  check_signature,
+  get_ft_type,
+  get_balance
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {
@@ -83,6 +86,7 @@ export async function testScript(operation?: string, options: any = {}) {
     ft_token_id: {type: 'string', default: undefined},
     is_dev: {type: 'boolean', default: false},
     sale_type : {type: 'number', default: 0},
+    tzkt: {type: 'string', default: ''},
     message: {type: 'string', default: ''}
   }).argv
   argv = {
@@ -128,7 +132,8 @@ export async function testScript(operation?: string, options: any = {}) {
     transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
     bid: "KT1UcBbv2D84mZ9tZx4MVLbCNyC5ihJERED2",
     bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2",
-    sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs"
+    sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
+    tzkt: "https://api.ithacanet.tzkt.io"
   }
 
   const devConfig = {
@@ -150,7 +155,8 @@ export async function testScript(operation?: string, options: any = {}) {
     transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
     bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
     bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr",
-    sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT"
+    sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT",
+    tzkt: "https://api.ithacanet.tzkt.io"
   }
 
   const provider = {
@@ -839,6 +845,22 @@ export async function testScript(operation?: string, options: any = {}) {
           throw new Error("publicKey is undefined")
         }
         return check_signature(argv.message, signature.signature, pk, provider)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "get_ft_type": {
+      try {
+        return get_ft_type(provider, argv.ft_contract)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "get_balance": {
+      try {
+        return get_balance(provider, argv.owner!, argv.sale_type, argv.ft_contract, argv.ft_token_id)
       } catch (e) {
         console.error(e)
       }
