@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.15](https://github.com/rarible/tezos-sdk/compare/v0.1.14...v0.1.15) (2022-05-17)
+
+
+### Bug Fixes
+
+* network list was changed ([baf81fa](https://github.com/rarible/tezos-sdk/commit/baf81fae78b2a185c62ce73aecd1fdff70b7ee2d))
+
+
+
+
+
 ## [0.1.14](https://github.com/rarible/tezos-sdk/compare/v0.1.13...v0.1.14) (2022-05-16)
 
 
