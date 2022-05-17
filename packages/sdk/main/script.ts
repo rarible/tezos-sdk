@@ -347,7 +347,7 @@ export async function testScript(operation?: string, options: any = {}) {
         s_sale_asset_contract: argv.ft_contract,
         s_sale_asset_token_id: argv.ft_token_id,
         s_sale: {
-          sale_amount: new BigNumber("0.02"),
+          sale_amount: new BigNumber("0.000002"),
           sale_asset_qty: new BigNumber("1"),
           sale_max_fees_base_boint: 10000,
           sale_end: undefined,
@@ -415,6 +415,7 @@ export async function testScript(operation?: string, options: any = {}) {
           })
           await op.confirmation()
           console.log(op)
+          return op
         } else {
           throw new Error(response.statusText)
         }
