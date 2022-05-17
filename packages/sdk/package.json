@@ -13,7 +13,8 @@
   "scripts": {
     "serve": "vue-cli-service serve test/test-web.ts",
     "build": "tsc --project tsconfig.json",
-    "test": "ts-node test/devnet/dev-sale-fa12.ts",
+    "test-devnet": "ts-node test/devnet-tests.ts",
+    "test-testnet": "ts-node test/testnet-tests.ts",
     "build-webpack": "webpack --config webpack.config.js",
     "clean": "rimraf ./dist"
   },

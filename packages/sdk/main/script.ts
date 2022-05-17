@@ -414,7 +414,6 @@ export async function testScript(operation?: string, options: any = {}) {
             amount: new BigNumber(order.make.value)
           })
           await op.confirmation()
-          console.log(op)
           return op
         } else {
           throw new Error(response.statusText)
@@ -467,7 +466,7 @@ export async function testScript(operation?: string, options: any = {}) {
             use_all: false,
           }
           const op = await buyV2(provider, buyRequest)
-          console.log(op)
+          return op
         } else {
           throw new Error("Error order does not exist")
         }
