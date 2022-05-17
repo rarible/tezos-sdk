@@ -2,7 +2,7 @@ import { AssetTypeV2 } from "@rarible/tezos-common";
 import {testScript} from "../../main/script";
 import {awaitDevItem} from "../common/utils";
 
-async function saleV2Dev() {
+async function devV2Sale() {
   while(true){
     const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
     const buyerEdsk = "edskS4QxJFDSkHaf6Ax3ByfrZj5cKvLUR813uqwE94baan31c1cPPTMvoAvUKbEv2xM9mvtwoLANNTBSdyZf3CCyN2re7qZyi3"
@@ -37,4 +37,4 @@ async function saleV2Dev() {
     console.log('buyOrder', buyOrder)
   }
 }
-saleV2Dev()
+devV2Sale()

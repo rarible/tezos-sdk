@@ -45,8 +45,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * deploy test ([914d377](https://github.com/rarible/tezos-sdk/commit/914d377b822621c9c38c7d6f2976f7589806a12d))
 * get decimals test ([4814967](https://github.com/rarible/tezos-sdk/commit/4814967adc50d20643919a708b793fcda5c4be9d))
-* sale with ft ([580fbe4](https://github.com/rarible/tezos-sdk/commit/580fbe4be16ea8529773d8c94313f97a127b714a))
-* sale with ft test ([235e7d1](https://github.com/rarible/tezos-sdk/commit/235e7d110e2e388386ebc4b27f071307f3bcb011))
+* devSale with ft ([580fbe4](https://github.com/rarible/tezos-sdk/commit/580fbe4be16ea8529773d8c94313f97a127b714a))
+* devSale with ft test ([235e7d1](https://github.com/rarible/tezos-sdk/commit/235e7d110e2e388386ebc4b27f071307f3bcb011))
 
 
 
