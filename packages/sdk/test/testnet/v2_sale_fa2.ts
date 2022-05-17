@@ -2,7 +2,10 @@ import { AssetTypeV2 } from "@rarible/tezos-common";
 import {testScript} from "../../main/script";
 import {awaitItem} from "../common/utils";
 
-async function sale() {
+export async function v2_sale_fa2() {
+  console.log("--------------------")
+  console.log("Running v2_sale_fa2 test")
+  console.log("--------------------")
   const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
   const buyerEdsk = "edskS4QxJFDSkHaf6Ax3ByfrZj5cKvLUR813uqwE94baan31c1cPPTMvoAvUKbEv2xM9mvtwoLANNTBSdyZf3CCyN2re7qZyi3"
 
@@ -34,4 +37,3 @@ async function sale() {
   })
   console.log('buyOrder', buyOrder)
 }
-sale()

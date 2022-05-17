@@ -3,7 +3,7 @@ import {awaitDevItem} from "../common/utils";
 
 export async function dev_sale() {
   console.log("--------------------")
-  console.log("Running devSale test")
+  console.log("Running dev_sale test")
   console.log("--------------------")
 
   const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"

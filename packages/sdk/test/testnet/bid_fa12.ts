@@ -2,7 +2,10 @@ import { AssetTypeV2 } from "@rarible/tezos-common";
 import {testScript} from "../../main/script";
 import {awaitItem} from "../common/utils";
 
-async function bidFA2() {
+export async function bid_fa12() {
+  console.log("--------------------")
+  console.log("Running bid_fa12 test")
+  console.log("--------------------")
   const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
   const buyerEdsk = "edskS4QxJFDSkHaf6Ax3ByfrZj5cKvLUR813uqwE94baan31c1cPPTMvoAvUKbEv2xM9mvtwoLANNTBSdyZf3CCyN2re7qZyi3"
 
@@ -17,9 +20,8 @@ async function bidFA2() {
   const bid = await testScript('put_bid', {
     edsk: buyerEdsk,
     item_id: mintedItemId,
-    sale_type: AssetTypeV2.FA2,
-    ft_contract: "KT1PEBh9oKkQosYuw4tvzigps5p7uqXMgdez",
-    ft_token_id: 0,
+    sale_type: AssetTypeV2.FA12,
+    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv"
   })
   console.log('bid', bid)
 
@@ -27,10 +29,8 @@ async function bidFA2() {
     edsk: sellerEdsk,
     item_id: mintedItemId,
     owner: "tz1U6HmK5feYQ7VzrLdho7u5aRbBssNeMsU9",
-    sale_type: AssetTypeV2.FA2,
-    ft_contract: "KT1PEBh9oKkQosYuw4tvzigps5p7uqXMgdez",
-    ft_token_id: 0,
+    sale_type: AssetTypeV2.FA12,
+    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv"
   })
   console.log('acceptBid', acceptBid)
 }
-bidFA2()

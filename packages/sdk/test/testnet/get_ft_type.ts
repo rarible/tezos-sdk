@@ -2,7 +2,10 @@ import {testScript} from "../../main/script";
 import * as assert from "assert";
 import {AssetTypeV2} from "@rarible/tezos-common";
 
-async function get_ft_type() {
+export async function get_ft_type() {
+  console.log("--------------------")
+  console.log("Running get_ft_type test")
+  console.log("--------------------")
   const typeFA2 = await testScript('get_ft_type', {
     ft_contract: "KT1PEBh9oKkQosYuw4tvzigps5p7uqXMgdez",
   })
@@ -12,4 +15,3 @@ async function get_ft_type() {
   })
   assert(typeFA12 == AssetTypeV2.FA12)
 }
-get_ft_type()
