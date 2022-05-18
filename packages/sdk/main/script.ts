@@ -52,7 +52,7 @@ import {
   put_bundle_bid,
   put_floor_bid
 } from "../bids";
-import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
+import {BundleOrderForm, await_v2_order, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../sales/buy";
 
 export async function testScript(operation?: string, options: any = {}) {
@@ -87,7 +87,8 @@ export async function testScript(operation?: string, options: any = {}) {
     is_dev: {type: 'boolean', default: false},
     sale_type : {type: 'number', default: 0},
     tzkt: {type: 'string', default: ''},
-    message: {type: 'string', default: ''}
+    message: {type: 'string', default: ''},
+    dipdup: {type: 'string', default: ''},
   }).argv
   argv = {
     ...argv,
@@ -133,7 +134,8 @@ export async function testScript(operation?: string, options: any = {}) {
     bid: "KT1UcBbv2D84mZ9tZx4MVLbCNyC5ihJERED2",
     bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2",
     sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
-    tzkt: "https://api.ithacanet.tzkt.io"
+    tzkt: "https://api.ithacanet.tzkt.io",
+    dipdup: "https://rarible-ithacanet.dipdup.net/v1/graphql"
   }
 
   const devConfig = {
@@ -156,7 +158,8 @@ export async function testScript(operation?: string, options: any = {}) {
     bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
     bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr",
     sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT",
-    tzkt: "https://api.ithacanet.tzkt.io"
+    tzkt: "https://api.ithacanet.tzkt.io",
+    dipdup: "http://localhost:8081/v1/graphql"
   }
 
   const provider = {
@@ -347,7 +350,7 @@ export async function testScript(operation?: string, options: any = {}) {
         s_sale_asset_contract: argv.ft_contract,
         s_sale_asset_token_id: argv.ft_token_id,
         s_sale: {
-          sale_amount: new BigNumber("0.02"),
+          sale_amount: new BigNumber("0.000002"),
           sale_asset_qty: new BigNumber("1"),
           sale_max_fees_base_boint: 10000,
           sale_end: undefined,
@@ -832,6 +835,14 @@ export async function testScript(operation?: string, options: any = {}) {
     case "get_decimals": {
       try {
         return get_decimals(provider, argv.ft_contract, argv.ft_token_id)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "await_v2_order": {
+      try {
+        return await_v2_order(provider, argv.ft_contract, argv.ft_token_id!, argv.owner!, argv.order_id, 10, 10)
       } catch (e) {
         console.error(e)
       }

@@ -10,6 +10,7 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import fetch from "node-fetch";
 
 export declare type OrderFormV2 = {
     s_asset_contract: string;
@@ -72,7 +73,8 @@ export async function sellV2(
     if (args.length != 0) {
         const op = await send_batch(provider, args);
         await op.confirmation();
-        return op
+        const order_id = await await_v2_order(provider, order.s_asset_contract, order.s_asset_token_id, seller, op.hash, 3, 5000)
+        return order_id
     }
 }
 
@@ -84,7 +86,7 @@ export async function sellBundle(
     const seller = await provider.tezos.address();
     const processed_amount = await absolute_amount(provider, order.s_sale.sale_amount, order.s_sale_type, order.s_sale_asset_contract, order.s_sale_asset_token_id)
 
-    for(const bundleItem of order.bundle){
+    for (const bundleItem of order.bundle) {
         const approve_a = await approve_v2(
             provider,
             seller,
@@ -101,6 +103,45 @@ export async function sellBundle(
         await op.confirmation();
         return op
     }
+}
+
+export async function await_v2_order(
+    provider: Provider,
+    asset_contract: string,
+    asset_token_id: BigNumber,
+    seller: string,
+    op_hash: string,
+    max_tries: number,
+    sleep: number): Promise<string | undefined> {
+    let order_id = undefined
+    let tries = 0
+
+    const payload = {
+        "query": `query MyQuery { marketplace_activity(where: {make_contract: {_eq: "${asset_contract}"}, make_token_id: {_eq: "${asset_token_id.toString()}"}, maker: {_eq: "${seller}"}, operation_hash: {_eq: "${op_hash}"}}) { id } }`,
+        "variables": null,
+        "operationName": "MyQuery"
+    }
+    while (tries < max_tries && order_id == undefined) {
+        const res = await fetch(provider.config.dipdup, {
+            method: 'post',
+            body: JSON.stringify(payload),
+            headers: {'Content-Type': 'application/json'}
+        })
+        const json = await res.json()
+        const result = json.data.marketplace_activity
+        if(result.length == 1) {
+            console.log(result)
+            order_id = result[0].id
+            break
+        } else {
+          await delay(sleep)
+        }
+    }
+    return order_id
+}
+
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 export function sell_arg_v2(
@@ -203,7 +244,7 @@ export function sell_arg_v2(
             },
         ],
     };
-    return { destination: provider.config.sales, entrypoint: "sell", parameter };
+    return {destination: provider.config.sales, entrypoint: "sell", parameter};
 }
 
 export function bundle_sell_arg_v2(
@@ -286,5 +327,5 @@ export function bundle_sell_arg_v2(
             }
         ]
     };
-    return { destination: provider.config.sales, entrypoint: "sell_bundle", parameter };
+    return {destination: provider.config.sales, entrypoint: "sell_bundle", parameter};
 }

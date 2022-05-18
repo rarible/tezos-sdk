@@ -115,7 +115,8 @@ export interface Config {
   bid: string,
   bid_storage: string,
   sig_checker: string,
-  tzkt: string
+  tzkt: string,
+  dipdup: string
 }
 
 export interface Provider {
