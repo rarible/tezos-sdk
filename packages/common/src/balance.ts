@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import BigNumber from "bignumber.js"
 
 export async function get_balance(
-    provider: Provider,
+    config: Config,
     owner: string,
     asset_type: AssetTypeV2,
     asset_contract?: string,
@@ -11,17 +11,17 @@ export async function get_balance(
     ) : Promise<string> {
   let balance = "0"
   if(asset_type == AssetTypeV2.XTZ){
-    const b_tz = await get_xtz_balance(provider.config, owner)
+    const b_tz = await get_xtz_balance(config, owner)
     balance = b_tz.toString()
   } else if (asset_type == AssetTypeV2.FA2 || asset_type ==  AssetTypeV2.FA12){
     if(asset_contract == undefined){
       throw new Error("Contract can't be empty for FA12 and FA2 assets")
     }
     const tokenIdQuery = asset_token_id !== undefined ? `&token.tokenId=${asset_token_id.toString()}` : ""
-    const r = await fetch(`${provider.config.tzkt}/v1/tokens/balances?account=${owner}&token.contract=${asset_contract}${tokenIdQuery}`)
+    const r = await fetch(`${config.tzkt}/v1/tokens/balances?account=${owner}&token.contract=${asset_contract}${tokenIdQuery}`)
     if (r.ok) {
       const json = await r.json()
-      const factor = await asset_factor(provider, asset_type, asset_contract, asset_token_id)
+      const factor = await asset_factor(config, asset_type, asset_contract, asset_token_id)
       balance = new BigNumber(json[0].balance).div(factor).toString()
     } else {
       throw new Error(r.statusText)

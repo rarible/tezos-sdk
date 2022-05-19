@@ -75,7 +75,7 @@ async function use_permit(provider: Provider, asset: Asset) : Promise<undefined 
       } else return undefined
     case "FT":
       if (provider.config.permit_whitelist.includes(asset.asset_type.contract) && asset.asset_type.token_id != undefined) {
-        let decimals = await get_decimals(provider, asset.asset_type.contract, asset.asset_type.token_id)
+        let decimals = await get_decimals(provider.config, asset.asset_type.contract, asset.asset_type.token_id)
         return { contract: asset.asset_type.contract, token_id: asset.asset_type.token_id,
                  amount: asset.value.times((new BigNumber(10).pow(decimals))) }
       } else return undefined
@@ -89,7 +89,7 @@ async function fill_order_unwrap_amount(provider: Provider, right: OrderForm, as
     const fees = get_make_fee(provider.config.fees, right)
     let value = (await add_fee(provider, right.take, fees, true)).value
     value = value.times(payout_part.value).div(10000)
-    const decimals = await get_decimals(provider, asset_type.contract, asset_type.token_id)
+    const decimals = await get_decimals(provider.config, asset_type.contract, asset_type.token_id)
     const decimal_factor = new BigNumber(10).pow(decimals)
     return value.times(decimal_factor).integerValue().div(decimal_factor)
   }

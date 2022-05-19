@@ -352,11 +352,11 @@ export function op_to_kt1(hash: string) : string {
   return b58enc(hash_kt1, kt1_prefix)
 }
 
-export async function asset_factor(provider: Provider, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
+export async function asset_factor(config: Config, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
   let decimals: BigNumber
   switch (asset_type) {
     case AssetTypeV2.FA12, AssetTypeV2.FA2:
-      decimals = await get_decimals(provider, asset_contract!, asset_token_id)
+      decimals = await get_decimals(config, asset_contract!, asset_token_id)
       break
     default:
       decimals = new BigNumber(6)
@@ -365,8 +365,8 @@ export async function asset_factor(provider: Provider, asset_type: AssetTypeV2, 
   return new BigNumber(10).pow(decimals)
 }
 
-export async function absolute_amount(provider: Provider, amount: BigNumber, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
-  const factor = await asset_factor(provider, asset_type, asset_contract, asset_token_id)
+export async function absolute_amount(config: Config, amount: BigNumber, asset_type: AssetTypeV2, asset_contract?: string, asset_token_id?: BigNumber) : Promise<BigNumber> {
+  const factor = await asset_factor(config, asset_type, asset_contract, asset_token_id)
   return amount.times(factor).integerValue()
 }
 
@@ -469,26 +469,17 @@ export async function get_ft_type(provider: Provider, assetContract: string): Pr
   else throw new Error("Could not identifiy type for " + assetContract + ": " + JSON.stringify(result))
 }
 
-export async function get_decimals(p: Provider, contract: string, token_id = new BigNumber(0)) : Promise<BigNumber> {
-  if (p.config.wrapper == contract) return new BigNumber(6)
-  const st : StorageFA1_2 | StorageFA2 = await p.tezos.storage(contract)
-  if (st.token_metadata==undefined) return new BigNumber(0)
-  else {
-    let v : any = await st.token_metadata.get(token_id.toString())
-    if (v==undefined) return new BigNumber(0)
-    else {
-      let v2 = v[Object.keys(v)[1]].get('decimals')
-      if (v2!=undefined) return new BigNumber(of_hex(v2))
-      v2 = v[Object.keys(v)[1]].get('')
-      if (v2==undefined) return new BigNumber(0)
-      let url = of_hex(v2)
-      const url_http = (url.substring(0, 4) == 'ipfs') ? "https://ipfs.io/ipfs/" + url.substring(7) : url
-      const r = await fetch(url_http)
-      if (!r.ok) return new BigNumber(0)
-      const json = await r.json()
-      if (json.decimals==undefined) return new BigNumber(0)
-      else return new BigNumber(json.decimals)
+export async function get_decimals(config: Config, contract: string, token_id = new BigNumber(0)) : Promise<BigNumber> {
+  const result = await fetch(`${config.tzkt}/v1/tokens?contract=${contract}&tokenId=${token_id}`)
+  const token = await result.json()
+  if(token.length == 1 && token[0].metadata != undefined){
+    if(token[0].metadata.decimals != undefined){
+      return new BigNumber(token[0].metadata.decimals)
+    } else {
+      return new BigNumber(0)
     }
+  } else {
+    return new BigNumber(0)
   }
 }
 

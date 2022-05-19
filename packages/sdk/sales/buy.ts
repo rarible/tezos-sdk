@@ -42,7 +42,7 @@ export async function buyV2(
 ) {
     let args: TransactionArg[] = [];
     const seller = await provider.tezos.address();
-    const processed_amount = await absolute_amount(provider, sale.sale_amount, sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)
+    const processed_amount = await absolute_amount(provider.config, sale.sale_amount, sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)
 
     const approve_a = await approve_v2(
         provider,
@@ -71,7 +71,7 @@ export async function buy_bundle(
 ) {
     let args: TransactionArg[] = [];
     const seller = await provider.tezos.address();
-    const processed_amount = await absolute_amount(provider, sale.sale_amount, sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)
+    const processed_amount = await absolute_amount(provider.config, sale.sale_amount, sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)
 
     const approve_a = await approve_v2(
         provider,
