@@ -33,7 +33,7 @@ export async function v2_sale() {
     sale_type: AssetTypeV2.XTZ,
     ft_contract: undefined,
     ft_token_id: undefined,
-    amount: 0.02
+    amount: 0.000002
   })
   console.log('buyOrder', buyOrder)
 }
