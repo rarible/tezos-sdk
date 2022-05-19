@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.18](https://github.com/rarible/tezos-sdk/compare/v0.1.17...v0.1.18) (2022-05-19)
+
+
+### Bug Fixes
+
+* get_balance ([067823b](https://github.com/rarible/tezos-sdk/commit/067823b96787aeee452207daa3ecb9f5dc17b299))
+
+
+
+
+
 ## [0.1.17](https://github.com/rarible/tezos-sdk/compare/v0.1.16...v0.1.17) (2022-05-19)
 
 
