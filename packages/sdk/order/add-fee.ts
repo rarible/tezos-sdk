@@ -18,7 +18,7 @@ export async function add_fee(provider: Provider, asset: Asset, fee: BigNumber, 
       decimals = new BigNumber(0)
       break
     case 'FT':
-      decimals = await get_decimals(provider, asset.asset_type.contract, asset.asset_type.token_id)
+      decimals = await get_decimals(provider.config, asset.asset_type.contract, asset.asset_type.token_id)
       break
   }
   const decimal_factor = new BigNumber(10).pow(decimals)

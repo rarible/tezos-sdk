@@ -173,7 +173,7 @@ export async function put_auction_bid(provider: Provider, bid: AuctionBid, aucti
     asset = unpackFA12Asset(auction.auction_buy_asset)
   }
 
-  const processed_amount = await absolute_amount(provider, bid.amount, auction.auction_buy_asset_type, asset.contract, asset.token_id)
+  const processed_amount = await absolute_amount(provider.config, bid.amount, auction.auction_buy_asset_type, asset.contract, asset.token_id)
 
   if (auction.auction_buy_asset_type == AssetTypeV2.FA2 || auction.auction_buy_asset_type == AssetTypeV2.FA12) {
     arg_approve = await approve_v2(provider, bidder, auction.auction_buy_asset_type, provider.config.transfer_manager, asset.contract, asset.token_id, processed_amount)
@@ -200,7 +200,7 @@ export async function put_bundle_auction_bid(provider: Provider, bid: BundleAuct
     asset = unpackFA12Asset(auction.bar_buy_asset)
   }
 
-  const processed_amount = await absolute_amount(provider, bid.amount, auction.bar_buy_asset_type, asset.contract, asset.token_id)
+  const processed_amount = await absolute_amount(provider.config, bid.amount, auction.bar_buy_asset_type, asset.contract, asset.token_id)
 
   if (auction.bar_buy_asset_type == AssetTypeV2.FA2 || auction.bar_buy_asset_type == AssetTypeV2.FA12) {
     arg_approve = await approve_v2(provider, bidder, auction.bar_buy_asset_type, provider.config.transfer_manager, asset.contract, asset.token_id, processed_amount)
