@@ -453,8 +453,8 @@ export function getAsset(sale_type: AssetTypeV2, assetContract?: string, assetId
   return asset
 }
 
-export async function get_ft_type(provider: Provider, assetContract: string): Promise<AssetTypeV2 | undefined> {
-  const result = await fetch(provider.config.tzkt + '/v1/contracts/' + assetContract)
+export async function get_ft_type(config: Config, assetContract: string): Promise<AssetTypeV2 | undefined> {
+  const result = await fetch(config.tzkt + '/v1/contracts/' + assetContract)
   let assetType = undefined
   if (result.ok) {
     const data = await result.json()

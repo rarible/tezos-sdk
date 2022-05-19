@@ -863,7 +863,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case "get_ft_type": {
       try {
-        return get_ft_type(provider, argv.ft_contract)
+        return get_ft_type(provider.config, argv.ft_contract)
       } catch (e) {
         console.error(e)
       }
