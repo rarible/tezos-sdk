@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.17](https://github.com/rarible/tezos-sdk/compare/v0.1.16...v0.1.17) (2022-05-19)
+
+
+### Bug Fixes
+
+* get_ft_type ([d9e342c](https://github.com/rarible/tezos-sdk/commit/d9e342cf1ac5ba2b76aab318543dbb38841e46d7))
+
+
+
+
+
 ## [0.1.16](https://github.com/rarible/tezos-sdk/compare/v0.1.15...v0.1.16) (2022-05-19)
 
 **Note:** Version bump only for package root
