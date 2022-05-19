@@ -16,6 +16,7 @@
     "test-devnet": "ts-node test/devnet-tests.ts",
     "test-testnet": "ts-node test/testnet-tests.ts",
     "build-webpack": "webpack --config webpack.config.js",
+    "verify": "tsc --noEmit",
     "clean": "rimraf ./dist"
   },
   "dependencies": {
