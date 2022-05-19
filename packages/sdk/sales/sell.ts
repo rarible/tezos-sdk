@@ -58,7 +58,7 @@ export async function sellV2(
 ) {
     let args: TransactionArg[] = [];
     const seller = await provider.tezos.address();
-    const processed_amount = await absolute_amount(provider.config, order.s_sale.sale_amount, order.s_sale_type, order.s_sale_asset_contract, order.s_sale_asset_token_id)
+    const processed_amount = await absolute_amount(provider.configg, order.s_sale.sale_amount, order.s_sale_type, order.s_sale_asset_contract, order.s_sale_asset_token_id)
 
     const approve_a = await approve_v2(
         provider,

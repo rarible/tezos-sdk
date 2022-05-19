@@ -12,6 +12,7 @@
   "description": "",
   "scripts": {
     "build": "tsc --project tsconfig.json",
+    "verify": "tsc --noEmit",
     "clean": "rimraf ./dist"
   },
   "dependencies": {
