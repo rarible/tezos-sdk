@@ -78,7 +78,7 @@ export interface AcceptBundleBid {
 export async function put_bid(provider: Provider, bid: Bid) : Promise<OperationResult> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
-  const processed_amount = await absolute_amount(provider, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
+  const processed_amount = await absolute_amount(provider.config, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
   if (bid.bid_type == AssetTypeV2.FA2 || bid.bid_type == AssetTypeV2.FA12) {
     arg_approve = await approve_v2(provider, bidder, bid.bid_type, provider.config.transfer_manager, bid.bid_asset_contract, bid.bid_asset_token_id, processed_amount)
   }
@@ -92,7 +92,7 @@ export async function put_bid(provider: Provider, bid: Bid) : Promise<OperationR
 export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise<OperationResult> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
-  const processed_amount = await absolute_amount(provider, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
+  const processed_amount = await absolute_amount(provider.config, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
   if (bid.bid_type == AssetTypeV2.FA2 || bid.bid_type == AssetTypeV2.FA12) {
     arg_approve = await approve_v2(provider, bidder, bid.bid_type, provider.config.transfer_manager, bid.bid_asset_contract, bid.bid_asset_token_id, processed_amount)
   }
@@ -106,7 +106,7 @@ export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise
 export async function put_bundle_bid(provider: Provider, bid: BundleBid) : Promise<OperationResult> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
-  const processed_amount = await absolute_amount(provider, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
+  const processed_amount = await absolute_amount(provider.config, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
   if (bid.bid_type == AssetTypeV2.FA2 || bid.bid_type == AssetTypeV2.FA12) {
     arg_approve = await approve_v2(provider, bidder, bid.bid_type, provider.config.transfer_manager, bid.bid_asset_contract, bid.bid_asset_token_id, processed_amount)
   }

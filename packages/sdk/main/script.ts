@@ -156,7 +156,7 @@ export async function testScript(operation?: string, options: any = {}) {
     bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
     bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr",
     sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT",
-    tzkt: "https://api.ithacanet.tzkt.io"
+    tzkt: "http://localhost:5001"
   }
 
   const provider = {
@@ -831,7 +831,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case "get_decimals": {
       try {
-        return get_decimals(provider, argv.ft_contract, argv.ft_token_id)
+        return get_decimals(provider.config, argv.ft_contract, argv.ft_token_id)
       } catch (e) {
         console.error(e)
       }
@@ -860,7 +860,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case "get_balance": {
       try {
-        return get_balance(provider, argv.owner!, argv.sale_type, argv.ft_contract, argv.ft_token_id)
+        return get_balance(provider.config, argv.owner!, argv.sale_type, argv.ft_contract, argv.ft_token_id)
       } catch (e) {
         console.error(e)
       }
