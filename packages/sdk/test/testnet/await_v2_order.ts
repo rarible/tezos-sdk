@@ -1,4 +1,4 @@
-import {testScript} from "../main/script";
+import {testScript} from "../../main/script";
 
 async function await_v2_order() {
   const order_id = await testScript('await_v2_order', {
