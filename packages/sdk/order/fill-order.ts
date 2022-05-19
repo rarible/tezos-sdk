@@ -122,14 +122,14 @@ export async function fill_order(
       amount = await get_real_value(provider, left)
       if(left.make.asset_type.asset_class === "FT"){
         const asset = left.make.asset_type as FTAssetType
-        const decimals = await get_decimals(provider, asset.contract, asset.token_id)
+        const decimals = await get_decimals(provider.config, asset.contract, asset.token_id)
         amount_to_approve = amount.times(new BigNumber("10").pow(decimals))
       }
     } else if ((right.make.asset_type.asset_class === "XTZ" || right.make.asset_type.asset_class === "FT") && right.salt == '0') {
       amount = await get_real_value(provider, right)
       if(right.make.asset_type.asset_class === "FT"){
         const asset = right.make.asset_type as FTAssetType
-        const decimals = await get_decimals(provider, asset.contract, asset.token_id)
+        const decimals = await get_decimals(provider.config, asset.contract, asset.token_id)
         amount_to_approve = amount.times(new BigNumber("10").pow(decimals))
       }
     }
