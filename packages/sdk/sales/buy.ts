@@ -18,6 +18,7 @@ export declare type BuyRequest = {
     sale_asset_contract?: string;
     sale_asset_token_id?: BigNumber;
     sale_amount: BigNumber;
+    sale_qty: BigNumber;
     sale_payouts: Array<Part>;
     sale_origin_fees: Array<Part>;
     use_all?: boolean;
@@ -51,7 +52,7 @@ export async function buyV2(
         provider.config.transfer_manager,
         sale.sale_asset_contract,
         sale.sale_asset_token_id,
-        processed_amount,
+        processed_amount.times(sale.sale_qty),
         use_all
     );
     if (approve_a) args = args.concat(approve_a);
@@ -100,51 +101,48 @@ export function buy_arg_v2(
     let amount: BigNumber = new BigNumber(0)
 
     if (sale.sale_type == AssetTypeV2.XTZ) {
-        amount = new BigNumber(sale.sale_amount)
+        amount = new BigNumber(sale.sale_amount).times(sale.sale_qty)
     }
 
-    const parameter: MichelsonData = {
-        prim: "Pair",
-        args: [{
-            string: `${sale.asset_contract}`
-        },
-            {
-                prim: "Pair",
-                args: [{
-                    int: `${sale.asset_token_id}`
-                },
+    const parameter: MichelsonData =
+        {
+            prim: "Pair",
+            args:
+                [{string: `${sale.asset_contract}`},
                     {
                         prim: "Pair",
-                        args: [{
-                            string: `${sale.asset_seller}`
-                        },
-                            {
-                                prim: "Pair",
-                                args: [{
-                                    int: `${sale.sale_type}`
-                                },
-                                    {
-                                        prim: "Pair",
-                                        args: [{
-                                            bytes: getAsset(sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)
-                                        },
+                        args:
+                            [{int: `${sale.asset_token_id}`},
+                                {
+                                    prim: "Pair",
+                                    args:
+                                        [{string: `${sale.asset_seller}`},
                                             {
                                                 prim: "Pair",
-                                                args: [
-                                                    parts_to_micheline(sale.sale_origin_fees),
-                                                    parts_to_micheline(sale.sale_payouts)
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
+                                                args:
+                                                    [{int: `${sale.sale_type}`},
+                                                        {
+                                                            prim: "Pair",
+                                                            args:
+                                                                [{bytes: getAsset(sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)},
+                                                                    {
+                                                                        prim: "Pair",
+                                                                        args:
+                                                                            [{int: `${sale.sale_qty}`},
+                                                                                {
+                                                                                    prim: "Pair", args: [
+                                                                                        parts_to_micheline(sale.sale_origin_fees),
+                                                                                        parts_to_micheline(sale.sale_payouts)
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                    }]
+                                                        }]
+                                            }]
+                                }]
+                    }]
+        }
+
     return {destination: provider.config.sales, entrypoint: "buy", parameter, amount: amount};
 }
 
