@@ -11,7 +11,8 @@ export async function v2_sale() {
 
   const mintedItemId = await testScript('mint', {
     edsk: sellerEdsk,
-    contract: "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43"
+    contract: "KT1GQwnRxUDNTJHAzi22wZbyKW4w5Bt2H2nD",
+    amount: 100
   })
   console.log('mintedItemId', mintedItemId)
 
