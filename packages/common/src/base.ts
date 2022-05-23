@@ -457,12 +457,16 @@ export async function get_ft_type(config: Config, assetContract: string): Promis
   const result = await fetch(config.tzkt + '/v1/contracts/' + assetContract)
   let assetType = undefined
   if (result.ok) {
-    const data = await result.json()
-    const tzips = data.tzips as Array<string>
-    if(tzips.includes("fa2")){
-      assetType = AssetTypeV2.FA2
-    } else if (tzips.includes("fa12")){
-      assetType = AssetTypeV2.FA12
+    try {
+      const data = await result.json()
+      const tzips = data.tzips as Array<string>
+      if(tzips.includes("fa2")){
+        assetType = AssetTypeV2.FA2
+      } else if (tzips.includes("fa12")){
+        assetType = AssetTypeV2.FA12
+      }
+    } catch (e) {
+      console.error(e)
     }
     return assetType
   }
