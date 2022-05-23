@@ -23,6 +23,8 @@ export async function dev_v2_sale() {
     const sellOrder = await testScript('sell_v2', {
         edsk: sellerEdsk,
         item_id: mintedItemId,
+        qty: 1,
+        amount: 0.000002,
         is_dev: true
     })
     console.log('sellOrder', sellOrder)
@@ -34,6 +36,7 @@ export async function dev_v2_sale() {
         sale_type: AssetTypeV2.XTZ,
         ft_contract: undefined,
         ft_token_id: undefined,
+        qty: 1,
         amount: 0.000002,
         is_dev: true
     })

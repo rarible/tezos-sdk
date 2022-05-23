@@ -1,8 +1,8 @@
 import { AssetTypeV2 } from "@rarible/tezos-common";
 import {testScript} from "../../main/script";
-import {awaitItem} from "../common/utils";
+import {awaitDevItem} from "../common/utils";
 
-export async function bundle_sale_fa12() {
+export async function dev_bundle_sale_fa12() {
   console.log("--------------------")
   console.log("Running dev_bundle_sale_fa12 test")
   console.log("--------------------")
@@ -11,30 +11,33 @@ export async function bundle_sale_fa12() {
 
   const mintedItemId_0 = await testScript('mint', {
     edsk: sellerEdsk,
-    contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
-    amount: 100
+    contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
+    amount: 100,
+    is_dev: true
   })
   console.log('mintedItemId_0', mintedItemId_0)
 
-  await awaitItem(mintedItemId_0)
+  await awaitDevItem(mintedItemId_0)
 
   const mintedItemId_1 = await testScript('mint', {
     edsk: sellerEdsk,
-    contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
-    amount: 100
+    contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
+    amount: 100,
+    is_dev: true
   })
   console.log('mintedItemId_1', mintedItemId_1)
 
-  await awaitItem(mintedItemId_1)
+  await awaitDevItem(mintedItemId_1)
 
   // const mintedItemId = ""
   const sellOrder = await testScript('sell_bundle', {
     edsk: sellerEdsk,
     item_id: `${mintedItemId_0},${mintedItemId_1}`,
     sale_type: AssetTypeV2.FA12,
-    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
+    ft_contract: "KT1X9S5Z69r36kToUx2xSi32gmhRjEW64dMS",
     qty: 1,
     amount: 0.000002,
+    is_dev: true
   })
   console.log('sellOrder', sellOrder)
 
@@ -43,9 +46,10 @@ export async function bundle_sale_fa12() {
     item_id: `${mintedItemId_0},${mintedItemId_1}`,
     owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
     sale_type: AssetTypeV2.FA12,
-    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
+    ft_contract: "KT1X9S5Z69r36kToUx2xSi32gmhRjEW64dMS",
     qty: 1,
     amount: 0.000002,
+    is_dev: true
   })
   console.log('buyOrder', buyOrder)
 }

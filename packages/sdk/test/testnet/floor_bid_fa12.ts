@@ -11,7 +11,7 @@ export async function floor_bid_fa12() {
 
   const mintedItemId = await testScript('mint', {
     edsk: sellerEdsk,
-    contract: "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43"
+    contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA"
   })
   console.log('mintedItemId', mintedItemId)
 

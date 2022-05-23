@@ -31,6 +31,7 @@ export declare type BuyBundleRequest = {
     sale_asset_contract?: string;
     sale_asset_token_id?: BigNumber;
     sale_amount: BigNumber;
+    sale_qty: BigNumber;
     sale_payouts: Array<Part>;
     sale_origin_fees: Array<Part>;
     use_all?: boolean;
@@ -153,47 +154,36 @@ export function buy_bundle_arg(
     let amount: BigNumber = new BigNumber(0)
 
     if (sale.sale_type == AssetTypeV2.XTZ) {
-        amount = new BigNumber(sale.sale_amount)
+        amount = new BigNumber(sale.sale_amount).times(sale.sale_qty)
     }
 
-    const parameter: MichelsonData = {
-        prim: "Pair",
-        args: [
-            {
-                bytes: mkPackedBundle(sale.bundle)
-            },
-            {
-                prim: "Pair",
-                args: [
-                    {
-                        string: `${sale.asset_seller}`
-                    },
+    const parameter: MichelsonData =
+        {
+            prim: "Pair",
+            args:
+                [{bytes: mkPackedBundle(sale.bundle)},
                     {
                         prim: "Pair",
-                        args: [
-                            {
-                                int: `${sale.sale_type}`
-                            },
-                            {
-                                prim: "Pair",
-                                args: [
-                                    {
-                                        bytes: getAsset(sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)
-                                    },
-                                    {
-                                        prim: "Pair",
-                                        args: [
-                                            parts_to_micheline(sale.sale_origin_fees),
-                                            parts_to_micheline(sale.sale_payouts)
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
+                        args:
+                            [{string: `${sale.asset_seller}`},
+                                {
+                                    prim: "Pair",
+                                    args:
+                                        [{int: `${sale.sale_type}`},
+                                            {
+                                                prim: "Pair",
+                                                args:
+                                                    [{bytes: getAsset(sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)},
+                                                        {
+                                                            prim: "Pair",
+                                                            args:
+                                                                [{int: `${sale.sale_qty}`},
+                                                                    {prim: "Pair", args: [[], []]}]
+                                                        }]
+                                            }]
+                                }]
+                    }]
+        }
+
     return {destination: provider.config.sales, entrypoint: "buy_bundle", parameter, amount: amount};
 }
