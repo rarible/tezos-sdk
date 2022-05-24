@@ -54,6 +54,7 @@ import {
 } from "../bids";
 import {BundleOrderForm, await_v2_order, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../sales/buy";
+import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -159,8 +160,8 @@ export async function testScript(operation?: string, options: any = {}) {
     bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
     bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr",
     sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT",
-    tzkt: "http://localhost:5001",
-    dipdup: "http://localhost:8081/v1/graphql"
+    tzkt: "http://dev-tezos-tzkt.rarible.org",
+    dipdup: "http://dev-tezos-indexer.rarible.org/v1/graphql"
   }
 
   const provider = {
@@ -633,6 +634,44 @@ export async function testScript(operation?: string, options: any = {}) {
 
       const auction = await cancel_auction(provider, contract, new BigNumber(tokenId))
       return auction
+    }
+
+    case 'cancel_v2': {
+      console.log("cancel_v2", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const cancel_request: CancelV2OrderRequest = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        sale_asset_contract: argv.ft_contract,
+        sale_asset_token_id: argv.ft_token_id,
+        sale_type: argv.sale_type
+      }
+      const canceled_order = await cancelV2(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_bundle_sale': {
+      console.log("cancel_bundle_sale", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+      const cancel_request: CancelBundleSaleRequest = {
+        bundle: bundle,
+        sale_asset_contract: argv.ft_contract,
+        sale_asset_token_id: argv.ft_token_id,
+        sale_type: argv.sale_type
+      }
+      const canceled_order = await cancel_bundle_sale(provider, cancel_request)
+      return canceled_order
     }
 
     case 'cancel_bundle_auction': {
