@@ -24,6 +24,8 @@ export async function v2_sale_fa2() {
     sale_type: AssetTypeV2.FA2,
     ft_contract: "KT1PEBh9oKkQosYuw4tvzigps5p7uqXMgdez",
     ft_token_id: 0,
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('sellOrder', sellOrder)
 
@@ -34,7 +36,8 @@ export async function v2_sale_fa2() {
     sale_type: AssetTypeV2.FA2,
     ft_contract: "KT1PEBh9oKkQosYuw4tvzigps5p7uqXMgdez",
     ft_token_id: 0,
-    amount: 2
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('buyOrder', buyOrder)
 }
