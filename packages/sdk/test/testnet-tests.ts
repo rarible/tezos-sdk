@@ -29,6 +29,9 @@ import {pack_unpack} from "./testnet/pack_unpack";
 import {get_auction} from "./testnet/get_auction";
 import {cancel_bundle_sale} from "./testnet/cancel_bundle_sale";
 import {v2_cancel} from "./testnet/v2_cancel";
+import {cancel_bid} from "./testnet/cancel_bid";
+import {cancel_floor_bid} from "./testnet/cancel_floor_bid";
+import {cancel_bundle_bid} from "./testnet/cancel_bundle_bid";
 
 
 async function run_tests(){
@@ -72,9 +75,14 @@ async function run_tests(){
     await v2_sale_fa2()
     await v2_sale_fa12()
 
-    //Cancel
+    //Cancel Sales
     await v2_cancel()
     await cancel_bundle_sale()
+
+    //Cancel Bids
+    await cancel_bid()
+    await cancel_floor_bid()
+    await cancel_bundle_bid()
 
     //Utils
     await deploy_nft()

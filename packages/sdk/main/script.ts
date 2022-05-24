@@ -46,7 +46,7 @@ import {
   AcceptBid,
   AcceptBundleBid,
   Bid,
-  BundleBid,
+  BundleBid, cancel_bid, cancel_bundle_bid, cancel_floor_bid, CancelBid, CancelBundleBid, CancelFloorBid,
   FloorBid,
   put_bid,
   put_bundle_bid,
@@ -671,6 +671,59 @@ export async function testScript(operation?: string, options: any = {}) {
         sale_type: argv.sale_type
       }
       const canceled_order = await cancel_bundle_sale(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_bid': {
+      console.log("cancel_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const cancel_request: CancelBid = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type
+      }
+      const canceled_order = await cancel_bid(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_floor_bid': {
+      console.log("cancel_floor_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const cancel_request: CancelFloorBid = {
+        asset_contract: contract,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type
+      }
+      const canceled_order = await cancel_floor_bid(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_bundle_bid': {
+      console.log("cancel_bundle_bid", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+      const cancel_request: CancelBundleBid = {
+        bundle: bundle,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type
+      }
+      const canceled_order = await cancel_bundle_bid(provider, cancel_request)
       return canceled_order
     }
 
