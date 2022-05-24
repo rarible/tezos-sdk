@@ -27,6 +27,8 @@ import {get_decimals} from "./testnet/get_decimals";
 import {get_ft_type} from "./testnet/get_ft_type";
 import {pack_unpack} from "./testnet/pack_unpack";
 import {get_auction} from "./testnet/get_auction";
+import {cancel_bundle_sale} from "./testnet/cancel_bundle_sale";
+import {v2_cancel} from "./testnet/v2_cancel";
 
 
 async function run_tests(){
@@ -69,6 +71,10 @@ async function run_tests(){
     await v2_sale()
     await v2_sale_fa2()
     await v2_sale_fa12()
+
+    //Cancel
+    await v2_cancel()
+    await cancel_bundle_sale()
 
     //Utils
     await deploy_nft()
