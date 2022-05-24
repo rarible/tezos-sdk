@@ -46,7 +46,7 @@ import {
   AcceptBid,
   AcceptBundleBid,
   Bid,
-  BundleBid,
+  BundleBid, cancel_bid, cancel_bundle_bid, cancel_floor_bid, CancelBid, CancelBundleBid, CancelFloorBid,
   FloorBid,
   put_bid,
   put_bundle_bid,
@@ -54,6 +54,7 @@ import {
 } from "../bids";
 import {BundleOrderForm, await_v2_order, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../sales/buy";
+import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -61,11 +62,12 @@ export async function testScript(operation?: string, options: any = {}) {
     endpoint: {type: 'string', default: 'https://test-tezos-node.rarible.org'},
     exchange: {type: 'string', default: 'KT1S6H2FWxrpaD7aPRSW1cTTE1xPucXBSTL5'},
     // contract: {type: 'string', default: 'KT1VnhPmUJnEH5dfeD8WW87LCoxdhGUUVfMV'},
-    contract: {type: 'string', default: 'KT1GQwnRxUDNTJHAzi22wZbyKW4w5Bt2H2nD'},
+    contract: {type: 'string', default: 'KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA'},
     royalties_contract: {type: 'string', default: 'KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya'},
     token_id: {type : 'number'},
     royalties: {type: 'string', default: '{}'},
     amount: {type: 'number', default: 0},
+    qty: {type: 'number', default: 0},
     metadata: {type: 'string', default: '{}'},
     metadata_key: {type: 'string', default: ''},
     metadata_value: {type: 'string', default: ''},
@@ -128,8 +130,8 @@ export async function testScript(operation?: string, options: any = {}) {
     auction: "KT1CB5JBSC7kTxRV3ir2xsooMA1FLieiD4Mt",
     auction_storage: "KT1KWAPPjuDq4ZeX67rzZWsf6eAeqwtuAfSP",
     node_url: argv.endpoint,
-    sales: "KT1KsiCXsBZwBLPxTCjGLAZmMegk8SVUgZim",
-    sales_storage: "KT19zpEqEFo7aYqTokoKAwTyF6Npb3U1LRuU",
+    sales: "KT1K2mNPj9U9497KjUggkgGcuuPsKrLr34zW",
+    sales_storage: "KT1JCKdM4S6489KbjYw8sKB1Zb1UzZm8vEcX",
     transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
     bid: "KT1UcBbv2D84mZ9tZx4MVLbCNyC5ihJERED2",
     bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2",
@@ -152,14 +154,14 @@ export async function testScript(operation?: string, options: any = {}) {
     auction: "KT1UThqUUyAM9g8Nk6u74ke6XAFZNycAWU7c",
     auction_storage: "KT1AJXNtHfFMB4kuJJexdevH2XeULivjThEX",
     node_url: devNode,
-    sales: "KT1HN6nLrhN8e4zdxXnrCr8VDnonMeivEQKL",
-    sales_storage: "KT1ACBWWZqLx8qo6cuLcDPXmivm4FxNYFWzb",
+    sales: "KT1LaV45iMDES1nXELGsnQgRHKzct2wc6EcT",
+    sales_storage: "KT1TEnB3APwPN4CGePGdAEA6uihdFfx6Skmq",
     transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
     bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
     bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr",
     sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT",
-    tzkt: "http://localhost:5001",
-    dipdup: "http://localhost:8081/v1/graphql"
+    tzkt: "http://dev-tezos-tzkt.rarible.org",
+    dipdup: "http://dev-tezos-indexer.rarible.org/v1/graphql"
   }
 
   const provider = {
@@ -350,8 +352,8 @@ export async function testScript(operation?: string, options: any = {}) {
         s_sale_asset_contract: argv.ft_contract,
         s_sale_asset_token_id: argv.ft_token_id,
         s_sale: {
-          sale_amount: new BigNumber("0.000002"),
-          sale_asset_qty: new BigNumber("1"),
+          sale_amount: new BigNumber(argv.amount),
+          sale_asset_qty: new BigNumber(argv.qty),
           sale_max_fees_base_boint: 10000,
           sale_end: undefined,
           sale_start: undefined,
@@ -391,7 +393,8 @@ export async function testScript(operation?: string, options: any = {}) {
         s_sale_asset_contract: argv.ft_contract,
         s_sale_asset_token_id: argv.ft_token_id,
         s_sale: {
-          sale_amount: new BigNumber("0.02"),
+          sale_amount: new BigNumber(argv.amount),
+          sale_qty: new BigNumber(argv.qty),
           sale_max_fees_base_boint: 10000,
           sale_end: undefined,
           sale_start: undefined,
@@ -464,7 +467,7 @@ export async function testScript(operation?: string, options: any = {}) {
             sale_asset_contract: argv.ft_contract,
             sale_asset_token_id: ft_token_id,
             sale_amount: amount,
-            sale_qty: new BigNumber("1"),
+            sale_qty: new BigNumber(argv.qty),
             sale_payouts: [],
             sale_origin_fees: [],
             use_all: false,
@@ -505,6 +508,7 @@ export async function testScript(operation?: string, options: any = {}) {
           sale_asset_contract: argv.ft_contract,
           sale_asset_token_id: argv.ft_token_id,
           sale_amount: amount,
+          sale_qty: new BigNumber(argv.qty),
           sale_payouts: [],
           sale_origin_fees: [],
           use_all: false,
@@ -630,6 +634,97 @@ export async function testScript(operation?: string, options: any = {}) {
 
       const auction = await cancel_auction(provider, contract, new BigNumber(tokenId))
       return auction
+    }
+
+    case 'cancel_v2': {
+      console.log("cancel_v2", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const cancel_request: CancelV2OrderRequest = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        sale_asset_contract: argv.ft_contract,
+        sale_asset_token_id: argv.ft_token_id,
+        sale_type: argv.sale_type
+      }
+      const canceled_order = await cancelV2(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_bundle_sale': {
+      console.log("cancel_bundle_sale", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+      const cancel_request: CancelBundleSaleRequest = {
+        bundle: bundle,
+        sale_asset_contract: argv.ft_contract,
+        sale_asset_token_id: argv.ft_token_id,
+        sale_type: argv.sale_type
+      }
+      const canceled_order = await cancel_bundle_sale(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_bid': {
+      console.log("cancel_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const cancel_request: CancelBid = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type
+      }
+      const canceled_order = await cancel_bid(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_floor_bid': {
+      console.log("cancel_floor_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const cancel_request: CancelFloorBid = {
+        asset_contract: contract,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type
+      }
+      const canceled_order = await cancel_floor_bid(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_bundle_bid': {
+      console.log("cancel_bundle_bid", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+      const cancel_request: CancelBundleBid = {
+        bundle: bundle,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type
+      }
+      const canceled_order = await cancel_bundle_bid(provider, cancel_request)
+      return canceled_order
     }
 
     case 'cancel_bundle_auction': {

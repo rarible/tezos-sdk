@@ -11,7 +11,7 @@ export async function bundle_bid_fa12() {
 
   const mintedItemId_0 = await testScript('mint', {
     edsk: sellerEdsk,
-    contract: "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43"
+    contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA"
   })
   console.log('mintedItemId_0', mintedItemId_0)
 
@@ -19,7 +19,7 @@ export async function bundle_bid_fa12() {
 
   const mintedItemId_1 = await testScript('mint', {
     edsk: sellerEdsk,
-    contract: "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43"
+    contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA"
   })
   console.log('mintedItemId_1', mintedItemId_1)
 

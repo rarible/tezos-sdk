@@ -2,9 +2,9 @@ import { AssetTypeV2 } from "@rarible/tezos-common";
 import {testScript} from "../../main/script";
 import {awaitItem} from "../common/utils";
 
-export async function bundle_sale_fa12() {
+export async function cancel_bundle_bid() {
   console.log("--------------------")
-  console.log("Running dev_bundle_sale_fa12 test")
+  console.log("Running cancel_bundle_bid test")
   console.log("--------------------")
   const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
   const buyerEdsk = "edskS4QxJFDSkHaf6Ax3ByfrZj5cKvLUR813uqwE94baan31c1cPPTMvoAvUKbEv2xM9mvtwoLANNTBSdyZf3CCyN2re7qZyi3"
@@ -28,24 +28,22 @@ export async function bundle_sale_fa12() {
   await awaitItem(mintedItemId_1)
 
   // const mintedItemId = ""
-  const sellOrder = await testScript('sell_bundle', {
-    edsk: sellerEdsk,
-    item_id: `${mintedItemId_0},${mintedItemId_1}`,
-    sale_type: AssetTypeV2.FA12,
-    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
-    qty: 1,
-    amount: 0.000002,
-  })
-  console.log('sellOrder', sellOrder)
-
-  const buyOrder = await testScript('buy_bundle', {
+  const bid = await testScript('put_bundle_bid', {
     edsk: buyerEdsk,
     item_id: `${mintedItemId_0},${mintedItemId_1}`,
-    owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
-    sale_type: AssetTypeV2.FA12,
-    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
-    qty: 1,
-    amount: 0.000002,
+    sale_type: AssetTypeV2.XTZ,
+    ft_contract: undefined,
+    ft_token_id: undefined
   })
-  console.log('buyOrder', buyOrder)
+  console.log('put_bundle_bid', bid)
+
+  const cancelBid = await testScript('cancel_bundle_bid', {
+    edsk: buyerEdsk,
+    item_id: `${mintedItemId_0},${mintedItemId_1}`,
+    owner: "tz1U6HmK5feYQ7VzrLdho7u5aRbBssNeMsU9",
+    sale_type: AssetTypeV2.XTZ,
+    ft_contract: undefined,
+    ft_token_id: undefined
+  })
+  console.log('cancelBid', cancelBid)
 }

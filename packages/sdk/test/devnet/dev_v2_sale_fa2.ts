@@ -25,6 +25,8 @@ export async function dev_v2_sale_fa2() {
     sale_type: AssetTypeV2.FA2,
     ft_contract: "KT1HvTfYG7DgeujAQ1LDvCHiQc29VMycoJh5",
     ft_token_id: 0,
+    qty: 1,
+    amount: 0.000002,
     is_dev: true
   })
   console.log('sellOrder', sellOrder)
@@ -37,6 +39,7 @@ export async function dev_v2_sale_fa2() {
     ft_contract: "KT1HvTfYG7DgeujAQ1LDvCHiQc29VMycoJh5",
     ft_token_id: 0,
     amount: 0.000002,
+    qty: 1,
     is_dev: true
   })
   console.log('buyOrder', buyOrder)

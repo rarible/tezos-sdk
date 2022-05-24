@@ -34,6 +34,7 @@ export declare type BundleSaleData = {
     sale_origin_fees: Array<Part>;
     sale_payouts: Array<Part>;
     sale_amount: BigNumber;
+    sale_qty: BigNumber;
     sale_start?: number;
     sale_end?: number;
     sale_max_fees_base_boint: number;
@@ -122,24 +123,24 @@ export async function await_v2_order(
         "variables": null,
         "operationName": "MyQuery"
     }
-  return retry(max_tries || min_tries, sleep, async () => {
-    const res = await fetch(provider.config.dipdup, {
-      method: 'post',
-      body: JSON.stringify(payload),
-      headers: {'Content-Type': 'application/json'}
+    return retry(max_tries || min_tries, sleep, async () => {
+        const res = await fetch(provider.config.dipdup, {
+            method: 'post',
+            body: JSON.stringify(payload),
+            headers: {'Content-Type': 'application/json'}
+        })
+        const json = await res.json()
+        const result = json.data.marketplace_activity
+        if (result.length >= 1) {
+            return result[0].id
+        } else {
+            throw new Error("OrderID cannot be requested")
+        }
     })
-    const json = await res.json()
-    const result = json.data.marketplace_activity
-    if (result.length >= 1) {
-      return result[0].id
-    } else {
-      throw new Error("OrderID cannot be requested")
-    }
-  })
 }
 
 function delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export function sell_arg_v2(
@@ -294,16 +295,24 @@ export function bundle_sell_arg_v2(
                                                                         prim: "Pair",
                                                                         args: [
                                                                             {
-                                                                                int: `${order.s_sale.sale_max_fees_base_boint}`
+                                                                                int: `${order.s_sale.sale_qty}`
                                                                             },
                                                                             {
                                                                                 prim: "Pair",
                                                                                 args: [
                                                                                     {
-                                                                                        prim: "None"
+                                                                                        int: `${order.s_sale.sale_max_fees_base_boint}`
                                                                                     },
                                                                                     {
-                                                                                        prim: "None"
+                                                                                        prim: "Pair",
+                                                                                        args: [
+                                                                                            {
+                                                                                                prim: "None"
+                                                                                            },
+                                                                                            {
+                                                                                                prim: "None"
+                                                                                            }
+                                                                                        ]
                                                                                     }
                                                                                 ]
                                                                             }

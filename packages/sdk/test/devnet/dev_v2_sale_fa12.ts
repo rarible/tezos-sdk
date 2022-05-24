@@ -26,6 +26,8 @@ export async function dev_v2_sale_fa12() {
     item_id: mintedItemId,
     sale_type: AssetTypeV2.FA12,
     ft_contract: "KT1X9S5Z69r36kToUx2xSi32gmhRjEW64dMS",
+    qty: 1,
+    amount: 0.000002,
     is_dev: true
   })
   console.log('sellOrder', sellOrder)
@@ -37,6 +39,7 @@ export async function dev_v2_sale_fa12() {
     sale_type: AssetTypeV2.FA12,
     ft_contract: "KT1X9S5Z69r36kToUx2xSi32gmhRjEW64dMS",
     amount: 0.000002,
+    qty: 1,
     is_dev: true
   })
   console.log('buyOrder', buyOrder)

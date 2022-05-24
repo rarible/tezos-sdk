@@ -75,6 +75,28 @@ export interface AcceptBundleBid {
   bid_payouts : Array<Part>;
 }
 
+export interface CancelBid {
+  asset_contract: string,
+  asset_token_id: BigNumber,
+  bid_type: AssetTypeV2;
+  bid_asset_contract?: string;
+  bid_asset_token_id?: BigNumber;
+}
+
+export interface CancelFloorBid {
+  asset_contract: string,
+  bid_type: AssetTypeV2;
+  bid_asset_contract?: string;
+  bid_asset_token_id?: BigNumber;
+}
+
+export interface CancelBundleBid {
+  bundle: Array<BundleItem>,
+  bid_type: AssetTypeV2;
+  bid_asset_contract?: string;
+  bid_asset_token_id?: BigNumber;
+}
+
 export async function put_bid(provider: Provider, bid: Bid) : Promise<OperationResult> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
@@ -144,6 +166,27 @@ export async function accept_bundle_bid(provider: Provider, bid_data: AcceptBund
   }
   args = args.concat(arg)
   const op = await send_batch(provider, args);
+  await op.confirmation();
+  return op
+}
+
+export async function cancel_bid(provider: Provider, bid_data: CancelBid) : Promise<OperationResult> {
+  const arg = cancel_bid_arg(provider, bid_data)
+  const op = await send_batch(provider, [arg]);
+  await op.confirmation();
+  return op
+}
+
+export async function cancel_floor_bid(provider: Provider, bid_data: CancelFloorBid) : Promise<OperationResult> {
+  const arg = cancel_floor_bid_arg(provider, bid_data)
+  const op = await send_batch(provider, [arg]);
+  await op.confirmation();
+  return op
+}
+
+export async function cancel_bundle_bid(provider: Provider, bid_data: CancelBundleBid) : Promise<OperationResult> {
+  const arg = cancel_bundle_bid_arg(provider, bid_data)
+  const op = await send_batch(provider, [arg]);
   await op.confirmation();
   return op
 }
@@ -480,4 +523,90 @@ function accept_bundle_bid_arg(
     ]
   }
   return { destination: provider.config.bid, entrypoint: "accept_bundle_bid", parameter };
+}
+
+function cancel_bid_arg(
+    provider: Provider,
+    bid_data: CancelBid
+): TransactionArg {
+  const parameter: MichelsonData = {
+    prim: "Pair",
+    args: [
+      {
+        string: `${bid_data.asset_contract}`
+      },
+      {
+        prim: "Pair",
+        args: [
+          {
+            int: `${bid_data.asset_token_id}`
+          },
+          {
+            prim: "Pair",
+            args: [
+              {
+                int: `${bid_data.bid_type}`
+              },
+              {
+                bytes: getAsset(bid_data.bid_type, bid_data.bid_asset_contract, bid_data.bid_asset_token_id)
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  return { destination: provider.config.bid, entrypoint: "cancel_bid", parameter };
+}
+
+function cancel_floor_bid_arg(
+    provider: Provider,
+    bid_data: CancelFloorBid
+): TransactionArg {
+  const parameter: MichelsonData = {
+    prim: "Pair",
+    args: [
+      {
+        string: `${bid_data.asset_contract}`
+      },
+      {
+        prim: "Pair",
+        args: [
+          {
+            int: `${bid_data.bid_type}`
+          },
+          {
+            bytes: getAsset(bid_data.bid_type, bid_data.bid_asset_contract, bid_data.bid_asset_token_id)
+          }
+        ]
+      }
+    ]
+  }
+  return { destination: provider.config.bid, entrypoint: "cancel_floor_bid", parameter };
+}
+
+function cancel_bundle_bid_arg(
+    provider: Provider,
+    bid_data: CancelBundleBid
+): TransactionArg {
+  const parameter: MichelsonData = {
+    prim: "Pair",
+    args: [
+      {
+        bytes: mkPackedBundle(bid_data.bundle)
+      },
+      {
+        prim: "Pair",
+        args: [
+          {
+            int: `${bid_data.bid_type}`
+          },
+          {
+            bytes: getAsset(bid_data.bid_type, bid_data.bid_asset_contract, bid_data.bid_asset_token_id)
+          }
+        ]
+      }
+    ]
+  }
+  return { destination: provider.config.bid, entrypoint: "cancel_bundle_bid", parameter };
 }
