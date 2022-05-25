@@ -24,7 +24,9 @@ export async function v2_sale_fa12() {
     edsk: sellerEdsk,
     item_id: mintedItemId,
     sale_type: AssetTypeV2.FA12,
-    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv"
+    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('sellOrder', sellOrder)
 
@@ -34,7 +36,8 @@ export async function v2_sale_fa12() {
     owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
     sale_type: AssetTypeV2.FA12,
     ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
-    amount: 2
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('buyOrder', buyOrder)
 }

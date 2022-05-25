@@ -24,6 +24,8 @@ export async function v2_sale() {
     sale_type: AssetTypeV2.XTZ,
     ft_contract: undefined,
     ft_token_id: undefined,
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('sellOrder', sellOrder)
 
@@ -34,7 +36,8 @@ export async function v2_sale() {
     sale_type: AssetTypeV2.XTZ,
     ft_contract: undefined,
     ft_token_id: undefined,
-    amount: 0.000002
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('buyOrder', buyOrder)
 }
