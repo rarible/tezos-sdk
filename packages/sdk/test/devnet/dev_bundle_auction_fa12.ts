@@ -35,13 +35,15 @@ export async function dev_bundle_auction_fa12() {
     edsk: sellerEdsk,
     item_id: `${mintedItemId_0},${mintedItemId_1}`,
     sale_type: AssetTypeV2.FA12,
-    ft_contract: "KT1X9S5Z69r36kToUx2xSi32gmhRjEW64dMS"
+    ft_contract: "KT1X9S5Z69r36kToUx2xSi32gmhRjEW64dMS",
+    is_dev: true
   })
   console.log('auctionOrder', auctionOrder)
 
   const cancelAuctionOrder = await testScript('cancel_bundle_auction', {
     edsk: sellerEdsk,
-    item_id: `${mintedItemId_0},${mintedItemId_1}`
+    item_id: `${mintedItemId_0},${mintedItemId_1}`,
+    is_dev: true
   })
   console.log('cancelAuctionOrder', cancelAuctionOrder)
 
@@ -49,14 +51,16 @@ export async function dev_bundle_auction_fa12() {
     edsk: sellerEdsk,
     item_id: `${mintedItemId_0},${mintedItemId_1}`,
     sale_type: AssetTypeV2.FA12,
-    ft_contract: "KT1X9S5Z69r36kToUx2xSi32gmhRjEW64dMS"
+    ft_contract: "KT1X9S5Z69r36kToUx2xSi32gmhRjEW64dMS",
+    is_dev: true
   })
   console.log('auctionOrder2', auctionOrder2)
 
   const bid = await testScript('put_bundle_auction_bid', {
     edsk: buyerEdsk,
     item_id: `${mintedItemId_0},${mintedItemId_1}`,
-    owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC"
+    owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+    is_dev: true
   })
   console.log('bid', bid)
 
@@ -66,7 +70,8 @@ export async function dev_bundle_auction_fa12() {
   const finishAuctionOrder = await testScript('finish_bundle_auction', {
     edsk: sellerEdsk,
     item_id: `${mintedItemId_0},${mintedItemId_1}`,
-    owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC"
+    owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+    is_dev: true
   })
   console.log('finishAuctionOrder', finishAuctionOrder)
 }
