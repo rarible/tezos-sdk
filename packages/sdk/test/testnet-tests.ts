@@ -32,6 +32,7 @@ import {v2_cancel} from "./testnet/v2_cancel";
 import {cancel_bid} from "./testnet/cancel_bid";
 import {cancel_floor_bid} from "./testnet/cancel_floor_bid";
 import {cancel_bundle_bid} from "./testnet/cancel_bundle_bid";
+import {get_order_type} from "./testnet/check_sale_type";
 
 
 async function run_tests(){
@@ -89,6 +90,7 @@ async function run_tests(){
     await get_decimals()
     await get_ft_type()
     await pack_unpack()
+    await get_order_type()
     //await get_auction()
 
 }

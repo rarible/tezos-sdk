@@ -6,12 +6,10 @@ import {
     Provider,
     send_batch,
     TransactionArg,
-    approve_v2, BundleItem, mkPackedBundle
+    approve_v2, BundleItem, mkPackedBundle, await_v2_order
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
-import fetch from "node-fetch";
-import {retry} from "../test/common/utils";
 
 export declare type OrderFormV2 = {
     s_asset_contract: string;
@@ -75,7 +73,7 @@ export async function sellV2(
     if (args.length != 0) {
         const op = await send_batch(provider, args);
         await op.confirmation();
-        const order_id = await await_v2_order(provider, order.s_asset_contract, order.s_asset_token_id, seller, op.hash, 3, 1000)
+        const order_id = await await_v2_order(provider.config, order.s_asset_contract, order.s_asset_token_id, seller, op.hash, 3, 1000)
         return order_id
     }
 }
@@ -105,38 +103,6 @@ export async function sellBundle(
         await op.confirmation();
         return op
     }
-}
-
-export async function await_v2_order(
-    provider: Provider,
-    asset_contract: string,
-    asset_token_id: BigNumber,
-    seller: string,
-    op_hash: string,
-    max_tries: number,
-    sleep: number
-): Promise<string | undefined> {
-    let min_tries = 1
-
-    const payload = {
-        "query": `query MyQuery { marketplace_activity(where: {make_contract: {_eq: "${asset_contract}"}, make_token_id: {_eq: "${asset_token_id.toString()}"}, maker: {_eq: "${seller}"}, operation_hash: {_eq: "${op_hash}"}}) { id } }`,
-        "variables": null,
-        "operationName": "MyQuery"
-    }
-    return retry(max_tries || min_tries, sleep, async () => {
-        const res = await fetch(provider.config.dipdup, {
-            method: 'post',
-            body: JSON.stringify(payload),
-            headers: {'Content-Type': 'application/json'}
-        })
-        const json = await res.json()
-        const result = json.data.marketplace_activity
-        if (result.length >= 1) {
-            return result[0].id
-        } else {
-            throw new Error("OrderID cannot be requested")
-        }
-    })
 }
 
 function delay(ms: number) {

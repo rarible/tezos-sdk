@@ -66,6 +66,11 @@ export enum AssetTypeV2 {
   FA2 = 2
 }
 
+export enum OrderType {
+  V1 = 0,
+  V2 = 1
+}
+
 export interface AssetBase<T> {
   asset_type: T;
   value: BigNumber;
@@ -523,4 +528,20 @@ export function optional_date_arg(date? : number): MichelsonData {
   }
 }
 
+export function delay(num: number) {
+  return new Promise<void>((r) => setTimeout(r, num))
+}
+
+export function retry<T>(
+    num: number,
+    del: number,
+    thunk: () => Promise<T>
+): Promise<T> {
+  return thunk().catch((error) => {
+    if (num === 0) {
+      throw error
+    }
+    return delay(del).then(() => retry(num - 1, del, thunk))
+  })
+}
 export type TezosNetwork = "mainnet" | "dev" | "testnet"

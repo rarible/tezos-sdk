@@ -38,7 +38,7 @@ import {
   BundleItem,
   check_signature,
   get_ft_type,
-  get_balance
+  get_balance, await_v2_order, get_active_order_type, OrderDataTypeRequest
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {
@@ -52,7 +52,7 @@ import {
   put_bundle_bid,
   put_floor_bid
 } from "../bids";
-import {BundleOrderForm, await_v2_order, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
+import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../sales/buy";
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 
@@ -84,7 +84,7 @@ export async function testScript(operation?: string, options: any = {}) {
     wrapper: {type: 'string', default: ''},
     item_id: {type: 'string', default: ''},
     order_id: {type: 'string', default: ''},
-    ft_contract: {type: 'string', default: 'KT1LJSq4mhyLtPKrncLXerwAF2Xvk7eU3KJX'},
+    ft_contract: {type: 'string', default: undefined},
     ft_token_id: {type: 'string', default: undefined},
     is_dev: {type: 'boolean', default: false},
     sale_type : {type: 'number', default: 0},
@@ -289,7 +289,7 @@ export async function testScript(operation?: string, options: any = {}) {
         make_asset_type: await check_asset_type(provider, asset),
         take_asset_type: {
           asset_class: "FT",
-          contract: argv.ft_contract,
+          contract: argv.ft_contract!,
           token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id): undefined,
         },
         amount: new BigNumber("1"),
@@ -322,7 +322,7 @@ export async function testScript(operation?: string, options: any = {}) {
         make_asset_type: await check_asset_type(provider, asset),
         take_asset_type: {
           asset_class: "FT",
-          contract: argv.ft_contract,
+          contract: argv.ft_contract!,
           token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id): undefined,
         },
         amount: new BigNumber("1"),
@@ -930,7 +930,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case "get_decimals": {
       try {
-        return get_decimals(provider.config, argv.ft_contract, argv.ft_token_id)
+        return get_decimals(provider.config, argv.ft_contract!, argv.ft_token_id)
       } catch (e) {
         console.error(e)
       }
@@ -938,7 +938,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case "await_v2_order": {
       try {
-        return await_v2_order(provider, argv.ft_contract, argv.ft_token_id!, argv.owner!, argv.order_id, 10, 10)
+        return await_v2_order(provider.config, argv.ft_contract!, argv.ft_token_id!, argv.owner!, argv.order_id, 10, 10)
       } catch (e) {
         console.error(e)
       }
@@ -959,7 +959,30 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case "get_ft_type": {
       try {
-        return get_ft_type(provider.config, argv.ft_contract)
+        return get_ft_type(provider.config, argv.ft_contract!)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "get_order_type": {
+      try {
+        if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+        const [contract, tokenId] = argv.item_id.split(":")
+        const publicKey = await get_public_key(provider)
+        if (!publicKey) {
+          throw new Error("publicKey is undefined")
+        }
+        const maker = pk_to_pkh(publicKey)
+        const request: OrderDataTypeRequest = {
+          contract: contract,
+          token_id: new BigNumber(tokenId),
+          seller: maker,
+          buy_asset_contract: argv.ft_contract,
+          buy_asset_token_id: argv.ft_token_id
+        }
+        return await get_active_order_type(provider.config, request)
       } catch (e) {
         console.error(e)
       }
