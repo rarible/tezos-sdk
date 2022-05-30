@@ -15,6 +15,7 @@ export async function dev_auction_fa12() {
     edsk: sellerEdsk,
     amount: 100,
     contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
+    metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
     is_dev: true
   })
   console.log('mintedItemId', mintedItemId)
