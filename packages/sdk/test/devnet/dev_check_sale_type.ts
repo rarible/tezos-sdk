@@ -12,6 +12,7 @@ export async function dev_get_order_type() {
     const mintedItemIdV1 = await testScript('mint', {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
+        metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
         amount: 100,
         is_dev: true
     })
@@ -21,6 +22,7 @@ export async function dev_get_order_type() {
     const mintedItemIdV1FA2 = await testScript('mint', {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
+        metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
         amount: 100,
         is_dev: true
     })
@@ -30,6 +32,7 @@ export async function dev_get_order_type() {
     const mintedItemIdV1FA12 = await testScript('mint', {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
+        metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
         amount: 100,
         is_dev: true
     })
@@ -39,6 +42,7 @@ export async function dev_get_order_type() {
     const mintedItemIdV2 = await testScript('mint', {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
+        metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
         amount: 100,
         is_dev: true
     })
@@ -47,6 +51,7 @@ export async function dev_get_order_type() {
     const mintedItemIdV2FA2 = await testScript('mint', {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
+        metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
         amount: 100,
         is_dev: true
     })
@@ -56,6 +61,7 @@ export async function dev_get_order_type() {
     const mintedItemIdV2FA12 = await testScript('mint', {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
+        metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
         amount: 100,
         is_dev: true
     })
