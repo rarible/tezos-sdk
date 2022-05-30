@@ -14,6 +14,7 @@ export async function bundle_auction_fa2() {
   const mintedItemId_0 = await testScript('mint', {
     edsk: sellerEdsk,
     contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
+    metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
     amount: 100
   })
   console.log('mintedItemId_0', mintedItemId_0)
@@ -23,6 +24,7 @@ export async function bundle_auction_fa2() {
   const mintedItemId_1 = await testScript('mint', {
     edsk: sellerEdsk,
     contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
+    metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
     amount: 100
   })
   console.log('mintedItemId_1', mintedItemId_1)

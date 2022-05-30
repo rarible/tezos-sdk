@@ -15,6 +15,7 @@ export async function dev_bundle_auction_fa12() {
     edsk: sellerEdsk,
     contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
     amount: 100,
+    metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
     is_dev: true
   })
   console.log('mintedItemId_0', mintedItemId_0)
@@ -25,6 +26,7 @@ export async function dev_bundle_auction_fa12() {
     edsk: sellerEdsk,
     contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
     amount: 100,
+    metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
     is_dev: true
   })
   console.log('mintedItemId_1', mintedItemId_1)
