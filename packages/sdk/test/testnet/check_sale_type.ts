@@ -13,6 +13,7 @@ export async function get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100
     })
     console.log('mintedItemIdV1', mintedItemIdV1)
@@ -22,6 +23,7 @@ export async function get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100
     })
     console.log('mintedItemIdV1FA2', mintedItemIdV1FA2)
@@ -31,6 +33,7 @@ export async function get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100
     })
     console.log('mintedItemIdV1FA12', mintedItemIdV1FA12)
@@ -40,6 +43,7 @@ export async function get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100
     })
     console.log('mintedItemIdV2', mintedItemIdV2)
@@ -48,6 +52,7 @@ export async function get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100
     })
     console.log('mintedItemIdV2FA2', mintedItemIdV2FA2)
@@ -57,6 +62,7 @@ export async function get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100
     })
     console.log('mintedItemIdV2FA12', mintedItemIdV2FA12)

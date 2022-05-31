@@ -16,6 +16,7 @@ export async function dev_bundle_auction() {
     contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
     amount: 100,
     metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
     is_dev: true
   })
   console.log('mintedItemId_0', mintedItemId_0)
@@ -27,6 +28,7 @@ export async function dev_bundle_auction() {
     contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
     amount: 100,
     metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
     is_dev: true
   })
   console.log('mintedItemId_1', mintedItemId_1)

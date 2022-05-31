@@ -13,6 +13,7 @@ export async function bundle_sale_fa2() {
     edsk: sellerEdsk,
     contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
     metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
     amount: 100
   })
   console.log('mintedItemId_0', mintedItemId_0)
@@ -23,6 +24,7 @@ export async function bundle_sale_fa2() {
     edsk: sellerEdsk,
     contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
     metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
     amount: 100
   })
   console.log('mintedItemId_1', mintedItemId_1)

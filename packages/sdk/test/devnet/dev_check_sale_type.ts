@@ -13,6 +13,7 @@ export async function dev_get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100,
         is_dev: true
     })
@@ -23,6 +24,7 @@ export async function dev_get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100,
         is_dev: true
     })
@@ -33,6 +35,7 @@ export async function dev_get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100,
         is_dev: true
     })
@@ -43,6 +46,7 @@ export async function dev_get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100,
         is_dev: true
     })
@@ -52,6 +56,7 @@ export async function dev_get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100,
         is_dev: true
     })
@@ -62,6 +67,7 @@ export async function dev_get_order_type() {
         edsk: sellerEdsk,
         contract: "KT1NWdwVA8zq5DDJTKcMkRqWYJcEcyTTm5WK",
         metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
         amount: 100,
         is_dev: true
     })
