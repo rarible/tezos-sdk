@@ -34,6 +34,7 @@ import {dev_get_balance} from "./devnet/dev_get_balance";
 import {dev_get_decimals} from "./devnet/dev_get_decimals";
 import {dev_get_ft_type} from "./devnet/dev_get_ft_type";
 import {dev_pack_unpack} from "./devnet/dev_pack_unpack";
+import {dev_get_order_type} from "./devnet/dev_check_sale_type";
 
 async function run_tests(){
     //Sales
@@ -92,6 +93,7 @@ async function run_tests(){
     await dev_get_decimals()
     await dev_get_ft_type()
     await dev_pack_unpack()
-    //await dev_get_auction()
+    await dev_get_order_type()
+    // //await dev_get_auction()
 }
 run_tests()
