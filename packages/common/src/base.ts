@@ -47,13 +47,13 @@ export interface FTAssetType {
 
 export interface NFTAssetType {
   asset_class: "NFT";
-  contract?: string;
+  contract: string;
   token_id: BigNumber;
 }
 
 export interface MTAssetType {
   asset_class: "MT";
-  contract?: string;
+  contract: string;
   token_id: BigNumber;
 }
 
