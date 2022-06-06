@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.22](https://github.com/rarible/tezos-sdk/compare/v0.1.21...v0.1.22) (2022-06-06)
+
+
+### Features
+
+* order exist check function ([c7f93ce](https://github.com/rarible/tezos-sdk/commit/c7f93ce41f71d1471e1e770f2e3fdff8eb980b06))
+
+
+
+
+
 ## [0.1.21](https://github.com/rarible/tezos-sdk/compare/v0.1.20...v0.1.21) (2022-06-02)
 
 
