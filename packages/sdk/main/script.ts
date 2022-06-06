@@ -53,18 +53,21 @@ import {
   put_floor_bid
 } from "../bids";
 import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
-import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../sales/buy";
+import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
-    edsk: {type: 'string', default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'},
+    edsk: {
+      type: 'string',
+      default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'
+    },
     endpoint: {type: 'string', default: 'https://test-tezos-node.rarible.org'},
     exchange: {type: 'string', default: 'KT1S6H2FWxrpaD7aPRSW1cTTE1xPucXBSTL5'},
     // contract: {type: 'string', default: 'KT1VnhPmUJnEH5dfeD8WW87LCoxdhGUUVfMV'},
     contract: {type: 'string', default: 'KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA'},
     royalties_contract: {type: 'string', default: 'KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya'},
-    token_id: {type : 'number'},
+    token_id: {type: 'number'},
     royalties: {type: 'string', default: '{}'},
     amount: {type: 'number', default: 0},
     qty: {type: 'number', default: 0},
@@ -87,7 +90,7 @@ export async function testScript(operation?: string, options: any = {}) {
     ft_contract: {type: 'string', default: undefined},
     ft_token_id: {type: 'string', default: undefined},
     is_dev: {type: 'boolean', default: false},
-    sale_type : {type: 'number', default: 0},
+    sale_type: {type: 'number', default: 0},
     tzkt: {type: 'string', default: ''},
     message: {type: 'string', default: ''},
     dipdup: {type: 'string', default: ''}
@@ -98,20 +101,20 @@ export async function testScript(operation?: string, options: any = {}) {
   }
   const action = operation ?? argv._[0]
 
-  const token_id_opt = (argv.token_id!=undefined) ? new BigNumber(argv.token_id) : undefined
-  const token_id = (argv.token_id!=undefined) ? new BigNumber(argv.token_id) : new BigNumber(0)
+  const token_id_opt = (argv.token_id != undefined) ? new BigNumber(argv.token_id) : undefined
+  const token_id = (argv.token_id != undefined) ? new BigNumber(argv.token_id) : new BigNumber(0)
 
-  const royalties0 = JSON.parse(argv.royalties) as { [key: string] : number }
-  const royalties : { [key: string] : BigNumber } = {};
+  const royalties0 = JSON.parse(argv.royalties) as { [key: string]: number }
+  const royalties: { [key: string]: BigNumber } = {};
   if (royalties0) {
     Object.keys(royalties0).forEach(
-      function(k : string) : void {
+      function (k: string): void {
         royalties[k] = new BigNumber(royalties0[k])
       })
   }
 
   const amount = (argv.amount) ? new BigNumber(argv.amount as number) : undefined
-  const metadata = JSON.parse(argv.metadata) as { [_: string] : string }
+  const metadata = JSON.parse(argv.metadata) as { [_: string]: string }
 
   const devNode = "https://dev-tezos-node.rarible.org"
   const tezos = in_memory_provider(argv.edsk, argv.is_dev ? devNode : argv.endpoint)
@@ -173,12 +176,12 @@ export async function testScript(operation?: string, options: any = {}) {
   const to = (argv.to) ? argv.to : await provider.tezos.address()
   const owner = (argv.owner) ? argv.owner : await provider.tezos.address()
   const fee_receiver = (argv.fee_receiver) ? argv.fee_receiver : await provider.tezos.address()
-  const asset_class = (amount==undefined) ? "NFT" : "MT"
+  const asset_class = (amount == undefined) ? "NFT" : "MT"
 
-  switch(action) {
+  switch (action) {
     case 'transfer' :
       console.log("transfer")
-      const op_transfer = await transfer(provider, { asset_class, contract: argv.contract, token_id }, to, amount)
+      const op_transfer = await transfer(provider, {asset_class, contract: argv.contract, token_id}, to, amount)
       await op_transfer.confirmation()
       console.log(op_transfer.hash)
       break
@@ -192,7 +195,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case 'burn':
       console.log("burn")
-      const op_burn = await burn(provider, { asset_class, contract: argv.contract, token_id }, amount)
+      const op_burn = await burn(provider, {asset_class, contract: argv.contract, token_id}, amount)
       await op_burn.confirmation()
       console.log(op_burn.hash)
       break
@@ -290,7 +293,7 @@ export async function testScript(operation?: string, options: any = {}) {
         take_asset_type: {
           asset_class: "FT",
           contract: argv.ft_contract!,
-          token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id): undefined,
+          token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id) : undefined,
         },
         amount: new BigNumber("1"),
         price: new BigNumber("2"),
@@ -323,7 +326,7 @@ export async function testScript(operation?: string, options: any = {}) {
         take_asset_type: {
           asset_class: "FT",
           contract: argv.ft_contract!,
-          token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id): undefined,
+          token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id) : undefined,
         },
         amount: new BigNumber("1"),
         price: new BigNumber("2"),
@@ -438,40 +441,23 @@ export async function testScript(operation?: string, options: any = {}) {
       try {
         if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
         const [contract, tokenId] = argv.item_id.split(":")
-        const st : StorageSalesV2 = await provider.tezos.storage(provider.config.sales_storage)
-        let key_exists = false
         const ft_token_id = (argv.ft_token_id!=undefined) ? new BigNumber(argv.ft_token_id) : new BigNumber(0)
         const amount = (argv.amount!=undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
-        try {
-          let order : any = await st.sales.get(
-            {
-              0: contract,
-              1: tokenId,
-              2: argv.owner,
-              3: argv.sale_type,
-              4: getAsset(argv.sale_type, argv.ft_contract, ft_token_id),
-            }
-          )
-          key_exists = order!=undefined
-        } catch(error) {
-          console.log(error)
-          key_exists = false
-          throw new Error("Error order does not exist")
+        const buyRequest: BuyRequest = {
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_seller: argv.owner!,
+          sale_type: argv.sale_type,
+          sale_asset_contract: argv.ft_contract,
+          sale_asset_token_id: ft_token_id,
+          sale_amount: amount,
+          sale_qty: new BigNumber(argv.qty),
+          sale_payouts: [],
+          sale_origin_fees: [],
+          use_all: false,
         }
-        if (key_exists) {
-          const buyRequest: BuyRequest = {
-            asset_contract: contract,
-            asset_token_id: new BigNumber(tokenId),
-            asset_seller: argv.owner!,
-            sale_type: argv.sale_type,
-            sale_asset_contract: argv.ft_contract,
-            sale_asset_token_id: ft_token_id,
-            sale_amount: amount,
-            sale_qty: new BigNumber(argv.qty),
-            sale_payouts: [],
-            sale_origin_fees: [],
-            use_all: false,
-          }
+        const isOrderExists = await isExistsSaleOrder(provider, buyRequest)
+        if (isOrderExists) {
           const op = await buyV2(provider, buyRequest)
           return op
         } else {
@@ -499,7 +485,7 @@ export async function testScript(operation?: string, options: any = {}) {
             asset_quantity: new BigNumber(1)
           })
         })
-        const amount = (argv.amount!=undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
+        const amount = (argv.amount != undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
 
         const buyRequest: BuyBundleRequest = {
           bundle: bundle,
@@ -1019,10 +1005,10 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case 'update_operators_for_all':
       console.log('update operators for all')
-      const arg_update : TransactionArg = {
+      const arg_update: TransactionArg = {
         destination: argv.contract,
         entrypoint: "update_operators_for_all",
-        parameter: [ { prim: 'Left', args : [ { string: argv.operator } ] } ]
+        parameter: [{prim: 'Left', args: [{string: argv.operator}]}]
       }
       const op_update = await send(provider, arg_update)
       await op_update.confirmation()

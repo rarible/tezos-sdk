@@ -1,6 +1,7 @@
-import { AssetTypeV2 } from "@rarible/tezos-common";
+import {AssetTypeV2, retry} from "@rarible/tezos-common";
 import {testScript} from "../../main/script";
-import {awaitDevItem} from "../common/utils";
+import {awaitDevItem, getDevItemById} from "../common/utils";
+import {in_memory_provider} from "../../providers/in_memory/in_memory_provider";
 
 export async function dev_v2_sale_fa2() {
   console.log("--------------------")
@@ -8,6 +9,7 @@ export async function dev_v2_sale_fa2() {
   console.log("--------------------")
   const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
   const buyerEdsk = "edskS4QxJFDSkHaf6Ax3ByfrZj5cKvLUR813uqwE94baan31c1cPPTMvoAvUKbEv2xM9mvtwoLANNTBSdyZf3CCyN2re7qZyi3"
+  const buyerProvider = in_memory_provider(buyerEdsk, "https://dev-tezos-node.rarible.org")
 
   const mintedItemId = await testScript('mint', {
     edsk: sellerEdsk,
@@ -19,7 +21,7 @@ export async function dev_v2_sale_fa2() {
   })
   console.log('mintedItemId', mintedItemId)
 
-  await awaitDevItem(mintedItemId)
+  const item = await awaitDevItem(mintedItemId)
   //const mintedItemId = "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43:216"
   const sellOrder = await testScript('sell_v2', {
     edsk: sellerEdsk,
@@ -45,4 +47,14 @@ export async function dev_v2_sale_fa2() {
     is_dev: true
   })
   console.log('buyOrder', buyOrder)
+
+  const buyerAddress = await buyerProvider.address()
+  await retry(10, 2000, async () => {
+    const item = await getDevItemById(mintedItemId)
+    if (!item.owners.includes(buyerAddress)) {
+      throw new Error('Buyer should be owner')
+    }
+  })
+  console.log('itemAfterPurchase', item)
+
 }

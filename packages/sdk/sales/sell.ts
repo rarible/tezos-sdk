@@ -73,7 +73,7 @@ export async function sellV2(
     if (args.length != 0) {
         const op = await send_batch(provider, args);
         await op.confirmation();
-        const order_id = await await_v2_order(provider.config, order.s_asset_contract, order.s_asset_token_id, seller, op.hash, 3, 1000)
+        const order_id = await await_v2_order(provider.config, order.s_asset_contract, order.s_asset_token_id, seller, op.hash, 10, 2000)
         return order_id
     }
 }

@@ -1,10 +1,10 @@
 import {
-    absolute_amount,
-    AssetTypeV2, BundleItem, getAsset, mkPackedBundle,
-    Part, parts_to_micheline,
-    Provider,
-    send_batch,
-    TransactionArg
+  absolute_amount,
+  AssetTypeV2, BundleItem, getAsset, mkPackedBundle,
+  Part, parts_to_micheline,
+  Provider,
+  send_batch, StorageSalesV2,
+  TransactionArg
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
@@ -186,4 +186,25 @@ export function buy_bundle_arg(
         }
 
     return {destination: provider.config.sales, entrypoint: "buy_bundle", parameter, amount: amount};
+}
+
+export async function isExistsSaleOrder(provider: Provider, buyRequest: BuyRequest): Promise<boolean> {
+  const st : StorageSalesV2 = await provider.tezos.storage(provider.config.sales_storage)
+  let key_exists = false
+  const ft_token_id = (buyRequest.sale_asset_token_id != undefined) ? new BigNumber(buyRequest.sale_asset_token_id) : new BigNumber(0)
+  try {
+    let order : any = await st.sales.get(
+      {
+        0: buyRequest.asset_contract,
+        1: buyRequest.asset_token_id,
+        2: buyRequest.asset_seller,
+        3: buyRequest.sale_type,
+        4: getAsset(buyRequest.sale_type, buyRequest.sale_asset_contract, ft_token_id),
+      }
+    )
+    key_exists = order !== undefined
+  } catch(error) {
+    console.log(error)
+  }
+  return key_exists
 }
