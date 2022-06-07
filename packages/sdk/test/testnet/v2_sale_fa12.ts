@@ -11,7 +11,9 @@ export async function v2_sale_fa12() {
 
   const mintedItemId = await testScript('mint', {
     edsk: sellerEdsk,
-    contract: "KT1GQwnRxUDNTJHAzi22wZbyKW4w5Bt2H2nD",
+    contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
+    metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
     amount: 100
   })
   console.log('mintedItemId', mintedItemId)
@@ -24,7 +26,9 @@ export async function v2_sale_fa12() {
     edsk: sellerEdsk,
     item_id: mintedItemId,
     sale_type: AssetTypeV2.FA12,
-    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv"
+    ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('sellOrder', sellOrder)
 
@@ -34,7 +38,8 @@ export async function v2_sale_fa12() {
     owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
     sale_type: AssetTypeV2.FA12,
     ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
-    amount: 2
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('buyOrder', buyOrder)
 }

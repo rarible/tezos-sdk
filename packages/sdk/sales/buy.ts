@@ -1,10 +1,10 @@
 import {
-    absolute_amount,
-    AssetTypeV2, BundleItem, getAsset, mkPackedBundle,
-    Part, parts_to_micheline,
-    Provider,
-    send_batch,
-    TransactionArg
+  absolute_amount,
+  AssetTypeV2, BundleItem, getAsset, mkPackedBundle,
+  Part, parts_to_micheline,
+  Provider,
+  send_batch, StorageSalesV2,
+  TransactionArg
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
@@ -31,6 +31,7 @@ export declare type BuyBundleRequest = {
     sale_asset_contract?: string;
     sale_asset_token_id?: BigNumber;
     sale_amount: BigNumber;
+    sale_qty: BigNumber;
     sale_payouts: Array<Part>;
     sale_origin_fees: Array<Part>;
     use_all?: boolean;
@@ -153,47 +154,57 @@ export function buy_bundle_arg(
     let amount: BigNumber = new BigNumber(0)
 
     if (sale.sale_type == AssetTypeV2.XTZ) {
-        amount = new BigNumber(sale.sale_amount)
+        amount = new BigNumber(sale.sale_amount).times(sale.sale_qty)
     }
 
-    const parameter: MichelsonData = {
-        prim: "Pair",
-        args: [
-            {
-                bytes: mkPackedBundle(sale.bundle)
-            },
-            {
-                prim: "Pair",
-                args: [
-                    {
-                        string: `${sale.asset_seller}`
-                    },
+    const parameter: MichelsonData =
+        {
+            prim: "Pair",
+            args:
+                [{bytes: mkPackedBundle(sale.bundle)},
                     {
                         prim: "Pair",
-                        args: [
-                            {
-                                int: `${sale.sale_type}`
-                            },
-                            {
-                                prim: "Pair",
-                                args: [
-                                    {
-                                        bytes: getAsset(sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)
-                                    },
-                                    {
-                                        prim: "Pair",
-                                        args: [
-                                            parts_to_micheline(sale.sale_origin_fees),
-                                            parts_to_micheline(sale.sale_payouts)
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
+                        args:
+                            [{string: `${sale.asset_seller}`},
+                                {
+                                    prim: "Pair",
+                                    args:
+                                        [{int: `${sale.sale_type}`},
+                                            {
+                                                prim: "Pair",
+                                                args:
+                                                    [{bytes: getAsset(sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)},
+                                                        {
+                                                            prim: "Pair",
+                                                            args:
+                                                                [{int: `${sale.sale_qty}`},
+                                                                    {prim: "Pair", args: [[], []]}]
+                                                        }]
+                                            }]
+                                }]
+                    }]
+        }
+
     return {destination: provider.config.sales, entrypoint: "buy_bundle", parameter, amount: amount};
+}
+
+export async function isExistsSaleOrder(provider: Provider, buyRequest: BuyRequest): Promise<boolean> {
+  const st : StorageSalesV2 = await provider.tezos.storage(provider.config.sales_storage)
+  let key_exists = false
+  const ft_token_id = (buyRequest.sale_asset_token_id != undefined) ? new BigNumber(buyRequest.sale_asset_token_id) : new BigNumber(0)
+  try {
+    let order : any = await st.sales.get(
+      {
+        0: buyRequest.asset_contract,
+        1: buyRequest.asset_token_id,
+        2: buyRequest.asset_seller,
+        3: buyRequest.sale_type,
+        4: getAsset(buyRequest.sale_type, buyRequest.sale_asset_contract, ft_token_id),
+      }
+    )
+    key_exists = order !== undefined
+  } catch(error) {
+    console.log(error)
+  }
+  return key_exists
 }

@@ -38,7 +38,7 @@ import {
   BundleItem,
   check_signature,
   get_ft_type,
-  get_balance
+  get_balance, await_v2_order, get_active_order_type, OrderDataTypeRequest
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {
@@ -46,26 +46,31 @@ import {
   AcceptBid,
   AcceptBundleBid,
   Bid,
-  BundleBid,
+  BundleBid, cancel_bid, cancel_bundle_bid, cancel_floor_bid, CancelBid, CancelBundleBid, CancelFloorBid,
   FloorBid,
   put_bid,
   put_bundle_bid,
   put_floor_bid
 } from "../bids";
-import {BundleOrderForm, await_v2_order, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
-import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2} from "../sales/buy";
+import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
+import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
+import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
-    edsk: {type: 'string', default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'},
+    edsk: {
+      type: 'string',
+      default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'
+    },
     endpoint: {type: 'string', default: 'https://test-tezos-node.rarible.org'},
     exchange: {type: 'string', default: 'KT1S6H2FWxrpaD7aPRSW1cTTE1xPucXBSTL5'},
     // contract: {type: 'string', default: 'KT1VnhPmUJnEH5dfeD8WW87LCoxdhGUUVfMV'},
-    contract: {type: 'string', default: 'KT1GQwnRxUDNTJHAzi22wZbyKW4w5Bt2H2nD'},
+    contract: {type: 'string', default: 'KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA'},
     royalties_contract: {type: 'string', default: 'KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya'},
-    token_id: {type : 'number'},
+    token_id: {type: 'number'},
     royalties: {type: 'string', default: '{}'},
     amount: {type: 'number', default: 0},
+    qty: {type: 'number', default: 0},
     metadata: {type: 'string', default: '{}'},
     metadata_key: {type: 'string', default: ''},
     metadata_value: {type: 'string', default: ''},
@@ -82,10 +87,10 @@ export async function testScript(operation?: string, options: any = {}) {
     wrapper: {type: 'string', default: ''},
     item_id: {type: 'string', default: ''},
     order_id: {type: 'string', default: ''},
-    ft_contract: {type: 'string', default: 'KT1LJSq4mhyLtPKrncLXerwAF2Xvk7eU3KJX'},
+    ft_contract: {type: 'string', default: undefined},
     ft_token_id: {type: 'string', default: undefined},
     is_dev: {type: 'boolean', default: false},
-    sale_type : {type: 'number', default: 0},
+    sale_type: {type: 'number', default: 0},
     tzkt: {type: 'string', default: ''},
     message: {type: 'string', default: ''},
     dipdup: {type: 'string', default: ''}
@@ -96,20 +101,20 @@ export async function testScript(operation?: string, options: any = {}) {
   }
   const action = operation ?? argv._[0]
 
-  const token_id_opt = (argv.token_id!=undefined) ? new BigNumber(argv.token_id) : undefined
-  const token_id = (argv.token_id!=undefined) ? new BigNumber(argv.token_id) : new BigNumber(0)
+  const token_id_opt = (argv.token_id != undefined) ? new BigNumber(argv.token_id) : undefined
+  const token_id = (argv.token_id != undefined) ? new BigNumber(argv.token_id) : new BigNumber(0)
 
-  const royalties0 = JSON.parse(argv.royalties) as { [key: string] : number }
-  const royalties : { [key: string] : BigNumber } = {};
+  const royalties0 = JSON.parse(argv.royalties) as { [key: string]: number }
+  const royalties: { [key: string]: BigNumber } = {};
   if (royalties0) {
     Object.keys(royalties0).forEach(
-      function(k : string) : void {
+      function (k: string): void {
         royalties[k] = new BigNumber(royalties0[k])
       })
   }
 
   const amount = (argv.amount) ? new BigNumber(argv.amount as number) : undefined
-  const metadata = JSON.parse(argv.metadata) as { [_: string] : string }
+  const metadata = JSON.parse(argv.metadata) as { [_: string]: string }
 
   const devNode = "https://dev-tezos-node.rarible.org"
   const tezos = in_memory_provider(argv.edsk, argv.is_dev ? devNode : argv.endpoint)
@@ -128,8 +133,8 @@ export async function testScript(operation?: string, options: any = {}) {
     auction: "KT1CB5JBSC7kTxRV3ir2xsooMA1FLieiD4Mt",
     auction_storage: "KT1KWAPPjuDq4ZeX67rzZWsf6eAeqwtuAfSP",
     node_url: argv.endpoint,
-    sales: "KT1KsiCXsBZwBLPxTCjGLAZmMegk8SVUgZim",
-    sales_storage: "KT19zpEqEFo7aYqTokoKAwTyF6Npb3U1LRuU",
+    sales: "KT1K2mNPj9U9497KjUggkgGcuuPsKrLr34zW",
+    sales_storage: "KT1JCKdM4S6489KbjYw8sKB1Zb1UzZm8vEcX",
     transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
     bid: "KT1UcBbv2D84mZ9tZx4MVLbCNyC5ihJERED2",
     bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2",
@@ -152,14 +157,14 @@ export async function testScript(operation?: string, options: any = {}) {
     auction: "KT1UThqUUyAM9g8Nk6u74ke6XAFZNycAWU7c",
     auction_storage: "KT1AJXNtHfFMB4kuJJexdevH2XeULivjThEX",
     node_url: devNode,
-    sales: "KT1HN6nLrhN8e4zdxXnrCr8VDnonMeivEQKL",
-    sales_storage: "KT1ACBWWZqLx8qo6cuLcDPXmivm4FxNYFWzb",
+    sales: "KT1LaV45iMDES1nXELGsnQgRHKzct2wc6EcT",
+    sales_storage: "KT1TEnB3APwPN4CGePGdAEA6uihdFfx6Skmq",
     transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
     bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
     bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr",
     sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT",
-    tzkt: "http://localhost:5001",
-    dipdup: "http://localhost:8081/v1/graphql"
+    tzkt: "http://dev-tezos-tzkt.rarible.org",
+    dipdup: "http://dev-tezos-indexer.rarible.org/v1/graphql"
   }
 
   const provider = {
@@ -171,12 +176,12 @@ export async function testScript(operation?: string, options: any = {}) {
   const to = (argv.to) ? argv.to : await provider.tezos.address()
   const owner = (argv.owner) ? argv.owner : await provider.tezos.address()
   const fee_receiver = (argv.fee_receiver) ? argv.fee_receiver : await provider.tezos.address()
-  const asset_class = (amount==undefined) ? "NFT" : "MT"
+  const asset_class = (amount == undefined) ? "NFT" : "MT"
 
-  switch(action) {
+  switch (action) {
     case 'transfer' :
       console.log("transfer")
-      const op_transfer = await transfer(provider, { asset_class, contract: argv.contract, token_id }, to, amount)
+      const op_transfer = await transfer(provider, {asset_class, contract: argv.contract, token_id}, to, amount)
       await op_transfer.confirmation()
       console.log(op_transfer.hash)
       break
@@ -190,7 +195,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case 'burn':
       console.log("burn")
-      const op_burn = await burn(provider, { asset_class, contract: argv.contract, token_id }, amount)
+      const op_burn = await burn(provider, {asset_class, contract: argv.contract, token_id}, amount)
       await op_burn.confirmation()
       console.log(op_burn.hash)
       break
@@ -287,8 +292,8 @@ export async function testScript(operation?: string, options: any = {}) {
         make_asset_type: await check_asset_type(provider, asset),
         take_asset_type: {
           asset_class: "FT",
-          contract: argv.ft_contract,
-          token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id): undefined,
+          contract: argv.ft_contract!,
+          token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id) : undefined,
         },
         amount: new BigNumber("1"),
         price: new BigNumber("2"),
@@ -320,8 +325,8 @@ export async function testScript(operation?: string, options: any = {}) {
         make_asset_type: await check_asset_type(provider, asset),
         take_asset_type: {
           asset_class: "FT",
-          contract: argv.ft_contract,
-          token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id): undefined,
+          contract: argv.ft_contract!,
+          token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id) : undefined,
         },
         amount: new BigNumber("1"),
         price: new BigNumber("2"),
@@ -350,8 +355,8 @@ export async function testScript(operation?: string, options: any = {}) {
         s_sale_asset_contract: argv.ft_contract,
         s_sale_asset_token_id: argv.ft_token_id,
         s_sale: {
-          sale_amount: new BigNumber("0.000002"),
-          sale_asset_qty: new BigNumber("1"),
+          sale_amount: new BigNumber(argv.amount),
+          sale_asset_qty: new BigNumber(argv.qty),
           sale_max_fees_base_boint: 10000,
           sale_end: undefined,
           sale_start: undefined,
@@ -391,7 +396,8 @@ export async function testScript(operation?: string, options: any = {}) {
         s_sale_asset_contract: argv.ft_contract,
         s_sale_asset_token_id: argv.ft_token_id,
         s_sale: {
-          sale_amount: new BigNumber("0.02"),
+          sale_amount: new BigNumber(argv.amount),
+          sale_qty: new BigNumber(argv.qty),
           sale_max_fees_base_boint: 10000,
           sale_end: undefined,
           sale_start: undefined,
@@ -435,40 +441,23 @@ export async function testScript(operation?: string, options: any = {}) {
       try {
         if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
         const [contract, tokenId] = argv.item_id.split(":")
-        const st : StorageSalesV2 = await provider.tezos.storage(provider.config.sales_storage)
-        let key_exists = false
         const ft_token_id = (argv.ft_token_id!=undefined) ? new BigNumber(argv.ft_token_id) : new BigNumber(0)
         const amount = (argv.amount!=undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
-        try {
-          let order : any = await st.sales.get(
-            {
-              0: contract,
-              1: tokenId,
-              2: argv.owner,
-              3: argv.sale_type,
-              4: getAsset(argv.sale_type, argv.ft_contract, ft_token_id),
-            }
-          )
-          key_exists = order!=undefined
-        } catch(error) {
-          console.log(error)
-          key_exists = false
-          throw new Error("Error order does not exist")
+        const buyRequest: BuyRequest = {
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_seller: argv.owner!,
+          sale_type: argv.sale_type,
+          sale_asset_contract: argv.ft_contract,
+          sale_asset_token_id: ft_token_id,
+          sale_amount: amount,
+          sale_qty: new BigNumber(argv.qty),
+          sale_payouts: [],
+          sale_origin_fees: [],
+          use_all: false,
         }
-        if (key_exists) {
-          const buyRequest: BuyRequest = {
-            asset_contract: contract,
-            asset_token_id: new BigNumber(tokenId),
-            asset_seller: argv.owner!,
-            sale_type: argv.sale_type,
-            sale_asset_contract: argv.ft_contract,
-            sale_asset_token_id: ft_token_id,
-            sale_amount: amount,
-            sale_qty: new BigNumber("1"),
-            sale_payouts: [],
-            sale_origin_fees: [],
-            use_all: false,
-          }
+        const isOrderExists = await isExistsSaleOrder(provider, buyRequest)
+        if (isOrderExists) {
           const op = await buyV2(provider, buyRequest)
           return op
         } else {
@@ -496,7 +485,7 @@ export async function testScript(operation?: string, options: any = {}) {
             asset_quantity: new BigNumber(1)
           })
         })
-        const amount = (argv.amount!=undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
+        const amount = (argv.amount != undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
 
         const buyRequest: BuyBundleRequest = {
           bundle: bundle,
@@ -505,6 +494,7 @@ export async function testScript(operation?: string, options: any = {}) {
           sale_asset_contract: argv.ft_contract,
           sale_asset_token_id: argv.ft_token_id,
           sale_amount: amount,
+          sale_qty: new BigNumber(argv.qty),
           sale_payouts: [],
           sale_origin_fees: [],
           use_all: false,
@@ -630,6 +620,97 @@ export async function testScript(operation?: string, options: any = {}) {
 
       const auction = await cancel_auction(provider, contract, new BigNumber(tokenId))
       return auction
+    }
+
+    case 'cancel_v2': {
+      console.log("cancel_v2", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const cancel_request: CancelV2OrderRequest = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        sale_asset_contract: argv.ft_contract,
+        sale_asset_token_id: argv.ft_token_id,
+        sale_type: argv.sale_type
+      }
+      const canceled_order = await cancelV2(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_bundle_sale': {
+      console.log("cancel_bundle_sale", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+      const cancel_request: CancelBundleSaleRequest = {
+        bundle: bundle,
+        sale_asset_contract: argv.ft_contract,
+        sale_asset_token_id: argv.ft_token_id,
+        sale_type: argv.sale_type
+      }
+      const canceled_order = await cancel_bundle_sale(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_bid': {
+      console.log("cancel_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const cancel_request: CancelBid = {
+        asset_contract: contract,
+        asset_token_id: new BigNumber(tokenId),
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type
+      }
+      const canceled_order = await cancel_bid(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_floor_bid': {
+      console.log("cancel_floor_bid", argv.item_id)
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+      const cancel_request: CancelFloorBid = {
+        asset_contract: contract,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type
+      }
+      const canceled_order = await cancel_floor_bid(provider, cancel_request)
+      return canceled_order
+    }
+
+    case 'cancel_bundle_bid': {
+      console.log("cancel_bundle_bid", argv.item_id)
+      const items = argv.item_id.split(",")
+      const bundle: Array<BundleItem> = []
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        bundle.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_quantity: new BigNumber(1)
+        })
+      })
+      const cancel_request: CancelBundleBid = {
+        bundle: bundle,
+        bid_asset_contract: argv.ft_contract,
+        bid_asset_token_id: argv.ft_token_id,
+        bid_type: argv.sale_type
+      }
+      const canceled_order = await cancel_bundle_bid(provider, cancel_request)
+      return canceled_order
     }
 
     case 'cancel_bundle_auction': {
@@ -835,7 +916,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case "get_decimals": {
       try {
-        return get_decimals(provider.config, argv.ft_contract, argv.ft_token_id)
+        return get_decimals(provider.config, argv.ft_contract!, argv.ft_token_id)
       } catch (e) {
         console.error(e)
       }
@@ -843,7 +924,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case "await_v2_order": {
       try {
-        return await_v2_order(provider, argv.ft_contract, argv.ft_token_id!, argv.owner!, argv.order_id, 10, 10)
+        return await_v2_order(provider.config, argv.ft_contract!, argv.ft_token_id!, argv.owner!, argv.order_id, 10, 10)
       } catch (e) {
         console.error(e)
       }
@@ -864,7 +945,30 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case "get_ft_type": {
       try {
-        return get_ft_type(provider.config, argv.ft_contract)
+        return get_ft_type(provider.config, argv.ft_contract!)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "get_order_type": {
+      try {
+        if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+        const [contract, tokenId] = argv.item_id.split(":")
+        const publicKey = await get_public_key(provider)
+        if (!publicKey) {
+          throw new Error("publicKey is undefined")
+        }
+        const maker = pk_to_pkh(publicKey)
+        const request: OrderDataTypeRequest = {
+          contract: contract,
+          token_id: new BigNumber(tokenId),
+          seller: maker,
+          buy_asset_contract: argv.ft_contract,
+          buy_asset_token_id: argv.ft_token_id
+        }
+        return await get_active_order_type(provider.config, request)
       } catch (e) {
         console.error(e)
       }
@@ -901,10 +1005,10 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case 'update_operators_for_all':
       console.log('update operators for all')
-      const arg_update : TransactionArg = {
+      const arg_update: TransactionArg = {
         destination: argv.contract,
         entrypoint: "update_operators_for_all",
-        parameter: [ { prim: 'Left', args : [ { string: argv.operator } ] } ]
+        parameter: [{prim: 'Left', args: [{string: argv.operator}]}]
       }
       const op_update = await send(provider, arg_update)
       await op_update.confirmation()

@@ -47,13 +47,13 @@ export interface FTAssetType {
 
 export interface NFTAssetType {
   asset_class: "NFT";
-  contract?: string;
+  contract: string;
   token_id: BigNumber;
 }
 
 export interface MTAssetType {
   asset_class: "MT";
-  contract?: string;
+  contract: string;
   token_id: BigNumber;
 }
 
@@ -64,6 +64,11 @@ export enum AssetTypeV2 {
   XTZ = 0,
   FA12 = 1,
   FA2 = 2
+}
+
+export enum OrderType {
+  V1 = 0,
+  V2 = 1
 }
 
 export interface AssetBase<T> {
@@ -457,12 +462,16 @@ export async function get_ft_type(config: Config, assetContract: string): Promis
   const result = await fetch(config.tzkt + '/v1/contracts/' + assetContract)
   let assetType = undefined
   if (result.ok) {
-    const data = await result.json()
-    const tzips = data.tzips as Array<string>
-    if(tzips.includes("fa2")){
-      assetType = AssetTypeV2.FA2
-    } else if (tzips.includes("fa12")){
-      assetType = AssetTypeV2.FA12
+    try {
+      const data = await result.json()
+      const tzips = data.tzips as Array<string>
+      if(tzips.includes("fa2")){
+        assetType = AssetTypeV2.FA2
+      } else if (tzips.includes("fa12")){
+        assetType = AssetTypeV2.FA12
+      }
+    } catch (e) {
+      console.error(e)
     }
     return assetType
   }
@@ -519,4 +528,20 @@ export function optional_date_arg(date? : number): MichelsonData {
   }
 }
 
+export function delay(num: number) {
+  return new Promise<void>((r) => setTimeout(r, num))
+}
+
+export function retry<T>(
+    num: number,
+    del: number,
+    thunk: () => Promise<T>
+): Promise<T> {
+  return thunk().catch((error) => {
+    if (num === 0) {
+      throw error
+    }
+    return delay(del).then(() => retry(num - 1, del, thunk))
+  })
+}
 export type TezosNetwork = "mainnet" | "dev" | "testnet"

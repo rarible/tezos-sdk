@@ -6,7 +6,7 @@ export async function pack_unpack() {
   console.log("--------------------")
   console.log("Running pack_unpack test")
   console.log("--------------------")
-  const contract = "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43"
+  const contract = "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA"
   const tokenId = new BigNumber("1")
   const packedFA12Asset = packFA12Asset(contract)
   const packedFA2Asset = packFA2Asset(contract, tokenId)

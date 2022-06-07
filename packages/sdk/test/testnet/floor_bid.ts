@@ -11,7 +11,10 @@ export async function floor_bid() {
 
   const mintedItemId = await testScript('mint', {
     edsk: sellerEdsk,
-    contract: "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43"
+    contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
+    metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
+    amount: 100
   })
   console.log('mintedItemId', mintedItemId)
 

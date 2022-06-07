@@ -6,11 +6,10 @@ import {
     Provider,
     send_batch,
     TransactionArg,
-    approve_v2, BundleItem, mkPackedBundle
+    approve_v2, BundleItem, mkPackedBundle, await_v2_order
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
-import fetch from "node-fetch";
 
 export declare type OrderFormV2 = {
     s_asset_contract: string;
@@ -33,6 +32,7 @@ export declare type BundleSaleData = {
     sale_origin_fees: Array<Part>;
     sale_payouts: Array<Part>;
     sale_amount: BigNumber;
+    sale_qty: BigNumber;
     sale_start?: number;
     sale_end?: number;
     sale_max_fees_base_boint: number;
@@ -73,7 +73,7 @@ export async function sellV2(
     if (args.length != 0) {
         const op = await send_batch(provider, args);
         await op.confirmation();
-        const order_id = await await_v2_order(provider, order.s_asset_contract, order.s_asset_token_id, seller, op.hash, 3, 5000)
+        const order_id = await await_v2_order(provider.config, order.s_asset_contract, order.s_asset_token_id, seller, op.hash, 10, 2000)
         return order_id
     }
 }
@@ -105,43 +105,8 @@ export async function sellBundle(
     }
 }
 
-export async function await_v2_order(
-    provider: Provider,
-    asset_contract: string,
-    asset_token_id: BigNumber,
-    seller: string,
-    op_hash: string,
-    max_tries: number,
-    sleep: number): Promise<string | undefined> {
-    let order_id = undefined
-    let tries = 0
-
-    const payload = {
-        "query": `query MyQuery { marketplace_activity(where: {make_contract: {_eq: "${asset_contract}"}, make_token_id: {_eq: "${asset_token_id.toString()}"}, maker: {_eq: "${seller}"}, operation_hash: {_eq: "${op_hash}"}}) { id } }`,
-        "variables": null,
-        "operationName": "MyQuery"
-    }
-    while (tries < max_tries && order_id == undefined) {
-        const res = await fetch(provider.config.dipdup, {
-            method: 'post',
-            body: JSON.stringify(payload),
-            headers: {'Content-Type': 'application/json'}
-        })
-        const json = await res.json()
-        const result = json.data.marketplace_activity
-        if(result.length == 1) {
-            console.log(result)
-            order_id = result[0].id
-            break
-        } else {
-          await delay(sleep)
-        }
-    }
-    return order_id
-}
-
 function delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export function sell_arg_v2(
@@ -296,16 +261,24 @@ export function bundle_sell_arg_v2(
                                                                         prim: "Pair",
                                                                         args: [
                                                                             {
-                                                                                int: `${order.s_sale.sale_max_fees_base_boint}`
+                                                                                int: `${order.s_sale.sale_qty}`
                                                                             },
                                                                             {
                                                                                 prim: "Pair",
                                                                                 args: [
                                                                                     {
-                                                                                        prim: "None"
+                                                                                        int: `${order.s_sale.sale_max_fees_base_boint}`
                                                                                     },
                                                                                     {
-                                                                                        prim: "None"
+                                                                                        prim: "Pair",
+                                                                                        args: [
+                                                                                            {
+                                                                                                prim: "None"
+                                                                                            },
+                                                                                            {
+                                                                                                prim: "None"
+                                                                                            }
+                                                                                        ]
                                                                                     }
                                                                                 ]
                                                                             }

@@ -3,6 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.21](https://github.com/rarible/tezos-sdk/compare/v0.1.20...v0.1.21) (2022-06-02)
+
+
+### Bug Fixes
+
+* contract in nft, mt asset types ([7311009](https://github.com/rarible/tezos-sdk/commit/7311009511548a1291ee56576fdb877769284c45))
+
+
+
+
+
+## [0.1.20](https://github.com/rarible/tezos-sdk/compare/v0.1.19...v0.1.20) (2022-06-02)
+
+**Note:** Version bump only for package @rarible/tezos-common
+
+
+
+
+
+## [0.1.19](https://github.com/rarible/tezos-sdk/compare/v0.1.18...v0.1.19) (2022-05-23)
+
+
+### Bug Fixes
+
+* get_ft_type, await_v2_order ([3969d8f](https://github.com/rarible/tezos-sdk/commit/3969d8f80e0a26c20377dbf357a8dc32c91a5279))
+
+
+
+
+
+## [0.1.18](https://github.com/rarible/tezos-sdk/compare/v0.1.17...v0.1.18) (2022-05-19)
+
+
+### Bug Fixes
+
+* get_balance ([067823b](https://github.com/rarible/tezos-sdk/commit/067823b96787aeee452207daa3ecb9f5dc17b299))
+
+
+
+
+
 ## [0.1.17](https://github.com/rarible/tezos-sdk/compare/v0.1.16...v0.1.17) (2022-05-19)
 
 

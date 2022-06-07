@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.21](https://github.com/rarible/tezos-sdk/compare/v0.1.20...v0.1.21) (2022-06-02)
+
+**Note:** Version bump only for package @rarible/tezos-contracts
+
+
+
+
+
+## [0.1.20](https://github.com/rarible/tezos-sdk/compare/v0.1.19...v0.1.20) (2022-06-02)
+
+**Note:** Version bump only for package @rarible/tezos-contracts
+
+
+
+
+
+## [0.1.19](https://github.com/rarible/tezos-sdk/compare/v0.1.18...v0.1.19) (2022-05-23)
+
+**Note:** Version bump only for package @rarible/tezos-contracts
+
+
+
+
+
+## [0.1.18](https://github.com/rarible/tezos-sdk/compare/v0.1.17...v0.1.18) (2022-05-19)
+
+**Note:** Version bump only for package @rarible/tezos-contracts
+
+
+
+
+
 ## [0.1.17](https://github.com/rarible/tezos-sdk/compare/v0.1.16...v0.1.17) (2022-05-19)
 
 **Note:** Version bump only for package @rarible/tezos-contracts

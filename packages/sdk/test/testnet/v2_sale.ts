@@ -11,7 +11,9 @@ export async function v2_sale() {
 
   const mintedItemId = await testScript('mint', {
     edsk: sellerEdsk,
-    contract: "KT1GQwnRxUDNTJHAzi22wZbyKW4w5Bt2H2nD",
+    contract: "KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA",
+    metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
+    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
     amount: 100
   })
   console.log('mintedItemId', mintedItemId)
@@ -24,6 +26,8 @@ export async function v2_sale() {
     sale_type: AssetTypeV2.XTZ,
     ft_contract: undefined,
     ft_token_id: undefined,
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('sellOrder', sellOrder)
 
@@ -34,7 +38,8 @@ export async function v2_sale() {
     sale_type: AssetTypeV2.XTZ,
     ft_contract: undefined,
     ft_token_id: undefined,
-    amount: 0.000002
+    qty: 1,
+    amount: 0.000002,
   })
   console.log('buyOrder', buyOrder)
 }
