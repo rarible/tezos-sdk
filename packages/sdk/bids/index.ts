@@ -7,7 +7,7 @@ import {
   Provider,
   send_batch,
   TransactionArg,
-  approve_v2
+  approve_v2, optional_date_arg
 } from "@rarible/tezos-common"
 import {MichelsonData} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
@@ -41,6 +41,7 @@ export interface BundleBidInfo {
   bid_origin_fees : Array<Part>;
   bid_payouts : Array<Part>;
   bid_amount : BigNumber;
+  bid_expiry_date?: number;
   bid_data_type?  : string;
   bid_data?       : string;
 }
@@ -50,6 +51,7 @@ export interface BidInfo {
   bid_payouts : Array<Part>;
   bid_amount : BigNumber;
   bid_asset_qty: BigNumber;
+  bid_expiry_date?: number;
   bid_data_type?  : string;
   bid_data?       : string;
 }
@@ -245,6 +247,7 @@ function bid_arg(
                                   {
                                     int: `${bid.bid.bid_asset_qty}`
                                   },
+                                  optional_date_arg(bid.bid.bid_expiry_date),
                                   {
                                     prim: "Pair",
                                     args: [
@@ -323,6 +326,7 @@ function floor_bid_arg(
                               {
                                 int: `${bid.bid.bid_asset_qty}`
                               },
+                              optional_date_arg(bid.bid.bid_expiry_date),
                               {
                                 prim: "Pair",
                                 args: [
@@ -393,6 +397,7 @@ function bundle_bid_arg(
                           {
                             int: `${processed_amount}`
                           },
+                          optional_date_arg(bid.bid.bid_expiry_date),
                           {
                             prim: "Pair",
                             args: [

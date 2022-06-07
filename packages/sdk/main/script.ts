@@ -136,8 +136,8 @@ export async function testScript(operation?: string, options: any = {}) {
     sales: "KT1K2mNPj9U9497KjUggkgGcuuPsKrLr34zW",
     sales_storage: "KT1JCKdM4S6489KbjYw8sKB1Zb1UzZm8vEcX",
     transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
-    bid: "KT1UcBbv2D84mZ9tZx4MVLbCNyC5ihJERED2",
-    bid_storage: "KT1VXSBANyhqGiGgXjt5mT9XXQMbujdfJFw2",
+    bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+    bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
     sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
     tzkt: "https://api.ithacanet.tzkt.io",
     dipdup: "https://rarible-ithacanet.dipdup.net/v1/graphql"
@@ -160,8 +160,8 @@ export async function testScript(operation?: string, options: any = {}) {
     sales: "KT1LaV45iMDES1nXELGsnQgRHKzct2wc6EcT",
     sales_storage: "KT1TEnB3APwPN4CGePGdAEA6uihdFfx6Skmq",
     transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
-    bid: "KT1H9fa1QF4vyAt3vQcj65PiJJNG7vNVrkoW",
-    bid_storage: "KT19c5jc4Y8so1FWbrRA8CucjUeNXZsP8yHr",
+    bid: "KT1DJxerfM2nPYYsVNBxaevppwhkCGwZzsGT",
+    bid_storage: "KT1NvX6EQUqjUuQXsBU3eocpkbZsVX71FcTn",
     sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT",
     tzkt: "http://dev-tezos-tzkt.rarible.org",
     dipdup: "http://dev-tezos-indexer.rarible.org/v1/graphql"
