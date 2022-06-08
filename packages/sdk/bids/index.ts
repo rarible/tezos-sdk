@@ -7,7 +7,7 @@ import {
   Provider,
   send_batch,
   TransactionArg,
-  approve_v2
+  approve_v2, optional_date_arg, await_v2_bid
 } from "@rarible/tezos-common"
 import {MichelsonData} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
@@ -41,6 +41,7 @@ export interface BundleBidInfo {
   bid_origin_fees : Array<Part>;
   bid_payouts : Array<Part>;
   bid_amount : BigNumber;
+  bid_expiry_date?: number;
   bid_data_type?  : string;
   bid_data?       : string;
 }
@@ -50,6 +51,7 @@ export interface BidInfo {
   bid_payouts : Array<Part>;
   bid_amount : BigNumber;
   bid_asset_qty: BigNumber;
+  bid_expiry_date?: number;
   bid_data_type?  : string;
   bid_data?       : string;
 }
@@ -97,7 +99,7 @@ export interface CancelBundleBid {
   bid_asset_token_id?: BigNumber;
 }
 
-export async function put_bid(provider: Provider, bid: Bid) : Promise<OperationResult> {
+export async function put_bid(provider: Provider, bid: Bid) : Promise<string | undefined> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
   const processed_amount = await absolute_amount(provider.config, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
@@ -108,10 +110,11 @@ export async function put_bid(provider: Provider, bid: Bid) : Promise<OperationR
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
   await op.confirmation();
-  return op
+  const bid_id = await await_v2_bid(provider.config, bid.asset_contract, bidder, op.hash, 10, 2000, bid.asset_token_id.toString())
+  return bid_id
 }
 
-export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise<OperationResult> {
+export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise<string | undefined> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
   const processed_amount = await absolute_amount(provider.config, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
@@ -122,7 +125,8 @@ export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
   await op.confirmation();
-  return op
+  const bid_id = await await_v2_bid(provider.config, bid.asset_contract, bidder, op.hash, 10, 2000)
+  return bid_id
 }
 
 export async function put_bundle_bid(provider: Provider, bid: BundleBid) : Promise<OperationResult> {
@@ -245,6 +249,7 @@ function bid_arg(
                                   {
                                     int: `${bid.bid.bid_asset_qty}`
                                   },
+                                  optional_date_arg(bid.bid.bid_expiry_date),
                                   {
                                     prim: "Pair",
                                     args: [
@@ -323,6 +328,7 @@ function floor_bid_arg(
                               {
                                 int: `${bid.bid.bid_asset_qty}`
                               },
+                              optional_date_arg(bid.bid.bid_expiry_date),
                               {
                                 prim: "Pair",
                                 args: [
@@ -393,6 +399,7 @@ function bundle_bid_arg(
                           {
                             int: `${processed_amount}`
                           },
+                          optional_date_arg(bid.bid.bid_expiry_date),
                           {
                             prim: "Pair",
                             args: [
