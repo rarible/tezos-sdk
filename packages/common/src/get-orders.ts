@@ -71,20 +71,34 @@ export async function await_v2_order(
         "variables": null,
         "operationName": "MyQuery"
     }
-    return retry(max_tries || min_tries, sleep, async () => {
-        const res = await fetch(config.dipdup, {
-            method: 'post',
-            body: JSON.stringify(payload),
-            headers: {'Content-Type': 'application/json'}
-        })
-        const json = await res.json()
-        const result = json.data.marketplace_activity
-        if (result.length >= 1) {
-            return result[0].id
-        } else {
-            throw new Error("OrderID cannot be requested")
-        }
-    })
+
+    return fetch_order_with_retry(config.dipdup, min_tries, max_tries, sleep, payload)
+}
+
+export async function await_v2_bid(
+    config: Config,
+    take_asset_contract: string,
+    seller: string,
+    op_hash: string,
+    max_tries: number,
+    sleep: number,
+    take_asset_token_id?: string
+): Promise<string | undefined> {
+    let min_tries = 1
+    let token_id_filter = ""
+    if(take_asset_token_id != undefined){
+        token_id_filter = `, take_token_id: {_eq: "${take_asset_token_id.toString()}"}`
+    }
+    const payload = {
+        "query": `query MyQuery {
+            marketplace_activity(where: {take_contract: {_eq: "${take_asset_contract}"}, maker: {_eq: "${seller}"}, operation_hash: {_eq: "${op_hash}"}${token_id_filter}}) {
+                id
+            }
+        }`,
+        "variables": null,
+        "operationName": "MyQuery"
+    }
+    return fetch_order_with_retry(config.dipdup, min_tries, max_tries, sleep, payload)
 }
 
 export async function get_v2_orders(
@@ -127,4 +141,22 @@ export async function get_v2_orders(
         }
     }
     return orders
+}
+
+
+function fetch_order_with_retry(url: string, min_tries: number, max_tries: number, sleep: number, payload: {query: string, variables: null, operationName: string}){
+    return retry(max_tries || min_tries, sleep, async () => {
+        const res = await fetch(url, {
+            method: 'post',
+            body: JSON.stringify(payload),
+            headers: {'Content-Type': 'application/json'}
+        })
+        const json = await res.json()
+        const result = json.data.marketplace_activity
+        if (result.length >= 1) {
+            return result[0].id
+        } else {
+            throw new Error("OrderID cannot be requested")
+        }
+    })
 }
