@@ -52,7 +52,7 @@ import {
   put_floor_bid
 } from "../bids";
 import {BundleOrderForm, OrderFormV2, sell_v2_batch, sellBundle, sellV2} from "../sales/sell";
-import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
+import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
@@ -543,6 +543,38 @@ export async function testScript(operation?: string, options: any = {}) {
         }
       }
       break
+    }
+
+    case "batch_buy_v2": {
+      const batch_buy_form: Array<BuyRequest> = []
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+
+      const ft_token_id = (argv.ft_token_id!=undefined) ? new BigNumber(argv.ft_token_id) : new BigNumber(0)
+      const amount = (argv.amount!=undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
+
+      const items = argv.item_id.split(",")
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        batch_buy_form.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_seller: argv.owner!,
+          sale_type: argv.sale_type,
+          sale_asset_contract: argv.ft_contract,
+          sale_asset_token_id: ft_token_id,
+          sale_amount: amount,
+          sale_qty: new BigNumber(argv.qty),
+          sale_payouts: [],
+          sale_origin_fees: [],
+          use_all: false,
+        })
+      })
+
+      const op = await buy_v2_batch(provider, batch_buy_form)
+      return op
     }
 
     case "buy_bundle": {
