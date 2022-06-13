@@ -7,7 +7,7 @@ import {
   fill_order,
   finish_auction, finish_bundle_auction,
   get_auction,
-  mint,
+  mint, mint_batch, MintingForm,
   order_of_json,
   OrderForm,
   put_auction_bid, put_bundle_auction_bid,
@@ -30,9 +30,8 @@ import {
 import {
   check_asset_type,
   get_decimals, get_public_key,
-  getAsset, pk_to_pkh,
+  pk_to_pkh,
   send, set_metadata,
-  StorageSalesV2,
   TransactionArg,
   UnknownTokenAssetType,
   BundleItem,
@@ -192,6 +191,25 @@ export async function testScript(operation?: string, options: any = {}) {
       await op_mint.confirmation()
       console.log(`minted item=${argv.contract}:${op_mint.token_id.toString()} hash=${op_mint.hash}`)
       return `${argv.contract}:${op_mint.token_id.toString()}`
+
+    case 'batch_mint':
+      console.log("mint")
+        const batch_form: Array<MintingForm> = []
+        for(let i = 0; i < argv.qty; i++){
+          batch_form.push({
+            contract: argv.contract,
+            royalties: royalties,
+            supply: amount,
+            owner: argv.owner,
+            token_id: token_id_opt,
+            metadata: metadata
+          })
+        }
+      const batch_op_mint = await mint_batch(provider, batch_form)
+      await batch_op_mint.confirmation()
+      console.log(`minted item=${argv.contract}:${batch_op_mint.token_ids.toString()} hash=${batch_op_mint.hash}`)
+      return batch_op_mint
+
 
     case 'burn':
       console.log("burn")

@@ -84,6 +84,8 @@ export interface OperationResult {
 }
 
 export type MintResult = OperationResult & { token_id: BigNumber }
+export type BatchMintResult = OperationResult & { token_ids: Array<BigNumber> }
+
 export type DeployResult = OperationResult & { contract: string }
 
 export interface TezosProvider {
