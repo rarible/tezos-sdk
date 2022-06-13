@@ -51,7 +51,7 @@ import {
   put_bundle_bid,
   put_floor_bid
 } from "../bids";
-import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
+import {BundleOrderForm, OrderFormV2, sell_v2_batch, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 
@@ -405,6 +405,41 @@ export async function testScript(operation?: string, options: any = {}) {
 
       }
       const order = await sellV2(provider, sell_request)
+      console.log('order=', order)
+      return order
+    }
+
+    case 'batch_sell_v2': {
+      console.log("sell item", argv.item_id)
+      const batch_sell_form: Array<OrderFormV2> = []
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      const items = argv.item_id.split(",")
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        batch_sell_form.push({
+          s_asset_contract: contract,
+          s_asset_token_id: new BigNumber(tokenId),
+          s_sale_type: argv.sale_type,
+          s_sale_asset_contract: argv.ft_contract,
+          s_sale_asset_token_id: argv.ft_token_id,
+          s_sale: {
+            sale_amount: new BigNumber(argv.amount),
+            sale_asset_qty: new BigNumber(argv.qty),
+            sale_max_fees_base_boint: 10000,
+            sale_end: undefined,
+            sale_start: undefined,
+            sale_origin_fees: [],
+            sale_payouts: [],
+            sale_data: undefined,
+            sale_data_type: undefined
+          }
+        })
+      })
+
+      const order = await sell_v2_batch(provider, batch_sell_form)
       console.log('order=', order)
       return order
     }

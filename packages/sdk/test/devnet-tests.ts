@@ -37,11 +37,17 @@ import {dev_pack_unpack} from "./devnet/dev_pack_unpack";
 import {dev_get_order_type} from "./devnet/dev_check_sale_type";
 import {dev_batch_mint} from "./devnet/dev_batch_mint";
 import {dev_batch_transfer} from "./devnet/dev_batch_transfer";
+import {dev_batch_v2_sale} from "./devnet/dev_batch_v2_sell";
 
 async function run_tests(){
-    //Mint
+    //Batch Mint
     await dev_batch_mint()
+
+    //Batch Transfer
     await dev_batch_transfer()
+
+    //Batch Sell
+    await dev_batch_v2_sale()
 
     //Sales
     await dev_sale()

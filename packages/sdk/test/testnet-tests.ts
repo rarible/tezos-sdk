@@ -35,12 +35,18 @@ import {cancel_bundle_bid} from "./testnet/cancel_bundle_bid";
 import {get_order_type} from "./testnet/check_sale_type";
 import {batch_mint} from "./testnet/batch_mint";
 import {batch_transfer} from "./testnet/batch_transfer";
+import {batch_v2_sale} from "./testnet/batch_v2_sell";
 
 
 async function run_tests(){
-    //Mint
+    //Batch Mint
     await batch_mint()
+
+    //Batch Transfer
     await batch_transfer()
+
+    //Batch sell
+    await batch_v2_sale()
 
     //Auctions
     await auction()
