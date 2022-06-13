@@ -15,7 +15,7 @@ import {
   SellRequest,
   set_token_metadata,
   start_auction, start_bundle_auction,
-  transfer
+  transfer, transfer_batch, TransferForm
 } from "./index"
 import {in_memory_provider} from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
@@ -183,6 +183,25 @@ export async function testScript(operation?: string, options: any = {}) {
       const op_transfer = await transfer(provider, {asset_class, contract: argv.contract, token_id}, to, amount)
       await op_transfer.confirmation()
       console.log(op_transfer.hash)
+      break
+
+    case 'batch_transfer' :
+      console.log("transfer")
+      const transfer_batch_form: Array<TransferForm> = []
+      const items = argv.item_id.split(",")
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+          transfer_batch_form.push({
+            asset_type: {asset_class: "MT", contract: contract, token_id: new BigNumber(tokenId)},
+            to: to,
+            amount: amount
+          })
+      })
+
+      const op_batch_transfer = await transfer_batch(provider, transfer_batch_form)
+      await op_batch_transfer.confirmation()
+      console.log(op_batch_transfer.hash)
+      return op_batch_transfer
       break
 
     case 'mint':

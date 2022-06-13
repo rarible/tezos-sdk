@@ -34,11 +34,13 @@ import {cancel_floor_bid} from "./testnet/cancel_floor_bid";
 import {cancel_bundle_bid} from "./testnet/cancel_bundle_bid";
 import {get_order_type} from "./testnet/check_sale_type";
 import {batch_mint} from "./testnet/batch_mint";
+import {batch_transfer} from "./testnet/batch_transfer";
 
 
 async function run_tests(){
     //Mint
     await batch_mint()
+    await batch_transfer()
 
     //Auctions
     await auction()
