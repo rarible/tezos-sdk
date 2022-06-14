@@ -235,7 +235,6 @@ export async function isExistsSaleOrder(provider: Provider, buyRequest: BuyReque
         4: getAsset(buyRequest.sale_type, buyRequest.sale_asset_contract, ft_token_id),
       }
     )
-    console.log('order', order)
     key_exists = order !== undefined
   } catch (error) {
     console.log(error)
