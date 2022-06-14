@@ -186,4 +186,3 @@ export async function dev_get_order_type() {
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
-dev_get_order_type()

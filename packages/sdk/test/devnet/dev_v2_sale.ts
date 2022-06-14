@@ -34,19 +34,6 @@ export async function dev_v2_sale() {
   })
   console.log('sellOrder', sellOrder)
 
-  /*
-{
-    "asset_contract": "KT1PuABq2ReD789KtKetktvVKJcCMpyDgwUx",
-    "asset_token_id": "21",
-    "asset_seller": "tz1RLtXUYvgv7uTZGJ1ZtPQFg3PZkj4NUHrz",
-    "sale_type": 0,
-    "sale_amount": "1",
-    "sale_qty": "0.0001",
-    "sale_payouts": [],
-    "sale_origin_fees": [],
-    "use_all": false
-  }
- */
   const buyOrder = await testScript('buy_v2', {
     edsk: buyerEdsk,
     item_id: mintedItemId,
@@ -70,4 +57,3 @@ export async function dev_v2_sale() {
   console.log('itemAfterPurchase', item)
 
 }
-dev_v2_sale()

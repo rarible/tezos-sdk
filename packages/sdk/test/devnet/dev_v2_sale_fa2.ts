@@ -56,6 +56,4 @@ export async function dev_v2_sale_fa2() {
     }
   })
   console.log('itemAfterPurchase', item)
-
 }
-dev_v2_sale_fa2()
