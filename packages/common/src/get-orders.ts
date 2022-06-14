@@ -67,7 +67,7 @@ export async function await_v2_order(
     let min_tries = 1
 
     const payload = {
-        "query": `query MyQuery { marketplace_activity(where: {make_contract: {_eq: "${asset_contract}"}, make_token_id: {_eq: "${asset_token_id.toString()}"}, maker: {_eq: "${seller}"}, operation_hash: {_eq: "${op_hash}"}}) { id } }`,
+        "query": `query MyQuery { marketplace_activity(where: {make_contract: {_eq: "${asset_contract}"}, make_token_id: {_eq: "${asset_token_id.toString()}"}, maker: {_eq: "${seller}"}, operation_hash: {_eq: "${op_hash}"}}) { order_id } }`,
         "variables": null,
         "operationName": "MyQuery"
     }
@@ -154,7 +154,7 @@ function fetch_order_with_retry(url: string, min_tries: number, max_tries: numbe
         const json = await res.json()
         const result = json.data.marketplace_activity
         if (result.length >= 1) {
-            return result[0].id
+            return result[0].order_id
         } else {
             throw new Error("OrderID cannot be requested")
         }
