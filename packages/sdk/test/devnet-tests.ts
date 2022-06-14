@@ -35,8 +35,20 @@ import {dev_get_decimals} from "./devnet/dev_get_decimals";
 import {dev_get_ft_type} from "./devnet/dev_get_ft_type";
 import {dev_pack_unpack} from "./devnet/dev_pack_unpack";
 import {dev_get_order_type} from "./devnet/dev_check_sale_type";
+import {dev_batch_mint} from "./devnet/dev_batch_mint";
+import {dev_batch_transfer} from "./devnet/dev_batch_transfer";
+import {dev_batch_v2_sale} from "./devnet/dev_batch_v2_sale";
 
 async function run_tests(){
+    //Batch Mint
+    await dev_batch_mint()
+
+    //Batch Transfer
+    await dev_batch_transfer()
+
+    //Batch Sell
+    await dev_batch_v2_sale()
+
     //Sales
     await dev_sale()
     await dev_sale_fa2()
@@ -94,6 +106,6 @@ async function run_tests(){
     await dev_get_ft_type()
     await dev_pack_unpack()
     await dev_get_order_type()
-    // //await dev_get_auction()
+    //await dev_get_auction()
 }
 run_tests()

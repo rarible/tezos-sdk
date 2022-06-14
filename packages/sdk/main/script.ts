@@ -7,7 +7,7 @@ import {
   fill_order,
   finish_auction, finish_bundle_auction,
   get_auction,
-  mint,
+  mint, mint_batch, MintingForm,
   order_of_json,
   OrderForm,
   put_auction_bid, put_bundle_auction_bid,
@@ -15,7 +15,7 @@ import {
   SellRequest,
   set_token_metadata,
   start_auction, start_bundle_auction,
-  transfer
+  transfer, transfer_batch, TransferForm
 } from "./index"
 import {in_memory_provider} from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
@@ -30,9 +30,8 @@ import {
 import {
   check_asset_type,
   get_decimals, get_public_key,
-  getAsset, pk_to_pkh,
+  pk_to_pkh,
   send, set_metadata,
-  StorageSalesV2,
   TransactionArg,
   UnknownTokenAssetType,
   BundleItem,
@@ -52,8 +51,8 @@ import {
   put_bundle_bid,
   put_floor_bid
 } from "../bids";
-import {BundleOrderForm, OrderFormV2, sellBundle, sellV2} from "../sales/sell";
-import {buy_bundle, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
+import {BundleOrderForm, OrderFormV2, sell_v2_batch, sellBundle, sellV2} from "../sales/sell";
+import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
@@ -186,12 +185,50 @@ export async function testScript(operation?: string, options: any = {}) {
       console.log(op_transfer.hash)
       break
 
+    case 'batch_transfer' :
+      console.log("transfer")
+      const transfer_batch_form: Array<TransferForm> = []
+      const items = argv.item_id.split(",")
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+          transfer_batch_form.push({
+            asset_type: {asset_class: "MT", contract: contract, token_id: new BigNumber(tokenId)},
+            to: to,
+            amount: amount
+          })
+      })
+
+      const op_batch_transfer = await transfer_batch(provider, transfer_batch_form)
+      await op_batch_transfer.confirmation()
+      console.log(op_batch_transfer.hash)
+      return op_batch_transfer
+      break
+
     case 'mint':
       console.log("mint")
       const op_mint = await mint(provider, argv.contract, royalties, amount, token_id_opt, metadata, argv.owner)
       await op_mint.confirmation()
       console.log(`minted item=${argv.contract}:${op_mint.token_id.toString()} hash=${op_mint.hash}`)
       return `${argv.contract}:${op_mint.token_id.toString()}`
+
+    case 'batch_mint':
+      console.log("mint")
+        const batch_form: Array<MintingForm> = []
+        for(let i = 0; i < argv.qty; i++){
+          batch_form.push({
+            contract: argv.contract,
+            royalties: royalties,
+            supply: amount,
+            owner: argv.owner,
+            token_id: token_id_opt,
+            metadata: metadata
+          })
+        }
+      const batch_op_mint = await mint_batch(provider, batch_form)
+      await batch_op_mint.confirmation()
+      console.log(`minted item=${argv.contract}:${batch_op_mint.token_ids.toString()} hash=${batch_op_mint.hash}`)
+      return batch_op_mint
+
 
     case 'burn':
       console.log("burn")
@@ -372,6 +409,41 @@ export async function testScript(operation?: string, options: any = {}) {
       return order
     }
 
+    case 'batch_sell_v2': {
+      console.log("sell item", argv.item_id)
+      const batch_sell_form: Array<OrderFormV2> = []
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      const items = argv.item_id.split(",")
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        batch_sell_form.push({
+          s_asset_contract: contract,
+          s_asset_token_id: new BigNumber(tokenId),
+          s_sale_type: argv.sale_type,
+          s_sale_asset_contract: argv.ft_contract,
+          s_sale_asset_token_id: argv.ft_token_id,
+          s_sale: {
+            sale_amount: new BigNumber(argv.amount),
+            sale_asset_qty: new BigNumber(argv.qty),
+            sale_max_fees_base_boint: 10000,
+            sale_end: undefined,
+            sale_start: undefined,
+            sale_origin_fees: [],
+            sale_payouts: [],
+            sale_data: undefined,
+            sale_data_type: undefined
+          }
+        })
+      })
+
+      const order = await sell_v2_batch(provider, batch_sell_form)
+      console.log('order=', order)
+      return order
+    }
+
     case 'sell_bundle': {
       console.log("sell bundle", argv.item_id)
       const publicKey = await get_public_key(provider)
@@ -471,6 +543,38 @@ export async function testScript(operation?: string, options: any = {}) {
         }
       }
       break
+    }
+
+    case "batch_buy_v2": {
+      const batch_buy_form: Array<BuyRequest> = []
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+
+      const ft_token_id = (argv.ft_token_id!=undefined) ? new BigNumber(argv.ft_token_id) : new BigNumber(0)
+      const amount = (argv.amount!=undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
+
+      const items = argv.item_id.split(",")
+      items.forEach(item => {
+        const [contract, tokenId] = item.split(":")
+        batch_buy_form.push({
+          asset_contract: contract,
+          asset_token_id: new BigNumber(tokenId),
+          asset_seller: argv.owner!,
+          sale_type: argv.sale_type,
+          sale_asset_contract: argv.ft_contract,
+          sale_asset_token_id: ft_token_id,
+          sale_amount: amount,
+          sale_qty: new BigNumber(argv.qty),
+          sale_payouts: [],
+          sale_origin_fees: [],
+          use_all: false,
+        })
+      })
+
+      const op = await buy_v2_batch(provider, batch_buy_form)
+      return op
     }
 
     case "buy_bundle": {

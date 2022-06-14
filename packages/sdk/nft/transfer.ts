@@ -1,7 +1,21 @@
 import { MichelsonData } from "@taquito/michel-codec"
-import { Provider, send, TransactionArg, get_address, OperationResult } from "@rarible/tezos-common"
+import {
+  Provider,
+  send,
+  TransactionArg,
+  get_address,
+  OperationResult,
+  send_batch
+} from "@rarible/tezos-common"
 import { check_asset_type, ExtendedAssetType } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
+import {mint_mt_arg, mint_nft_arg, MintingForm} from "./mint";
+
+export declare type TransferForm = {
+  asset_type: ExtendedAssetType,
+  to: string,
+  amount?: BigNumber
+}
 
 function transfer_param(
   from: string,
@@ -98,4 +112,15 @@ export async function transfer(
   amount?: BigNumber) : Promise<OperationResult> {
   const arg = await transfer_arg(provider, asset_type, to, amount)
   return send(provider, arg)
+}
+
+export async function transfer_batch(
+    provider: Provider,
+    form: Array<TransferForm>) : Promise<OperationResult> {
+  let args: TransactionArg[] = [];
+  for(let transfer of form) {
+    const arg = await transfer_arg(provider, transfer.asset_type, transfer.to, transfer.amount)
+    args = args.concat(arg)
+  }
+  return send_batch(provider, args)
 }

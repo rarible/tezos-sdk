@@ -95,6 +95,38 @@ export async function buy_bundle(
     }
 }
 
+export async function buy_v2_batch(
+    provider: Provider,
+    sale_form: Array<BuyRequest>,
+    use_all = false
+) {
+    let args: TransactionArg[] = [];
+    const seller = await provider.tezos.address();
+
+    for (const sale of sale_form) {
+        const processed_amount = await absolute_amount(provider.config, sale.sale_amount, sale.sale_type, sale.sale_asset_contract, sale.sale_asset_token_id)
+        const approve_a = await approve_v2(
+            provider,
+            seller,
+            sale.sale_type,
+            provider.config.transfer_manager,
+            sale.sale_asset_contract,
+            sale.sale_asset_token_id,
+            processed_amount,
+            use_all
+        );
+        if (approve_a) args = args.concat(approve_a);
+        args = args.concat(buy_arg_v2(provider, sale));
+    }
+
+    if (args.length != 0) {
+        const op = await send_batch(provider, args);
+        await op.confirmation();
+        console.log(op)
+        return op
+    }
+}
+
 export function buy_arg_v2(
     provider: Provider,
     sale: BuyRequest

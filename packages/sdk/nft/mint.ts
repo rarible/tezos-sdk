@@ -1,7 +1,25 @@
 import { MichelsonData } from "@taquito/michel-codec"
-import { Provider, send, TransactionArg, get_address, OperationResult, MintResult, to_hex } from "@rarible/tezos-common"
+import {
+  Provider,
+  send,
+  TransactionArg,
+  get_address,
+  OperationResult,
+  MintResult,
+  to_hex,
+  send_batch, BatchMintResult
+} from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
+
+export declare type MintingForm = {
+  contract: string;
+  royalties : { [key: string]: BigNumber };
+  supply?: BigNumber;
+  token_id?: BigNumber;
+  metadata?: { [key: string]: string };
+  owner?: string;
+}
 
 function mint_param(
   token_id: BigNumber,
@@ -138,4 +156,25 @@ export async function mint(
 ) : Promise<MintResult> {
   if (supply!=undefined) { return mint_mt(provider, contract, royalties, supply, token_id, metadata, owner) }
   else { return mint_nft(provider, contract, royalties, token_id, metadata, owner) }
+}
+
+export async function mint_batch(
+    provider: Provider,
+    form: Array<MintingForm>
+) : Promise<BatchMintResult> {
+  let args: TransactionArg[] = [];
+  let ids: Array<BigNumber> = [];
+  for(let mint of form) {
+    if(mint.supply != undefined){
+      const [ next_id, arg ] = await mint_mt_arg(provider, mint.contract, mint.royalties, mint.supply, mint.token_id, mint.metadata, mint.owner)
+      args = args.concat(arg)
+      ids.push(next_id)
+    } else {
+      const [ next_id, arg ] = await mint_nft_arg(provider, mint.contract, mint.royalties, mint.token_id, mint.metadata, mint.owner)
+      args = args.concat(arg)
+      ids.push(next_id)
+    }
+  }
+  let op = await send_batch(provider, args)
+  return {...op, token_ids : ids }
 }
