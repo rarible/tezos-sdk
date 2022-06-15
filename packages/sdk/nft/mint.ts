@@ -45,7 +45,7 @@ function metadata_param(
 export async function get_next_token_id(
   provider: Provider,
   contract: string) : Promise<BigNumber> {
-  const r = await fetch(provider.config.api + '/collections/' + contract + '/generate_token_id')
+  const r = await fetch(provider.config.union_api + '/collections/TEZOS:' + contract + '/generate_token_id')
   if (r.ok) {
     const json = await r.json()
     return new BigNumber(json.tokenId)

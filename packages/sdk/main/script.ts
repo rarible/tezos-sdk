@@ -140,7 +140,8 @@ export async function testScript(operation?: string, options: any = {}) {
     bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
     sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
     tzkt: "https://api.ithacanet.tzkt.io",
-    dipdup: "https://rarible-ithacanet.dipdup.net/v1/graphql"
+    dipdup: "https://rarible-ithacanet.dipdup.net/v1/graphql",
+    union_api: "https://staging-api.rarible.org/v0.1"
   }
 
   const devConfig = {
@@ -164,7 +165,8 @@ export async function testScript(operation?: string, options: any = {}) {
     bid_storage: "KT1NvX6EQUqjUuQXsBU3eocpkbZsVX71FcTn",
     sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT",
     tzkt: "http://dev-tezos-tzkt.rarible.org",
-    dipdup: "http://dev-tezos-indexer.rarible.org/v1/graphql"
+    dipdup: "http://dev-tezos-indexer.rarible.org/v1/graphql",
+    union_api: "https://dev-api.rarible.org/v0.1"
   }
 
   const provider = {
