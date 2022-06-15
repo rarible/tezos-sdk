@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.23](https://github.com/rarible/tezos-sdk/compare/v0.1.22...v0.1.23) (2022-06-15)
+
+
+### Bug Fixes
+
+* v2 orders ([#26](https://github.com/rarible/tezos-sdk/issues/26)) ([446ff60](https://github.com/rarible/tezos-sdk/commit/446ff6076c3203511ece1faa29c72a12f843adad))
+
+
+
+
+
 ## [0.1.21](https://github.com/rarible/tezos-sdk/compare/v0.1.20...v0.1.21) (2022-06-02)
 
 
