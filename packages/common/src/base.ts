@@ -123,7 +123,8 @@ export interface Config {
   bid_storage: string,
   sig_checker: string,
   tzkt: string,
-  dipdup: string
+  dipdup: string,
+  union_api: string
 }
 
 export interface Provider {
