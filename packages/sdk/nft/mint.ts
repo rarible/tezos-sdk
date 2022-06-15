@@ -48,7 +48,6 @@ export async function get_next_token_id(
   const r = await fetch(provider.config.union_api + '/collections/TEZOS:' + contract + '/generate_token_id')
   if (r.ok) {
     const json = await r.json()
-    console.log(json.tokenId)
     return new BigNumber(json.tokenId)
   } else {
     throw new Error(r.statusText)
