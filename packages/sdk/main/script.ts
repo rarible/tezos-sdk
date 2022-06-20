@@ -16,7 +16,7 @@ import {
   SellRequest,
   set_token_metadata,
   start_auction, start_bundle_auction,
-  transfer, transfer_batch, TransferForm
+  transfer, transfer_batch, TransferForm, get_royalties
 } from "./index"
 import {in_memory_provider} from '../providers/in_memory/in_memory_provider'
 import yargs from 'yargs'
@@ -55,6 +55,7 @@ import {
 import {BundleOrderForm, OrderFormV2, sell_v2_batch, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
+import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/ask";
 
 export async function testScript(operation?: string, options: any = {}) {
   let argv = await yargs(process.argv.slice(2)).options({
@@ -140,8 +141,9 @@ export async function testScript(operation?: string, options: any = {}) {
     bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
     sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
     tzkt: "https://api.ithacanet.tzkt.io",
-    dipdup: "https://rarible-ithacanet.dipdup.net/v1/graphql",
-    union_api: "https://staging-api.rarible.org/v0.1"
+    dipdup: "http://localhost:8088/v1/graphql",
+    union_api: "https://staging-api.rarible.org/v0.1",
+    objkt_sales_v2: "KT1F6ykm4aMqDt2DB5RCZZdGhkPem8UFrdtL"
   }
 
   const devConfig = {
@@ -166,7 +168,8 @@ export async function testScript(operation?: string, options: any = {}) {
     sig_checker: "KT1ShTc4haTgT76z5nTLSQt3GSTLzeLPZYfT",
     tzkt: "http://dev-tezos-tzkt.rarible.org",
     dipdup: "http://dev-tezos-indexer.rarible.org/v1/graphql",
-    union_api: "https://dev-api.rarible.org/v0.1"
+    union_api: "https://dev-api.rarible.org/v0.1",
+    objkt_sales_v2: "KT1M27ezSXAP18Qf1hif3TRDdRuEBuTD9jJt"
   }
 
   const provider = {
@@ -303,9 +306,23 @@ export async function testScript(operation?: string, options: any = {}) {
           asset_class: "XTZ"
         },
         amount: new BigNumber("1"),
-        price: new BigNumber("0.02"),
-        payouts: [],
-        origin_fees: []
+        price: new BigNumber("1"),
+        payouts: [{
+          account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+          value: new BigNumber(250)
+        },
+          {
+            account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+            value: new BigNumber(251)
+          }],
+        origin_fees: [{
+          account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+          value: new BigNumber(252)
+        },
+          {
+            account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+            value: new BigNumber(253)
+          }]
       }
       const order = await sell(provider, request)
       console.log('order=', order)
@@ -400,8 +417,22 @@ export async function testScript(operation?: string, options: any = {}) {
           sale_max_fees_base_boint: 10000,
           sale_end: Date.now() + 100 * 1000,
           sale_start: undefined,
-          sale_origin_fees: [],
-          sale_payouts: [],
+          sale_payouts: [{
+            account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+            value: new BigNumber(250)
+          },
+            {
+              account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+              value: new BigNumber(251)
+            }],
+          sale_origin_fees: [{
+            account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+            value: new BigNumber(252)
+          },
+            {
+              account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+              value: new BigNumber(253)
+            }],
           sale_data: undefined,
           sale_data_type: undefined
         }
@@ -484,6 +515,30 @@ export async function testScript(operation?: string, options: any = {}) {
 
       }
       const order = await sellBundle(provider, sell_request)
+      console.log('order=', order)
+      return order
+    }
+
+    case 'ask_v2_objkt': {
+      console.log("sell item", argv.item_id)
+      const publicKey = await get_public_key(provider)
+      if (!publicKey) {
+        throw new Error("publicKey is undefined")
+      }
+      if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+      const [contract, tokenId] = argv.item_id.split(":")
+
+      const sell_request: ObjktAskV2Form = {
+        token_contract: contract,
+        token_id: new BigNumber(tokenId),
+        amount: new BigNumber(argv.amount),
+        editions: new BigNumber(argv.qty),
+        shares: [],
+        expiry_time: undefined,
+      }
+
+      const order = await ask_v2(provider, sell_request)
       console.log('order=', order)
       return order
     }
@@ -1053,6 +1108,17 @@ export async function testScript(operation?: string, options: any = {}) {
     case "get_ft_type": {
       try {
         return get_ft_type(provider.config, argv.ft_contract!)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "get_royalties": {
+      try {
+        if (!argv.item_id || argv.item_id.split(":").length !== 2) throw new Error("item_id was not set or set incorrectly")
+
+        const [contract, tokenId] = argv.item_id.split(":")
+        return get_royalties(provider, contract, new BigNumber(tokenId))
       } catch (e) {
         console.error(e)
       }

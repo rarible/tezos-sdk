@@ -13,8 +13,9 @@
   "scripts": {
     "serve": "vue-cli-service serve test/test-web.ts",
     "build": "tsc --project tsconfig.json",
-    "test-devnet": "ts-node test/devnet-tests.ts",
-    "test-testnet": "ts-node test/testnet-tests.ts",
+    "test-objkt-devnet": "ts-node test/objkt-devnet-tests.ts",
+    "test-rarible-devnet": "ts-node test/rarible-devnet-tests.ts",
+    "test-rarible-testnet": "ts-node test/rarible-testnet-tests.ts",
     "build-webpack": "webpack --config webpack.config.js",
     "verify": "tsc --noEmit",
     "clean": "rimraf ./dist"
