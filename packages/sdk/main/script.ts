@@ -169,7 +169,7 @@ export async function testScript(operation?: string, options: any = {}) {
     tzkt: "http://dev-tezos-tzkt.rarible.org",
     dipdup: "http://dev-tezos-indexer.rarible.org/v1/graphql",
     union_api: "https://dev-api.rarible.org/v0.1",
-    objkt_sales_v2: "KT1M27ezSXAP18Qf1hif3TRDdRuEBuTD9jJt"
+    objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L"
   }
 
   const provider = {

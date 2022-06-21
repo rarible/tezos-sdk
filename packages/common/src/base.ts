@@ -521,7 +521,7 @@ export interface Part {
 export function parts_to_micheline(p : Array<Part>): MichelsonData[]{
   let parts: MichelsonData[] = []
   for (let part of p) {
-    parts.push([
+    parts.push(
       {
         prim: "Pair",
         args: [{
@@ -529,7 +529,7 @@ export function parts_to_micheline(p : Array<Part>): MichelsonData[]{
         }, {
           int: `${part.value}`
         }]
-      }])
+      })
   }
   return parts
 }
@@ -537,7 +537,7 @@ export function parts_to_micheline(p : Array<Part>): MichelsonData[]{
 export function objkt_parts_to_micheline(p : Array<Part>): MichelsonData[]{
   let parts: MichelsonData[] = []
   for (let part of p) {
-    parts.push([
+    parts.push(
       {
         prim: "Pair",
         args: [{
@@ -545,7 +545,7 @@ export function objkt_parts_to_micheline(p : Array<Part>): MichelsonData[]{
         }, {
           string: `${part.account}`
         }]
-      }])
+      })
   }
   return parts
 }
