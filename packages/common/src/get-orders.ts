@@ -10,6 +10,27 @@ export interface OrderDataTypeRequest {
   buy_asset_token_id?: string;
 }
 
+export interface ObjktV2TokenData {
+  address: string,
+  token_id: string
+}
+
+export interface ObjktV2Shares {
+  amount: string,
+  recipient: string
+}
+
+export interface ObjktV2OrderData {
+  token: ObjktV2TokenData;
+  amount: string;
+  shares: Array<ObjktV2Shares>;
+  target?: string;
+  creator: string;
+  currency: any;
+  editions: string;
+  expiry_time?: Date
+}
+
 export async function is_exist_v1_order(config: Config, order: OrderDataTypeRequest): Promise<boolean> {
   const order_v1_result = await fetch(config.api + `/orders/sell/byItem?contract=${order.contract}&tokenId=${order.token_id}&maker=${order.seller}&status=ACTIVE`)
   if (order_v1_result.ok) {
@@ -106,6 +127,16 @@ export async function await_v2_bid(
     "operationName": "MyQuery"
   }
   return fetch_order_with_retry(config.dipdup, min_tries, max_tries, sleep, payload)
+}
+
+export async function get_objkt_order_v2(config: Config, order_id: string): Promise<ObjktV2OrderData | undefined>{
+  const res = await fetch(`${config.tzkt}/v1/contracts/${config.objkt_sales_v2}/bigmaps/asks/keys/${order_id}`)
+  if(res.ok){
+    const json = await res.json()
+    return json.value
+  } else {
+    return undefined
+  }
 }
 
 export async function get_v2_orders(

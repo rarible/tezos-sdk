@@ -38,7 +38,7 @@ import {
   BundleItem,
   check_signature,
   get_ft_type,
-  get_balance, await_v2_order, get_active_order_type, OrderDataTypeRequest
+  get_balance, await_v2_order, get_active_order_type, OrderDataTypeRequest, get_objkt_order_v2
 } from "@rarible/tezos-common"
 import fetch from "node-fetch"
 import {
@@ -1119,6 +1119,14 @@ export async function testScript(operation?: string, options: any = {}) {
 
         const [contract, tokenId] = argv.item_id.split(":")
         return get_royalties(provider, contract, new BigNumber(tokenId))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+    case "get_objkt_order_v2": {
+      try {
+        return get_objkt_order_v2(provider.config, argv.item_id)
       } catch (e) {
         console.error(e)
       }
