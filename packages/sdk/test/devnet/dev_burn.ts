@@ -14,7 +14,6 @@ export async function dev_burn() {
   const mintedItemId = await testScript('mint', {
     edsk: sellerEdsk,
     contract: "KT1PuABq2ReD789KtKetktvVKJcCMpyDgwUx",
-    amount: 1,
     metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
     royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
     is_dev: true
@@ -27,10 +26,7 @@ export async function dev_burn() {
 
   const burnOp = await testScript('burn', {
     edsk: sellerEdsk,
-    contract: "KT1PuABq2ReD789KtKetktvVKJcCMpyDgwUx",
     item_id: item.id,
-    amount: 1,
-    royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
     is_dev: true
   })
   console.log('burn op', burnOp)
