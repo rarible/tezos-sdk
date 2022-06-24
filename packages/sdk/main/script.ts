@@ -235,7 +235,8 @@ export async function testScript(operation?: string, options: any = {}) {
 
     case 'burn':
       console.log("burn")
-      const op_burn = await burn(provider, {asset_class, contract: argv.contract, token_id}, amount)
+      const [contract, tokenId] = argv.item_id.split(":")
+      const op_burn = await burn(provider, {asset_class: asset_class, contract: contract, token_id: new BigNumber(tokenId)}, amount)
       await op_burn.confirmation()
       console.log(op_burn.hash)
       break
