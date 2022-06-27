@@ -41,10 +41,11 @@ import {dev_batch_v2_sale} from "./devnet/rarible/dev_batch_v2_sale";
 import {dev_get_royalties} from "./devnet/rarible/dev_get_royalties";
 import {dev_objkt_ask} from "./devnet/objkt/dev_ask";
 import {dev_get_objkt_order_v2} from "./devnet/objkt/dev_get_objkt_order";
+import {objkt_ask} from "./testnet/objkt/ask";
 
 async function run_tests(){
     //Batch Mint
-    await dev_objkt_ask()
-    //await dev_get_objkt_order_v2()
+    await objkt_ask()
+    //await get_objkt_order_v2()
 }
 run_tests()

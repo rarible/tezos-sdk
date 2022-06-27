@@ -1,200 +1,221 @@
-import {Config, OrderType, retry} from "./base"
+import {Config, OrderType, Platform, retry} from "./base"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
+import {
+	createClient, marketplace_activity,
+	marketplace_activityRequest, marketplace_order,
+	marketplace_orderRequest
+} from "@rarible/tezos-sdk/marketplace-client";
 
-export interface OrderDataTypeRequest {
-  contract: string;
-  token_id: BigNumber;
-  seller: string;
-  buy_asset_contract?: string;
-  buy_asset_token_id?: string;
+export interface OrderDataRequest {
+	order_id?: string,
+	maker?: string,
+	make_contract?: string,
+	make_token_id?: BigNumber,
+	take_contract?: string,
+	take_token_id?: BigNumber
+	platform?: Platform,
+	status?: string,
+	activity_id?: string,
+	op_hash?: string,
 }
 
 export interface ObjktV2TokenData {
-  address: string,
-  token_id: string
+	address: string,
+	token_id: string
 }
 
 export interface ObjktV2Shares {
-  amount: string,
-  recipient: string
+	amount: string,
+	recipient: string
 }
 
 export interface ObjktV2OrderData {
-  token: ObjktV2TokenData;
-  amount: string;
-  shares: Array<ObjktV2Shares>;
-  target?: string;
-  creator: string;
-  currency: any;
-  editions: string;
-  expiry_time?: Date
+	token: ObjktV2TokenData;
+	amount: string;
+	shares: Array<ObjktV2Shares>;
+	target?: string;
+	creator: string;
+	currency: any;
+	editions: string;
+	expiry_time?: Date
 }
 
-export async function is_exist_v1_order(config: Config, order: OrderDataTypeRequest): Promise<boolean> {
-  const order_v1_result = await fetch(config.api + `/orders/sell/byItem?contract=${order.contract}&tokenId=${order.token_id}&maker=${order.seller}&status=ACTIVE`)
-  if (order_v1_result.ok) {
-    let json = await order_v1_result.json()
-    if (json.orders != undefined && json.orders.length > 0) {
-      if (json.orders.length >= 1) {
-        for (let i = 0; i < json.orders.length; i++) {
-          const fetched_order = json.orders[i]
-          const is_xtz = (fetched_order.take.assetType.assetClass == "XTZ" && order.buy_asset_contract == undefined && order.buy_asset_token_id == undefined)
-          const is_fa2 = (
-            fetched_order.take.assetType.assetClass == "FT" &&
-            order.buy_asset_contract != undefined &&
-            order.buy_asset_token_id != undefined &&
-            fetched_order.take.assetType.tokenId != undefined &&
-            order.buy_asset_contract == fetched_order.take.assetType.contract &&
-            order.buy_asset_token_id == fetched_order.take.assetType.tokenId.toString()
-          )
-          const is_fa12 = (
-            fetched_order.take.assetType.assetClass == "FT" &&
-            order.buy_asset_contract != undefined &&
-            order.buy_asset_token_id == undefined &&
-            fetched_order.take.assetType.tokenId == undefined &&
-            order.buy_asset_contract == fetched_order.take.assetType.contract
-          )
-          if (is_xtz || is_fa2 || is_fa12) {
-            return true
-          }
-        }
-      }
+export async function is_v1_order(config: Config, order: OrderDataRequest): Promise<boolean> {
+	const order_v1_result = await fetch(config.api + `/orders/sell/byItem?contract=${order.make_contract}&tokenId=${order.make_token_id}&maker=${order.maker}&status=ACTIVE`)
+	if (order_v1_result.ok) {
+		let json = await order_v1_result.json()
+		if (json.orders != undefined && json.orders.length > 0) {
+			if (json.orders.length >= 1) {
+				for (let i = 0; i < json.orders.length; i++) {
+					const fetched_order = json.orders[i]
+					const is_xtz = (
+						fetched_order.take.assetType.assetClass == "XTZ" &&
+						order.take_contract == undefined
+						&& order.take_token_id == undefined
+					)
+					const is_fa2 = (
+						fetched_order.take.assetType.assetClass == "FT" &&
+						order.take_contract != undefined &&
+						order.take_token_id != undefined &&
+						fetched_order.take.assetType.tokenId != undefined &&
+						order.take_contract == fetched_order.take.assetType.contract &&
+						order.take_token_id.toString() == fetched_order.take.assetType.tokenId.toString()
+					)
+					const is_fa12 = (
+						fetched_order.take.assetType.assetClass == "FT" &&
+						order.take_contract != undefined &&
+						order.take_token_id == undefined &&
+						fetched_order.take.assetType.tokenId == undefined &&
+						order.take_contract == fetched_order.take.assetType.contract
+					)
+					if (is_xtz || is_fa2 || is_fa12) {
+						return true
+					}
+				}
+			}
 
-    }
-  }
-  return false
+		}
+	}
+	return false
 }
 
 export async function get_active_order_type(
-  config: Config,
-  order: OrderDataTypeRequest
+	config: Config,
+	platform: Platform,
+	order: OrderDataRequest
 ): Promise<OrderType | undefined> {
-  return retry(30, 2000, async () => {
-    const isExistV1Order = await is_exist_v1_order(config, order)
-    if (isExistV1Order) {
-      return OrderType.V1
-    }
-    const order_v2_result = await get_v2_orders(config, order.contract, order.token_id, order.seller, "ACTIVE", order.buy_asset_contract, order.buy_asset_token_id)
-    if (order_v2_result.length > 0) {
-      return OrderType.V2
-    }
-    throw new Error("Unrecognized order type: v1/v2 orders has not been found")
-  })
+	return retry(30, 2000, async () => {
+		const isV1Order = await is_v1_order(config, order)
+		if (isV1Order) {
+			return OrderType.V1
+		}
+		const order_v2_result = await get_orders(config, {id: true},
+			{
+				make_contract: order.make_contract,
+				make_token_id: order.make_token_id,
+				maker: order.maker,
+				platform: platform,
+				status: "ACTIVE",
+				take_contract: order.take_contract,
+				take_token_id: order.take_token_id
+			}
+		)
+		if (order_v2_result.length > 0) {
+			return OrderType.V2
+		}
+		throw new Error("Unrecognized order type: v1/v2 orders has not been found")
+	})
 }
 
-export async function await_v2_order(
-  config: Config,
-  asset_contract: string,
-  asset_token_id: BigNumber,
-  seller: string,
-  op_hash: string,
-  max_tries: number,
-  sleep: number
+export async function await_order(
+	config: Config,
+	make_contract: string,
+	maker: string,
+	platform: Platform,
+	max_tries: number,
+	sleep: number,
+	op_hash?: string,
+	make_token_id?: BigNumber,
+	status?: string,
+	take_contract?: string,
+	take_token_id?: BigNumber,
 ): Promise<string | undefined> {
-  let min_tries = 1
-
-    const payload = {
-        "query": `query MyQuery { marketplace_activity(where: {make_contract: {_eq: "${asset_contract}"}, make_token_id: {_eq: "${asset_token_id.toString()}"}, maker: {_eq: "${seller}"}, operation_hash: {_eq: "${op_hash}"}}) { order_id } }`,
-        "variables": null,
-        "operationName": "MyQuery"
-    }
-
-  return fetch_order_with_retry(config.dipdup, min_tries, max_tries, sleep, payload)
-}
-
-export async function await_v2_bid(
-  config: Config,
-  take_asset_contract: string,
-  seller: string,
-  op_hash: string,
-  max_tries: number,
-  sleep: number,
-  take_asset_token_id?: string
-): Promise<string | undefined> {
-  let min_tries = 1
-  let token_id_filter = ""
-  if (take_asset_token_id != undefined) {
-    token_id_filter = `, take_token_id: {_eq: "${take_asset_token_id.toString()}"}`
-  }
-  const payload = {
-    "query": `query MyQuery {
-            marketplace_activity(where: {take_contract: {_eq: "${take_asset_contract}"}, maker: {_eq: "${seller}"}, operation_hash: {_eq: "${op_hash}"}${token_id_filter}}) {
-                id
-            }
-        }`,
-    "variables": null,
-    "operationName": "MyQuery"
-  }
-  return fetch_order_with_retry(config.dipdup, min_tries, max_tries, sleep, payload)
-}
-
-export async function get_objkt_order_v2(config: Config, order_id: string): Promise<ObjktV2OrderData | undefined>{
-  const res = await fetch(`${config.tzkt}/v1/contracts/${config.objkt_sales_v2}/bigmaps/asks/keys/${order_id}`)
-  if(res.ok){
-    const json = await res.json()
-    return json.value
-  } else {
-    return undefined
-  }
-}
-
-export async function get_v2_orders(
-  config: Config,
-  asset_contract: string,
-  asset_token_id: BigNumber,
-  seller: string,
-  status?: string,
-  take_asset_contract?: string,
-  take_asset_token_id?: string | undefined
-): Promise<Array<string>> {
-  const orders: Array<string> = []
-  let status_filter = ""
-  let take_asset_contract_filter = ""
-  let take_asset_token_id_filter = ""
-  if (status) {
-    status_filter = `, status: {_eq: "${status}"}`
-  }
-  if (take_asset_contract) {
-    take_asset_contract_filter = `, take_contract: {_eq: "${take_asset_contract}"}`
-  }
-  if (take_asset_token_id) {
-    take_asset_token_id_filter = `, take_token_id: {_eq: "${take_asset_token_id}"}`
-  }
-  const payload = {
-    "query": `query MyQuery { marketplace_order(where: {make_contract: {_eq: "${asset_contract}"}, make_token_id: {_eq: "${asset_token_id.toString()}"}, maker: {_eq: "${seller}"}${status_filter}${take_asset_contract_filter}${take_asset_token_id_filter}}) { id }}`,
-    "variables": null,
-    "operationName": "MyQuery"
-  }
-  const res = await fetch(config.dipdup, {
-    method: 'post',
-    body: JSON.stringify(payload),
-    headers: {'Content-Type': 'application/json'}
-  })
-  const json = await res.json()
-  const result = json.data.marketplace_order
-  if (result.length >= 1) {
-    for (let i = 0; i < result.length; i++) {
-      orders.push(result[i].id)
-    }
-  }
-  return orders
+	return retry(max_tries, sleep, async () => {
+		const activities = await get_order_activities(config, {order_id: true},
+			{
+				make_contract: make_contract,
+				make_token_id: make_token_id,
+				maker: maker,
+				platform: platform,
+				status: "ACTIVE",
+				take_contract: take_contract,
+				take_token_id: take_token_id,
+				op_hash: op_hash
+			})
+		console.log(activities)
+		if (activities.length == 1) {
+			return activities[0].order_id
+		} else {
+			throw new Error("Could not find order")
+		}
+	})
 }
 
 
-function fetch_order_with_retry(url: string, min_tries: number, max_tries: number, sleep: number, payload: {query: string, variables: null, operationName: string}){
-    return retry(max_tries || min_tries, sleep, async () => {
-        const res = await fetch(url, {
-            method: 'post',
-            body: JSON.stringify(payload),
-            headers: {'Content-Type': 'application/json'}
-        })
-        const json = await res.json()
-        const result = json.data.marketplace_activity
-        if (result.length >= 1) {
-            return result[0].order_id
-        } else {
-            throw new Error("OrderID cannot be requested")
-        }
-    })
+export async function get_orders(
+	config: Config,
+	request: marketplace_orderRequest,
+	request_params: OrderDataRequest
+): Promise<Array<marketplace_order>> {
+	const client = createClient({
+		url: config.dipdup
+	})
+	const orders = await client.chain.query.marketplace_order({
+		where: process_query(request_params, false)
+	}).get(request)
+	return orders
+}
+
+export async function get_order_activities(
+	config: Config,
+	request: marketplace_activityRequest,
+	request_params: OrderDataRequest
+): Promise<Array<marketplace_activity>> {
+	const client = createClient({
+		url: config.dipdup
+	})
+	const activities = await client.chain.query.marketplace_activity({
+		where: process_query(request_params, true)
+	}).get(request)
+	return activities
+}
+
+function process_query(request_params: OrderDataRequest, is_activity: boolean): { [key: string]: any } {
+	const where: { [key: string]: any } = {};
+
+	if (request_params.platform) {
+		where.platform = {_eq: request_params.platform}
+	}
+
+	if (request_params.maker) {
+		where.maker = {_eq: request_params.maker}
+	}
+
+	if (request_params.make_contract) {
+		where.make_contract = {_eq: request_params.make_contract}
+	}
+
+	if (request_params.make_token_id) {
+		where.make_token_id = {_eq: request_params.make_token_id.toString()}
+	}
+
+	if (request_params.take_contract) {
+		where.take_contract = {_eq: request_params.take_contract}
+	}
+
+	if (request_params.take_token_id) {
+		where.take_token_id = {_eq: request_params.take_token_id.toString()}
+	}
+
+	if (is_activity) {
+		if (request_params.activity_id) {
+			where.id = {_eq: request_params.activity_id}
+		}
+		if (request_params.order_id) {
+			where.order_id = {_eq: request_params.order_id}
+		}
+		if (request_params.op_hash) {
+			where.operation_hash = {_eq: request_params.op_hash}
+		}
+	} else {
+		if (request_params.order_id) {
+			where.id = {_eq: request_params.order_id}
+		}
+		if (request_params.status) {
+			where.status = {_eq: request_params.status}
+		}
+	}
+
+	return where
 }

@@ -35,6 +35,17 @@ export type AssetData = {
   token_id?: BigNumber;
 }
 
+export enum Platform  {
+  RARIBLE = "RARIBLE",
+  OBJKT_V2 = "OBJKT_V2"
+}
+
+export enum OrderStatus  {
+  ACTIVE= "ACTIVE",
+  INACTIVE= "INACTIVE",
+  FILLED= "FILLED"
+}
+
 export interface XTZAssetType  {
   asset_class: "XTZ";
 }

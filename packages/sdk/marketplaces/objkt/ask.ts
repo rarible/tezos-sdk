@@ -1,11 +1,10 @@
 import {
     absolute_amount,
     approve_v2,
-    AssetTypeV2, get_royalties,
-    get_v2_orders,
+    AssetTypeV2, await_order, get_royalties,
     objkt_parts_to_micheline,
-    optional_date_arg,
-    Part,
+    optional_date_arg, OrderStatus,
+    Part, Platform,
     Provider,
     retry,
     send_batch,
@@ -100,16 +99,16 @@ export async function ask_v2(
         provider,
         seller,
         AssetTypeV2.FA2,
-        provider.config.transfer_manager,
+        provider.config.objkt_sales_v2,
         order.token_contract,
         order.token_id
     );
     if (approve_a) args = args.concat(approve_a);
-    order.shares = await get_royalties(provider, order.token_contract, order.token_id)
+    //order.shares = await get_royalties(provider, order.token_contract, order.token_id)
+    order.shares = []
     for(let share of order.shares){
         share.value = new BigNumber(share.value).div(10)
     }
-    console.log(JSON.stringify(objkt_ask_v2_arg(provider, order, processed_amount)))
     args = args.concat(objkt_ask_v2_arg(provider, order, processed_amount));
     if (args.length === 0) {
         throw new Error("Empty array of sell args")
@@ -117,10 +116,24 @@ export async function ask_v2(
     try{
         const op = await send_batch(provider, args);
         await op.confirmation();
-        return op.hash
+        console.log(op.hash)
+        const order_id = await await_order(provider.config,
+            order.token_contract,
+            seller,
+            Platform.OBJKT_V2,
+            20,
+            2000,
+            op.hash,
+            order.token_id,
+            OrderStatus.ACTIVE)
+        console.log(order_id)
+        if (order_id == undefined || order_id.length == 0) {
+            throw new Error("Order was not found")
+        }
+        return order_id
     } catch (e) {
         console.log(JSON.stringify(e))
-        return ""
+        throw new Error("Could not submit order: " + e)
     }
 
 }
