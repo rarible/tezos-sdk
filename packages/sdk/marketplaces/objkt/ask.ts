@@ -118,15 +118,16 @@ export async function ask_v2(
         await op.confirmation();
         console.log(op.hash)
         const order_id = await await_order(provider.config,
-            order.token_contract,
-            seller,
-            Platform.OBJKT_V2,
+            {
+                make_contract: order.token_contract,
+                maker: seller,
+                platform: Platform.OBJKT_V2,
+                op_hash: op.hash,
+                make_token_id: order.token_id,
+                status: OrderStatus.ACTIVE
+            },
             20,
-            2000,
-            op.hash,
-            order.token_id,
-            OrderStatus.ACTIVE)
-        console.log(order_id)
+            2000)
         if (order_id == undefined || order_id.length == 0) {
             throw new Error("Order was not found")
         }

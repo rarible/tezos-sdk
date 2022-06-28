@@ -338,18 +338,14 @@ export async function testScript(operation?: string, options: any = {}) {
 				price: new BigNumber("1"),
 				payouts: [{
 					account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
-					value: new BigNumber(250)
-				},
-					{
-						account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
-						value: new BigNumber(251)
-					}],
+					value: new BigNumber(10000)
+				}],
 				origin_fees: [{
 					account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
 					value: new BigNumber(252)
 				},
 					{
-						account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+						account: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
 						value: new BigNumber(253)
 					}]
 			}
@@ -460,7 +456,7 @@ export async function testScript(operation?: string, options: any = {}) {
 						value: new BigNumber(250)
 					},
 						{
-							account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+							account: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
 							value: new BigNumber(251)
 						}],
 					sale_origin_fees: [{
@@ -468,7 +464,7 @@ export async function testScript(operation?: string, options: any = {}) {
 						value: new BigNumber(252)
 					},
 						{
-							account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
+							account: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
 							value: new BigNumber(253)
 						}],
 					sale_data: undefined,
@@ -1177,14 +1173,16 @@ export async function testScript(operation?: string, options: any = {}) {
 		case "await_v2_order": {
 			try {
 				return await_order(provider.config,
-					argv.ft_contract!,
-					argv.owner!,
-					Platform.RARIBLE,
-					10,
-					10,
-					argv.order_id,
-					argv.ft_token_id!,
-					OrderStatus.ACTIVE)
+					{
+						make_contract: argv.ft_contract!,
+						maker: argv.owner!,
+						platform: Platform.RARIBLE,
+						order_id: argv.order_id,
+						make_token_id: argv.ft_token_id!,
+						status: OrderStatus.ACTIVE
+					},
+					20,
+					2000)
 			} catch (e) {
 				console.error(e)
 			}

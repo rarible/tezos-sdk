@@ -110,29 +110,12 @@ export async function get_active_order_type(
 
 export async function await_order(
 	config: Config,
-	make_contract: string,
-	maker: string,
-	platform: Platform,
+	order: OrderDataRequest,
 	max_tries: number,
 	sleep: number,
-	op_hash?: string,
-	make_token_id?: BigNumber,
-	status?: string,
-	take_contract?: string,
-	take_token_id?: BigNumber,
 ): Promise<string | undefined> {
 	return retry(max_tries, sleep, async () => {
-		const activities = await get_order_activities(config, {order_id: true},
-			{
-				make_contract: make_contract,
-				make_token_id: make_token_id,
-				maker: maker,
-				platform: platform,
-				status: "ACTIVE",
-				take_contract: take_contract,
-				take_token_id: take_token_id,
-				op_hash: op_hash
-			})
+		const activities = await get_order_activities(config, {order_id: true}, order)
 		if (activities.length == 1) {
 			return activities[0].order_id
 		} else {

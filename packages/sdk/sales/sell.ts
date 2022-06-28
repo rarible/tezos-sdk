@@ -86,16 +86,18 @@ export async function sellV2(
 	const op = await send_batch(provider, args);
 	await op.confirmation();
 	const order_id = await await_order(provider.config,
-		order.s_asset_contract,
-		seller,
-		Platform.RARIBLE,
+		{
+			make_contract: order.s_asset_contract,
+			maker: seller,
+			platform: Platform.RARIBLE,
+			op_hash: op.hash,
+			make_token_id: order.s_asset_token_id,
+			status: OrderStatus.ACTIVE,
+			take_contract: order.s_sale_asset_contract,
+			take_token_id: order.s_sale_asset_token_id
+		},
 		20,
-		2000,
-		op.hash,
-		order.s_asset_token_id,
-		OrderStatus.ACTIVE,
-		order.s_sale_asset_contract,
-		order.s_sale_asset_token_id)
+		2000)
 	if (order_id == undefined) {
 		throw new Error("Order was not found")
 	}
