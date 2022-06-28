@@ -1,13 +1,21 @@
 import {
   absolute_amount,
-  AssetTypeV2, BundleItem,
+  approve_v2,
+  AssetTypeV2,
+  await_order,
+  BundleItem,
   get_address,
-  getAsset, mkPackedBundle,
-  OperationResult, Part, parts_to_micheline,
+  getAsset,
+  mkPackedBundle,
+  OperationResult,
+  optional_date_arg,
+  OrderStatus,
+  Part,
+  parts_to_micheline,
+  Platform,
   Provider,
   send_batch,
-  TransactionArg,
-  approve_v2, optional_date_arg, await_v2_bid
+  TransactionArg
 } from "@rarible/tezos-common"
 import {MichelsonData} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
@@ -110,7 +118,15 @@ export async function put_bid(provider: Provider, bid: Bid) : Promise<string | u
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
   await op.confirmation();
-  const bid_id = await await_v2_bid(provider.config, bid.asset_contract, bidder, op.hash, 10, 2000, bid.asset_token_id.toString())
+  console.log(op.hash)
+  const bid_id = await await_order(provider.config, {
+    take_contract: bid.asset_contract,
+    take_token_id: bid.asset_token_id,
+    status: OrderStatus.ACTIVE,
+    op_hash: op.hash,
+    maker: bidder,
+    platform: Platform.RARIBLE
+  }, 20, 2000)
   return bid_id
 }
 
@@ -125,7 +141,13 @@ export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
   await op.confirmation();
-  const bid_id = await await_v2_bid(provider.config, bid.asset_contract, bidder, op.hash, 10, 2000)
+  const bid_id = await await_order(provider.config, {
+    take_contract: bid.asset_contract,
+    status: OrderStatus.ACTIVE,
+    op_hash: op.hash,
+    maker: bidder,
+    platform: Platform.RARIBLE
+  }, 20, 2000)
   return bid_id
 }
 

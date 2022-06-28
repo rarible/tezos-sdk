@@ -35,6 +35,17 @@ export type AssetData = {
   token_id?: BigNumber;
 }
 
+export enum Platform  {
+  RARIBLE = "RARIBLE_V2",
+  OBJKT_V2 = "OBJKT_V2"
+}
+
+export enum OrderStatus  {
+  ACTIVE= "ACTIVE",
+  INACTIVE= "INACTIVE",
+  FILLED= "FILLED"
+}
+
 export interface XTZAssetType  {
   asset_class: "XTZ";
 }
@@ -124,7 +135,8 @@ export interface Config {
   sig_checker: string,
   tzkt: string,
   dipdup: string,
-  union_api: string
+  union_api: string,
+  objkt_sales_v2: string
 }
 
 export interface Provider {
@@ -259,6 +271,23 @@ export async function get_transaction(
   const r = await fetch(provider.config.api + '/transaction/' + op_hash)
   if (r.ok) { return r.json() }
   else throw new Error("/transaction/" + op_hash + " failed")
+}
+
+export async function get_royalties(
+    provider: Provider,
+    token_contract: string,
+    tokenId: BigNumber): Promise<Array<Part>> {
+  const r = await fetch(provider.config.union_api + `/items/TEZOS:${token_contract}:${tokenId}/royalties` )
+  if (r.ok) {
+    const result = await r.json()
+    const royalties: Array<Part> = result.royalties
+    for(let share of royalties){
+      console.log(share.account)
+      share.account = share.account.replace("TEZOS:", "")
+    }
+    return royalties
+  }
+  else throw new Error(`/items/TEZOS:${token_contract}:${tokenId}/royalties failed: ${JSON.stringify(r.statusText)}`)
 }
 
 export function uint8array_to_hex(a: Uint8Array) : string {
@@ -510,6 +539,22 @@ export function parts_to_micheline(p : Array<Part>): MichelsonData[]{
           string: part.account
         }, {
           int: `${part.value}`
+        }]
+      })
+  }
+  return parts
+}
+
+export function objkt_parts_to_micheline(p : Array<Part>): MichelsonData[]{
+  let parts: MichelsonData[] = []
+  for (let part of p) {
+    parts.push(
+      {
+        prim: "Pair",
+        args: [{
+          int: `${part.value}`
+        }, {
+          string: `${part.account}`
         }]
       })
   }
