@@ -20,27 +20,6 @@ export interface OrderDataRequest {
 	op_hash?: string,
 }
 
-export interface ObjktV2TokenData {
-	address: string,
-	token_id: string
-}
-
-export interface ObjktV2Shares {
-	amount: string,
-	recipient: string
-}
-
-export interface ObjktV2OrderData {
-	token: ObjktV2TokenData;
-	amount: string;
-	shares: Array<ObjktV2Shares>;
-	target?: string;
-	creator: string;
-	currency: any;
-	editions: string;
-	expiry_time?: Date
-}
-
 export async function is_v1_order(config: Config, order: OrderDataRequest): Promise<boolean> {
 	const order_v1_result = await fetch(config.api + `/orders/sell/byItem?contract=${order.make_contract}&tokenId=${order.make_token_id}&maker=${order.maker}&status=ACTIVE`)
 	if (order_v1_result.ok) {
