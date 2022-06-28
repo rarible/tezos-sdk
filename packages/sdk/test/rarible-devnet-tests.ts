@@ -41,9 +41,73 @@ import {dev_batch_v2_sale} from "./devnet/rarible/dev_batch_v2_sale";
 import {dev_get_royalties} from "./devnet/rarible/dev_get_royalties";
 
 async function run_tests(){
+    //Batch Mint
+    await dev_batch_mint()
+
+    //Batch Transfer
+    await dev_batch_transfer()
+
+    //Batch Sell
+    await dev_batch_v2_sale()
+
+    //Sales
+    await dev_sale()
+    await dev_sale_fa2()
+    await dev_sale_fa12()
 
     //V2 Sales
     await dev_v2_sale()
+    await dev_v2_sale_fa2()
+    await dev_v2_sale_fa12()
 
+    //Bundle sales
+    await dev_bundle_sale()
+    await dev_bundle_sale_fa2()
+    await dev_bundle_sale_fa12()
+
+    //Cancel sales
+    await dev_v2_cancel()
+    await dev_cancel_bundle_sale()
+
+    //Cancel bids
+    await dev_cancel_bid()
+    await dev_cancel_floor_bid()
+    await dev_cancel_bundle_bid()
+
+    //Auction
+    await dev_auction()
+    await dev_auction_fa2()
+    await dev_auction_fa12()
+
+    //Bids
+    await dev_bid()
+    await dev_bid_fa2()
+    await dev_bid_fa12()
+
+    //Bundle Auction
+    await dev_bundle_auction()
+    await dev_bundle_auction_fa2()
+    await dev_bundle_auction_fa12()
+
+    //Bundle Bid
+    await dev_bundle_bid()
+    await dev_bundle_bid_fa2()
+    await dev_bundle_bid_fa12()
+
+    //Floor bids
+    await dev_floor_bid()
+    await dev_floor_bid_fa2()
+    await dev_floor_bid_fa12()
+
+    //Utils
+    await dev_deploy_nft()
+    await dev_check_signature()
+    await dev_get_balance()
+    await dev_get_decimals()
+    await dev_get_ft_type()
+    await dev_pack_unpack()
+    await dev_get_order_type()
+    await dev_get_royalties()
+    //await dev_get_auction()
 }
 run_tests()

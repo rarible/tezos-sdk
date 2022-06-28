@@ -167,7 +167,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ithacanet.tzkt.io",
-		dipdup: "http://localhost:49180/v1/graphql",
+		dipdup: "https://test-tezos-indexer.rarible.orgv1/graphql",
 		union_api: "https://staging-api.rarible.org/v0.1",
 		objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV"
 	}
@@ -192,8 +192,8 @@ export async function testScript(operation?: string, options: any = {}) {
 		bid: "KT1DJxerfM2nPYYsVNBxaevppwhkCGwZzsGT",
 		bid_storage: "KT1NvX6EQUqjUuQXsBU3eocpkbZsVX71FcTn",
 		sig_checker: "KT1EiyFnYEGUtfMLKBcWnYzJ95d1hakR5qaX",
-		tzkt: "http://dev-tezos-tzkt.rarible.org",
-		dipdup: "http://localhost:49180/v1/graphql",
+		tzkt: "https://dev-tezos-tzkt.rarible.org",
+		dipdup: "https://dev-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://dev-api.rarible.org/v0.1",
 		objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L"
 	}

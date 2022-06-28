@@ -1,4 +1,4 @@
-import {AssetTypeV2, get_v2_orders, retry} from "@rarible/tezos-common";
+import {AssetTypeV2, retry} from "@rarible/tezos-common";
 import {testScript} from "../../../main/script";
 import {awaitDevItem, getDevItemById} from "../../common/utils";
 import {in_memory_provider} from "../../../providers/in_memory/in_memory_provider";

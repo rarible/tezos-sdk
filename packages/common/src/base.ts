@@ -36,7 +36,7 @@ export type AssetData = {
 }
 
 export enum Platform  {
-  RARIBLE = "RARIBLE",
+  RARIBLE = "RARIBLE_V2",
   OBJKT_V2 = "OBJKT_V2"
 }
 

@@ -133,7 +133,6 @@ export async function await_order(
 				take_token_id: take_token_id,
 				op_hash: op_hash
 			})
-		console.log(activities)
 		if (activities.length == 1) {
 			return activities[0].order_id
 		} else {
