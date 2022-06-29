@@ -168,7 +168,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ithacanet.tzkt.io",
 		dipdup: "https://test-tezos-indexer.rarible.orgv1/graphql",
-		union_api: "https://staging-api.rarible.org/v0.1",
+		union_api: "https://testnet-api.rarible.org/v0.1",
 		objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV"
 	}
 
