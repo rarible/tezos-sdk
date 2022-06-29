@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import {retry} from "@rarible/tezos-common";
 
 export async function getTestItemById(itemId: string) {
-  const r = await fetch('https://test-tezos-api.rarible.org/v0.1/items/' + itemId)
+  const r = await fetch('https://testnet-api.rarible.org/v0.1/items/TEZOS:' + itemId)
   if (r.ok) {
     return r.json()
   } else {
@@ -11,7 +11,7 @@ export async function getTestItemById(itemId: string) {
 }
 
 export async function getDevItemById(itemId: string) {
-  const r = await fetch('https://dev-tezos-api.rarible.org/v0.1/items/' + itemId)
+  const r = await fetch('https://dev-api.rarible.org/v0.1/items/TEZOS:' + itemId)
   if (r.ok) {
     return r.json()
   } else {

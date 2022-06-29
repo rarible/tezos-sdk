@@ -89,7 +89,7 @@ export async function testScript(operation?: string, options: any = {}) {
 			type: 'string',
 			default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'
 		},
-		endpoint: {type: 'string', default: 'https://test-tezos-node.rarible.org'},
+		endpoint: {type: 'string', default: 'https://rpc.tzkt.io/ithacanet'},
 		exchange: {type: 'string', default: 'KT1S6H2FWxrpaD7aPRSW1cTTE1xPucXBSTL5'},
 		// contract: {type: 'string', default: 'KT1VnhPmUJnEH5dfeD8WW87LCoxdhGUUVfMV'},
 		contract: {type: 'string', default: 'KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA'},
