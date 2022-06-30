@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.28](https://github.com/rarible/tezos-sdk/compare/v0.1.27...v0.1.28) (2022-06-30)
+
+
+### Bug Fixes
+
+* change timeout for await_order ([f10d236](https://github.com/rarible/tezos-sdk/commit/f10d236ea5943573f01ab57027dbdef3b7f0ff27))
+
+
+
+
+
 ## [0.1.27](https://github.com/rarible/tezos-sdk/compare/v0.1.26...v0.1.27) (2022-06-28)
 
 **Note:** Version bump only for package root
