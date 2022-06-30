@@ -96,7 +96,7 @@ export async function sellV2(
 			take_contract: order.s_sale_asset_contract,
 			take_token_id: order.s_sale_asset_token_id
 		},
-		20,
+		40,
 		2000)
 	if (order_id == undefined) {
 		throw new Error("Order was not found")
