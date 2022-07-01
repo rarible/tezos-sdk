@@ -1,4 +1,13 @@
-import {Provider, Asset, NFTAssetType, MTAssetType, asset_to_json, asset_of_json, Part} from "@rarible/tezos-common"
+import {
+  Provider,
+  Asset,
+  NFTAssetType,
+  MTAssetType,
+  asset_to_json,
+  asset_of_json,
+  Part,
+  get_royalties, are_royalties_on_chain
+} from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
 const getRandomValues = require('get-random-values')
@@ -81,22 +90,17 @@ export function salt() : string {
 }
 
 export async function fill_offchain_royalties(provider : Provider, order: OrderForm) : Promise<OrderForm> {
-  let assett : NFTAssetType | MTAssetType | undefined ;
+  let asset : NFTAssetType | MTAssetType | undefined ;
   if ((order.make.asset_type.asset_class=="NFT" || order.make.asset_type.asset_class=="MT") && order.take.asset_type.asset_class!="NFT" && order.take.asset_type.asset_class!="MT") {
-    assett = order.make.asset_type }
-  if (!assett) return order
-  let contract = (assett.contract) ? assett.contract
-    : (assett.asset_class=="NFT") ? provider.config.nft_public
+    asset = order.make.asset_type }
+  if (!asset) return order
+  let contract = (asset.contract) ? asset.contract
+    : (asset.asset_class=="NFT") ? provider.config.nft_public
     : provider.config.mt_public
-  let id = contract + ':' + assett.token_id.toString()
-  const r = await fetch(provider.config.api + '/items/' + id + '/royalties')
-  if (r.ok) {
-    const json = await r.json()
-    if (json.onchain) return order
-    let royalties = json.royalties.map(function(x : { account: string, value: number }) {
-      return {...x, value: new BigNumber(x.value)}
-    })
-    let data = { ...order.data, origin_fees: order.data.origin_fees.concat(royalties) }
-    return { ...order, data }
-  } else throw new Error(`cannot get royalties for ${id}, reason:${r.statusText}`)
+  const royalties = await get_royalties(provider, contract, new BigNumber(asset.token_id))
+  const is_on_chain = await are_royalties_on_chain(provider, contract, new BigNumber(asset.token_id))
+  console.log("is on chain =" + is_on_chain)
+  if (is_on_chain) return order
+  let data = { ...order.data, origin_fees: order.data.origin_fees.concat(royalties) }
+  return { ...order, data }
 }
