@@ -11,7 +11,7 @@ import {
 	fill_order,
 	finish_auction,
 	finish_bundle_auction, get_asset_type,
-	get_auction,
+	get_auction, get_legacy_orders,
 	get_orders,
 	get_royalties,
 	mint,
@@ -585,17 +585,21 @@ export async function testScript(operation?: string, options: any = {}) {
 		case "fill": {
 			try {
 				console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
-				const response = await fetch(`${provider.config.api}/orders/${argv.order_id}`)
-				if (response.ok) {
-					const order = order_of_json(await response.json())
-					const op = await fill_order(provider, order as OrderForm, {
-						amount: new BigNumber(order.make.value)
+				const response = await get_legacy_orders(
+					provider.config, {
+						data: true
+					}, {
+						order_id: argv.order_id
 					})
-					await op.confirmation()
-					return op
-				} else {
-					throw new Error(response.statusText)
-				}
+
+				console.log("fetched order = " + JSON.stringify(response[0].data))
+
+				const order = order_of_json(response[0].data)
+				const op = await fill_order(provider, order as OrderForm, {
+					amount: new BigNumber(order.make.value)
+				})
+				await op.confirmation()
+				return op
 			} catch (e) {
 				try {
 					console.error(JSON.stringify(e, null, ' '))

@@ -1,8 +1,7 @@
 import {Config, OrderType, Platform, retry} from "./base"
 import BigNumber from "bignumber.js"
-import fetch from "node-fetch"
 import {
-	createClient,
+	createClient, legacy_orders, legacy_ordersRequest,
 	marketplace_activity,
 	marketplace_activityRequest,
 	marketplace_order,
@@ -22,45 +21,6 @@ export interface OrderDataRequest {
 	op_hash?: string,
 }
 
-export async function is_v1_order(config: Config, order: OrderDataRequest): Promise<boolean> {
-	const order_v1_result = await fetch(config.api + `/orders/sell/byItem?contract=${order.make_contract}&tokenId=${order.make_token_id}&maker=${order.maker}&status=ACTIVE`)
-	if (order_v1_result.ok) {
-		let json = await order_v1_result.json()
-		if (json.orders != undefined && json.orders.length > 0) {
-			if (json.orders.length >= 1) {
-				for (let i = 0; i < json.orders.length; i++) {
-					const fetched_order = json.orders[i]
-					const is_xtz = (
-						fetched_order.take.assetType.assetClass == "XTZ" &&
-						order.take_contract == undefined
-						&& order.take_token_id == undefined
-					)
-					const is_fa2 = (
-						fetched_order.take.assetType.assetClass == "FT" &&
-						order.take_contract != undefined &&
-						order.take_token_id != undefined &&
-						fetched_order.take.assetType.tokenId != undefined &&
-						order.take_contract == fetched_order.take.assetType.contract &&
-						order.take_token_id.toString() == fetched_order.take.assetType.tokenId.toString()
-					)
-					const is_fa12 = (
-						fetched_order.take.assetType.assetClass == "FT" &&
-						order.take_contract != undefined &&
-						order.take_token_id == undefined &&
-						fetched_order.take.assetType.tokenId == undefined &&
-						order.take_contract == fetched_order.take.assetType.contract
-					)
-					if (is_xtz || is_fa2 || is_fa12) {
-						return true
-					}
-				}
-			}
-
-		}
-	}
-	return false
-}
-
 export async function get_active_order_type(
 	config: Config,
 	order: OrderDataRequest
@@ -78,10 +38,10 @@ export async function get_active_order_type(
 		)
 
 		if (order_result.length > 0) {
-			for(let i = 0; i < order_result.length; i++){
-				if(order_result[i].platform == "RARIBLE_V1"){
+			for (let i = 0; i < order_result.length; i++) {
+				if (order_result[i].platform == "RARIBLE_V1") {
 					return OrderType.V1
-				} else if(order_result[i].platform == "RARIBLE_V2"){
+				} else if (order_result[i].platform == "RARIBLE_V2") {
 					return OrderType.V2
 				} else {
 					throw new Error("Unrecognized order type: v1/v2 orders has not been found")
@@ -128,13 +88,13 @@ export async function get_orders(
 
 export async function get_legacy_orders(
 	config: Config,
-	request: marketplace_orderRequest,
+	request: legacy_ordersRequest,
 	request_params: OrderDataRequest
-): Promise<Array<marketplace_order>> {
+): Promise<Array<legacy_orders>> {
 	const client = createClient({
 		url: config.dipdup
 	})
-	const orders = await client.chain.query.marketplace_order({
+	const orders = await client.chain.query.legacy_orders({
 		where: process_query(request_params, false)
 	}).get(request)
 	return orders
