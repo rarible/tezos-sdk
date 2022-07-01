@@ -10,7 +10,7 @@ import {
 	deploy_nft_public,
 	fill_order,
 	finish_auction,
-	finish_bundle_auction,
+	finish_bundle_auction, get_asset_type,
 	get_auction,
 	get_orders,
 	get_royalties,
@@ -1206,6 +1206,23 @@ export async function testScript(operation?: string, options: any = {}) {
 		case "get_ft_type": {
 			try {
 				return get_ft_type(provider.config, argv.ft_contract!)
+			} catch (e) {
+				console.error(e)
+			}
+		}
+
+		case "get_collection_type": {
+			try {
+				if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+					throw new Error(
+						"item_id was not set or set incorrectly")
+				}
+
+				const [contract, tokenId] = argv.item_id.split(":")
+				return get_asset_type(provider, {
+					contract: contract,
+					token_id: new BigNumber(tokenId)
+				})
 			} catch (e) {
 				console.error(e)
 			}
