@@ -37,7 +37,8 @@ export type AssetData = {
 }
 
 export enum Platform {
-	RARIBLE = "RARIBLE_V2",
+	RARIBLE_V1 = "RARIBLE_V1",
+	RARIBLE_V2 = "RARIBLE_V2",
 	OBJKT_V2 = "OBJKT_V2"
 }
 
@@ -273,18 +274,6 @@ export async function send_batch(
 		}
 	})
 	return provider.tezos.batch(params)
-}
-
-export async function get_transaction(
-	provider: Provider,
-	op_hash: string
-) {
-	const r = await fetch(provider.config.api + '/transaction/' + op_hash)
-	if (r.ok) {
-		return r.json()
-	} else {
-		throw new Error("/transaction/" + op_hash + " failed")
-	}
 }
 
 export async function get_royalties(

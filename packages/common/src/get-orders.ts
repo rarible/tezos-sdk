@@ -2,8 +2,10 @@ import {Config, OrderType, Platform, retry} from "./base"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
 import {
-	createClient, marketplace_activity,
-	marketplace_activityRequest, marketplace_order,
+	createClient,
+	marketplace_activity,
+	marketplace_activityRequest,
+	marketplace_order,
 	marketplace_orderRequest
 } from "@rarible/tezos-sdk/marketplace-client";
 
@@ -61,29 +63,34 @@ export async function is_v1_order(config: Config, order: OrderDataRequest): Prom
 
 export async function get_active_order_type(
 	config: Config,
-	platform: Platform,
 	order: OrderDataRequest
 ): Promise<OrderType | undefined> {
 	return retry(30, 2000, async () => {
-		const isV1Order = await is_v1_order(config, order)
-		if (isV1Order) {
-			return OrderType.V1
-		}
-		const order_v2_result = await get_orders(config, {id: true},
+		const order_result = await get_orders(config, {platform: true},
 			{
 				make_contract: order.make_contract,
 				make_token_id: order.make_token_id,
 				maker: order.maker,
-				platform: platform,
 				status: "ACTIVE",
 				take_contract: order.take_contract,
 				take_token_id: order.take_token_id
 			}
 		)
-		if (order_v2_result.length > 0) {
-			return OrderType.V2
+
+		if (order_result.length > 0) {
+			for(let i = 0; i < order_result.length; i++){
+				if(order_result[i].platform == "RARIBLE_V1"){
+					return OrderType.V1
+				} else if(order_result[i].platform == "RARIBLE_V2"){
+					return OrderType.V2
+				} else {
+					throw new Error("Unrecognized order type: v1/v2 orders has not been found")
+				}
+			}
+		} else {
+			throw new Error("Unrecognized order type: v1/v2 orders has not been found")
 		}
-		throw new Error("Unrecognized order type: v1/v2 orders has not been found")
+
 	})
 }
 
@@ -105,6 +112,21 @@ export async function await_order(
 
 
 export async function get_orders(
+	config: Config,
+	request: marketplace_orderRequest,
+	request_params: OrderDataRequest
+): Promise<Array<marketplace_order>> {
+	const client = createClient({
+		url: config.dipdup
+	})
+	const orders = await client.chain.query.marketplace_order({
+		where: process_query(request_params, false)
+	}).get(request)
+	return orders
+}
+
+
+export async function get_legacy_orders(
 	config: Config,
 	request: marketplace_orderRequest,
 	request_params: OrderDataRequest

@@ -1178,7 +1178,7 @@ export async function testScript(operation?: string, options: any = {}) {
 					{
 						make_contract: argv.ft_contract!,
 						maker: argv.owner!,
-						platform: Platform.RARIBLE,
+						platform: Platform.RARIBLE_V2,
 						order_id: argv.order_id,
 						make_token_id: argv.ft_token_id!,
 						status: OrderStatus.ACTIVE
@@ -1276,19 +1276,15 @@ export async function testScript(operation?: string, options: any = {}) {
 				}
 
 				const [contract, tokenId] = argv.item_id.split(":")
-				const publicKey = await get_public_key(provider)
-				if (!publicKey) {
-					throw new Error("publicKey is undefined")
-				}
-				const maker = pk_to_pkh(publicKey)
+
 				const request: OrderDataRequest = {
 					make_contract: contract,
 					make_token_id: new BigNumber(tokenId),
-					maker: maker,
+					maker: argv.owner,
 					take_contract: argv.ft_contract,
 					take_token_id: argv.ft_token_id
 				}
-				return await get_active_order_type(provider.config, Platform.RARIBLE, request)
+				return await get_active_order_type(provider.config, request)
 			} catch (e) {
 				console.error(e)
 			}

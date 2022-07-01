@@ -125,7 +125,7 @@ export async function put_bid(provider: Provider, bid: Bid) : Promise<string | u
     status: OrderStatus.ACTIVE,
     op_hash: op.hash,
     maker: bidder,
-    platform: Platform.RARIBLE
+    platform: Platform.RARIBLE_V2
   }, 20, 2000)
   return bid_id
 }
@@ -146,7 +146,7 @@ export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise
     status: OrderStatus.ACTIVE,
     op_hash: op.hash,
     maker: bidder,
-    platform: Platform.RARIBLE
+    platform: Platform.RARIBLE_V2
   }, 20, 2000)
   return bid_id
 }
