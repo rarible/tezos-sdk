@@ -63,6 +63,14 @@ module.exports.isindexing_status = function(obj) {
 
 
 
+var legacy_orders_possibleTypes = ['legacy_orders']
+module.exports.islegacy_orders = function(obj) {
+  if (!obj || !obj.__typename) throw new Error('__typename is missing in "islegacy_orders"')
+  return legacy_orders_possibleTypes.includes(obj.__typename)
+}
+
+
+
 var marketplace_activity_possibleTypes = ['marketplace_activity']
 module.exports.ismarketplace_activity = function(obj) {
   if (!obj || !obj.__typename) throw new Error('__typename is missing in "ismarketplace_activity"')

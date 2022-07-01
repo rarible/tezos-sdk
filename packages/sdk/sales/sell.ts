@@ -89,7 +89,7 @@ export async function sellV2(
 		{
 			make_contract: order.s_asset_contract,
 			maker: seller,
-			platform: Platform.RARIBLE,
+			platform: Platform.RARIBLE_V2,
 			op_hash: op.hash,
 			make_token_id: order.s_asset_token_id,
 			status: OrderStatus.ACTIVE,

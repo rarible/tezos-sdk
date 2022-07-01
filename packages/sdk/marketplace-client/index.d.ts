@@ -120,6 +120,12 @@ export declare const enumindexingStatusSelectColumn: {
   readonly last_level: 'last_level'
 }
 
+export declare const enumlegacyOrdersSelectColumn: {
+  readonly data: 'data'
+  readonly hash: 'hash'
+  readonly id: 'id'
+}
+
 export declare const enummarketplaceActivitySelectColumn: {
   readonly id: 'id'
   readonly internal_order_id: 'internal_order_id'

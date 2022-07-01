@@ -10,8 +10,8 @@ import {
 	deploy_nft_public,
 	fill_order,
 	finish_auction,
-	finish_bundle_auction,
-	get_auction,
+	finish_bundle_auction, get_asset_type,
+	get_auction, get_legacy_orders,
 	get_orders,
 	get_royalties,
 	mint,
@@ -585,17 +585,21 @@ export async function testScript(operation?: string, options: any = {}) {
 		case "fill": {
 			try {
 				console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
-				const response = await fetch(`${provider.config.api}/orders/${argv.order_id}`)
-				if (response.ok) {
-					const order = order_of_json(await response.json())
-					const op = await fill_order(provider, order as OrderForm, {
-						amount: new BigNumber(order.make.value)
+				const response = await get_legacy_orders(
+					provider.config, {
+						data: true
+					}, {
+						order_id: argv.order_id
 					})
-					await op.confirmation()
-					return op
-				} else {
-					throw new Error(response.statusText)
-				}
+
+				console.log("fetched order = " + JSON.stringify(response[0].data))
+
+				const order = order_of_json(response[0].data)
+				const op = await fill_order(provider, order as OrderForm, {
+					amount: new BigNumber(order.make.value)
+				})
+				await op.confirmation()
+				return op
 			} catch (e) {
 				try {
 					console.error(JSON.stringify(e, null, ' '))
@@ -1178,7 +1182,7 @@ export async function testScript(operation?: string, options: any = {}) {
 					{
 						make_contract: argv.ft_contract!,
 						maker: argv.owner!,
-						platform: Platform.RARIBLE,
+						platform: Platform.RARIBLE_V2,
 						order_id: argv.order_id,
 						make_token_id: argv.ft_token_id!,
 						status: OrderStatus.ACTIVE
@@ -1206,6 +1210,23 @@ export async function testScript(operation?: string, options: any = {}) {
 		case "get_ft_type": {
 			try {
 				return get_ft_type(provider.config, argv.ft_contract!)
+			} catch (e) {
+				console.error(e)
+			}
+		}
+
+		case "get_collection_type": {
+			try {
+				if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+					throw new Error(
+						"item_id was not set or set incorrectly")
+				}
+
+				const [contract, tokenId] = argv.item_id.split(":")
+				return get_asset_type(provider, {
+					contract: contract,
+					token_id: new BigNumber(tokenId)
+				})
 			} catch (e) {
 				console.error(e)
 			}
@@ -1259,19 +1280,15 @@ export async function testScript(operation?: string, options: any = {}) {
 				}
 
 				const [contract, tokenId] = argv.item_id.split(":")
-				const publicKey = await get_public_key(provider)
-				if (!publicKey) {
-					throw new Error("publicKey is undefined")
-				}
-				const maker = pk_to_pkh(publicKey)
+
 				const request: OrderDataRequest = {
 					make_contract: contract,
 					make_token_id: new BigNumber(tokenId),
-					maker: maker,
+					maker: argv.owner,
 					take_contract: argv.ft_contract,
 					take_token_id: argv.ft_token_id
 				}
-				return await get_active_order_type(provider.config, Platform.RARIBLE, request)
+				return await get_active_order_type(provider.config, request)
 			} catch (e) {
 				console.error(e)
 			}

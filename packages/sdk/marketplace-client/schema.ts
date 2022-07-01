@@ -4,7 +4,6 @@ export type Scalars = {
     Boolean: boolean,
     Int: number,
     String: string,
-    bigint: any,
     jsonb: any,
     numeric: any,
     timestamptz: any,
@@ -129,15 +128,28 @@ export type dipdup_token_metadata_select_column = 'contract' | 'created_at' | 'i
 
 /** columns and relationships of "indexing_status" */
 export interface indexing_status {
-    /** COLLECTION: COLLECTION */
+    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
     index: Scalars['String']
-    last_level: Scalars['bigint']
+    last_level: Scalars['String']
     __typename: 'indexing_status'
 }
 
 
 /** select columns of table "indexing_status" */
 export type indexing_status_select_column = 'index' | 'last_level'
+
+
+/** columns and relationships of "legacy_orders" */
+export interface legacy_orders {
+    data: Scalars['jsonb']
+    hash: Scalars['String']
+    id: Scalars['uuid']
+    __typename: 'legacy_orders'
+}
+
+
+/** select columns of table "legacy_orders" */
+export type legacy_orders_select_column = 'data' | 'hash' | 'id'
 
 
 /** columns and relationships of "marketplace_activity" */
@@ -196,7 +208,7 @@ export interface marketplace_order {
     payouts: Scalars['jsonb']
     /** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
     platform: Scalars['String']
-    salt: Scalars['bigint']
+    salt: Scalars['String']
     start_at: Scalars['timestamptz']
     /** ACTIVE: ACTIVE\nFILLED: FILLED\nHISTORICAL: HISTORICAL\nINACTIVE: INACTIVE\nCANCELLED: CANCELLED */
     status: Scalars['String']
@@ -248,6 +260,10 @@ export interface query_root {
     indexing_status: indexing_status[]
     /** fetch data from the table: "indexing_status" using primary key columns */
     indexing_status_by_pk?: indexing_status
+    /** fetch data from the table: "legacy_orders" */
+    legacy_orders: legacy_orders[]
+    /** fetch data from the table: "legacy_orders" using primary key columns */
+    legacy_orders_by_pk?: legacy_orders
     /** fetch data from the table: "marketplace_activity" */
     marketplace_activity: marketplace_activity[]
     /** fetch data from the table: "marketplace_activity" using primary key columns */
@@ -290,6 +306,10 @@ export interface subscription_root {
     indexing_status: indexing_status[]
     /** fetch data from the table: "indexing_status" using primary key columns */
     indexing_status_by_pk?: indexing_status
+    /** fetch data from the table: "legacy_orders" */
+    legacy_orders: legacy_orders[]
+    /** fetch data from the table: "legacy_orders" using primary key columns */
+    legacy_orders_by_pk?: legacy_orders
     /** fetch data from the table: "marketplace_activity" */
     marketplace_activity: marketplace_activity[]
     /** fetch data from the table: "marketplace_activity" using primary key columns */
@@ -335,10 +355,6 @@ _nsimilar?: (Scalars['String'] | null),
 _regex?: (Scalars['String'] | null),
 /** does the column match the given SQL regular expression */
 _similar?: (Scalars['String'] | null)}
-
-
-/** Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'. */
-export interface bigint_comparison_exp {_eq?: (Scalars['bigint'] | null),_gt?: (Scalars['bigint'] | null),_gte?: (Scalars['bigint'] | null),_in?: (Scalars['bigint'][] | null),_is_null?: (Scalars['Boolean'] | null),_lt?: (Scalars['bigint'] | null),_lte?: (Scalars['bigint'] | null),_neq?: (Scalars['bigint'] | null),_nin?: (Scalars['bigint'][] | null)}
 
 
 /** columns and relationships of "dipdup_contract" */
@@ -499,7 +515,7 @@ export interface dipdup_token_metadata_order_by {contract?: (order_by | null),cr
 
 /** columns and relationships of "indexing_status" */
 export interface indexing_statusRequest{
-    /** COLLECTION: COLLECTION */
+    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
     index?: boolean | number
     last_level?: boolean | number
     __typename?: boolean | number
@@ -508,7 +524,7 @@ export interface indexing_statusRequest{
 
 
 /** Boolean expression to filter rows from the table "indexing_status". All fields are combined with a logical 'AND'. */
-export interface indexing_status_bool_exp {_and?: (indexing_status_bool_exp[] | null),_not?: (indexing_status_bool_exp | null),_or?: (indexing_status_bool_exp[] | null),index?: (String_comparison_exp | null),last_level?: (bigint_comparison_exp | null)}
+export interface indexing_status_bool_exp {_and?: (indexing_status_bool_exp[] | null),_not?: (indexing_status_bool_exp | null),_or?: (indexing_status_bool_exp[] | null),index?: (String_comparison_exp | null),last_level?: (String_comparison_exp | null)}
 
 
 /** Ordering options when selecting data from "indexing_status". */
@@ -527,6 +543,26 @@ _has_key?: (Scalars['String'] | null),
 _has_keys_all?: (Scalars['String'][] | null),
 /** do any of these strings exist as top-level keys in the column */
 _has_keys_any?: (Scalars['String'][] | null),_in?: (Scalars['jsonb'][] | null),_is_null?: (Scalars['Boolean'] | null),_lt?: (Scalars['jsonb'] | null),_lte?: (Scalars['jsonb'] | null),_neq?: (Scalars['jsonb'] | null),_nin?: (Scalars['jsonb'][] | null)}
+
+
+/** columns and relationships of "legacy_orders" */
+export interface legacy_ordersRequest{
+    data?: [{
+    /** JSON select path */
+    path?: (Scalars['String'] | null)}] | boolean | number
+    hash?: boolean | number
+    id?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** Boolean expression to filter rows from the table "legacy_orders". All fields are combined with a logical 'AND'. */
+export interface legacy_orders_bool_exp {_and?: (legacy_orders_bool_exp[] | null),_not?: (legacy_orders_bool_exp | null),_or?: (legacy_orders_bool_exp[] | null),data?: (jsonb_comparison_exp | null),hash?: (String_comparison_exp | null),id?: (uuid_comparison_exp | null)}
+
+
+/** Ordering options when selecting data from "legacy_orders". */
+export interface legacy_orders_order_by {data?: (order_by | null),hash?: (order_by | null),id?: (order_by | null)}
 
 
 /** columns and relationships of "marketplace_activity" */
@@ -610,7 +646,7 @@ export interface marketplace_orderRequest{
 
 
 /** Boolean expression to filter rows from the table "marketplace_order". All fields are combined with a logical 'AND'. */
-export interface marketplace_order_bool_exp {_and?: (marketplace_order_bool_exp[] | null),_not?: (marketplace_order_bool_exp | null),_or?: (marketplace_order_bool_exp[] | null),cancelled?: (Boolean_comparison_exp | null),created_at?: (timestamptz_comparison_exp | null),end_at?: (timestamptz_comparison_exp | null),ended_at?: (timestamptz_comparison_exp | null),fill?: (numeric_comparison_exp | null),id?: (uuid_comparison_exp | null),internal_order_id?: (String_comparison_exp | null),last_updated_at?: (timestamptz_comparison_exp | null),make_asset_class?: (String_comparison_exp | null),make_contract?: (String_comparison_exp | null),make_token_id?: (String_comparison_exp | null),make_value?: (numeric_comparison_exp | null),maker?: (String_comparison_exp | null),network?: (String_comparison_exp | null),origin_fees?: (jsonb_comparison_exp | null),payouts?: (jsonb_comparison_exp | null),platform?: (String_comparison_exp | null),salt?: (bigint_comparison_exp | null),start_at?: (timestamptz_comparison_exp | null),status?: (String_comparison_exp | null),take_asset_class?: (String_comparison_exp | null),take_contract?: (String_comparison_exp | null),take_token_id?: (String_comparison_exp | null),take_value?: (numeric_comparison_exp | null),taker?: (String_comparison_exp | null)}
+export interface marketplace_order_bool_exp {_and?: (marketplace_order_bool_exp[] | null),_not?: (marketplace_order_bool_exp | null),_or?: (marketplace_order_bool_exp[] | null),cancelled?: (Boolean_comparison_exp | null),created_at?: (timestamptz_comparison_exp | null),end_at?: (timestamptz_comparison_exp | null),ended_at?: (timestamptz_comparison_exp | null),fill?: (numeric_comparison_exp | null),id?: (uuid_comparison_exp | null),internal_order_id?: (String_comparison_exp | null),last_updated_at?: (timestamptz_comparison_exp | null),make_asset_class?: (String_comparison_exp | null),make_contract?: (String_comparison_exp | null),make_token_id?: (String_comparison_exp | null),make_value?: (numeric_comparison_exp | null),maker?: (String_comparison_exp | null),network?: (String_comparison_exp | null),origin_fees?: (jsonb_comparison_exp | null),payouts?: (jsonb_comparison_exp | null),platform?: (String_comparison_exp | null),salt?: (String_comparison_exp | null),start_at?: (timestamptz_comparison_exp | null),status?: (String_comparison_exp | null),take_asset_class?: (String_comparison_exp | null),take_contract?: (String_comparison_exp | null),take_token_id?: (String_comparison_exp | null),take_value?: (numeric_comparison_exp | null),taker?: (String_comparison_exp | null)}
 
 
 /** Ordering options when selecting data from "marketplace_order". */
@@ -731,8 +767,22 @@ export interface query_rootRequest{
     where?: (indexing_status_bool_exp | null)},indexing_statusRequest] | indexing_statusRequest
     /** fetch data from the table: "indexing_status" using primary key columns */
     indexing_status_by_pk?: [{
-    /** COLLECTION: COLLECTION */
+    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
     index: Scalars['String']},indexing_statusRequest]
+    /** fetch data from the table: "legacy_orders" */
+    legacy_orders?: [{
+    /** distinct select on columns */
+    distinct_on?: (legacy_orders_select_column[] | null),
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null),
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null),
+    /** sort the rows by one or more columns */
+    order_by?: (legacy_orders_order_by[] | null),
+    /** filter the rows returned */
+    where?: (legacy_orders_bool_exp | null)},legacy_ordersRequest] | legacy_ordersRequest
+    /** fetch data from the table: "legacy_orders" using primary key columns */
+    legacy_orders_by_pk?: [{hash: Scalars['String']},legacy_ordersRequest]
     /** fetch data from the table: "marketplace_activity" */
     marketplace_activity?: [{
     /** distinct select on columns */
@@ -876,8 +926,22 @@ export interface subscription_rootRequest{
     where?: (indexing_status_bool_exp | null)},indexing_statusRequest] | indexing_statusRequest
     /** fetch data from the table: "indexing_status" using primary key columns */
     indexing_status_by_pk?: [{
-    /** COLLECTION: COLLECTION */
+    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
     index: Scalars['String']},indexing_statusRequest]
+    /** fetch data from the table: "legacy_orders" */
+    legacy_orders?: [{
+    /** distinct select on columns */
+    distinct_on?: (legacy_orders_select_column[] | null),
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null),
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null),
+    /** sort the rows by one or more columns */
+    order_by?: (legacy_orders_order_by[] | null),
+    /** filter the rows returned */
+    where?: (legacy_orders_bool_exp | null)},legacy_ordersRequest] | legacy_ordersRequest
+    /** fetch data from the table: "legacy_orders" using primary key columns */
+    legacy_orders_by_pk?: [{hash: Scalars['String']},legacy_ordersRequest]
     /** fetch data from the table: "marketplace_activity" */
     marketplace_activity?: [{
     /** distinct select on columns */
@@ -982,6 +1046,14 @@ const indexing_status_possibleTypes: string[] = ['indexing_status']
 export const isindexing_status = (obj?: { __typename?: any } | null): obj is indexing_status => {
   if (!obj?.__typename) throw new Error('__typename is missing in "isindexing_status"')
   return indexing_status_possibleTypes.includes(obj.__typename)
+}
+
+
+
+const legacy_orders_possibleTypes: string[] = ['legacy_orders']
+export const islegacy_orders = (obj?: { __typename?: any } | null): obj is legacy_orders => {
+  if (!obj?.__typename) throw new Error('__typename is missing in "islegacy_orders"')
+  return legacy_orders_possibleTypes.includes(obj.__typename)
 }
 
 
@@ -1199,18 +1271,38 @@ path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultV
 /** columns and relationships of "indexing_status" */
 export interface indexing_statusPromiseChain{
     
-/** COLLECTION: COLLECTION */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
 index: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
-    last_level: ({get: (request?: boolean|number, defaultValue?: Scalars['bigint']) => Promise<Scalars['bigint']>})
+    last_level: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>})
 }
 
 
 /** columns and relationships of "indexing_status" */
 export interface indexing_statusObservableChain{
     
-/** COLLECTION: COLLECTION */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
 index: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
-    last_level: ({get: (request?: boolean|number, defaultValue?: Scalars['bigint']) => Observable<Scalars['bigint']>})
+    last_level: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>})
+}
+
+
+/** columns and relationships of "legacy_orders" */
+export interface legacy_ordersPromiseChain{
+    data: ((args?: {
+/** JSON select path */
+path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultValue?: Scalars['jsonb']) => Promise<Scalars['jsonb']>})&({get: (request?: boolean|number, defaultValue?: Scalars['jsonb']) => Promise<Scalars['jsonb']>}),
+    hash: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
+    id: ({get: (request?: boolean|number, defaultValue?: Scalars['uuid']) => Promise<Scalars['uuid']>})
+}
+
+
+/** columns and relationships of "legacy_orders" */
+export interface legacy_ordersObservableChain{
+    data: ((args?: {
+/** JSON select path */
+path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultValue?: Scalars['jsonb']) => Observable<Scalars['jsonb']>})&({get: (request?: boolean|number, defaultValue?: Scalars['jsonb']) => Observable<Scalars['jsonb']>}),
+    hash: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
+    id: ({get: (request?: boolean|number, defaultValue?: Scalars['uuid']) => Observable<Scalars['uuid']>})
 }
 
 
@@ -1309,7 +1401,7 @@ path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultV
     
 /** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
 platform: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
-    salt: ({get: (request?: boolean|number, defaultValue?: Scalars['bigint']) => Promise<Scalars['bigint']>}),
+    salt: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
     start_at: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Promise<Scalars['timestamptz']>}),
     
 /** ACTIVE: ACTIVE\nFILLED: FILLED\nHISTORICAL: HISTORICAL\nINACTIVE: INACTIVE\nCANCELLED: CANCELLED */
@@ -1351,7 +1443,7 @@ path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultV
     
 /** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
 platform: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
-    salt: ({get: (request?: boolean|number, defaultValue?: Scalars['bigint']) => Observable<Scalars['bigint']>}),
+    salt: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
     start_at: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Observable<Scalars['timestamptz']>}),
     
 /** ACTIVE: ACTIVE\nFILLED: FILLED\nHISTORICAL: HISTORICAL\nINACTIVE: INACTIVE\nCANCELLED: CANCELLED */
@@ -1491,8 +1583,24 @@ where?: (indexing_status_bool_exp | null)}) => {get: <R extends indexing_statusR
     
 /** fetch data from the table: "indexing_status" using primary key columns */
 indexing_status_by_pk: ((args: {
-/** COLLECTION: COLLECTION */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
 index: Scalars['String']}) => indexing_statusPromiseChain & {get: <R extends indexing_statusRequest>(request: R, defaultValue?: (FieldsSelection<indexing_status, R> | undefined)) => Promise<(FieldsSelection<indexing_status, R> | undefined)>}),
+    
+/** fetch data from the table: "legacy_orders" */
+legacy_orders: ((args?: {
+/** distinct select on columns */
+distinct_on?: (legacy_orders_select_column[] | null),
+/** limit the number of rows returned */
+limit?: (Scalars['Int'] | null),
+/** skip the first n rows. Use only with order_by */
+offset?: (Scalars['Int'] | null),
+/** sort the rows by one or more columns */
+order_by?: (legacy_orders_order_by[] | null),
+/** filter the rows returned */
+where?: (legacy_orders_bool_exp | null)}) => {get: <R extends legacy_ordersRequest>(request: R, defaultValue?: FieldsSelection<legacy_orders, R>[]) => Promise<FieldsSelection<legacy_orders, R>[]>})&({get: <R extends legacy_ordersRequest>(request: R, defaultValue?: FieldsSelection<legacy_orders, R>[]) => Promise<FieldsSelection<legacy_orders, R>[]>}),
+    
+/** fetch data from the table: "legacy_orders" using primary key columns */
+legacy_orders_by_pk: ((args: {hash: Scalars['String']}) => legacy_ordersPromiseChain & {get: <R extends legacy_ordersRequest>(request: R, defaultValue?: (FieldsSelection<legacy_orders, R> | undefined)) => Promise<(FieldsSelection<legacy_orders, R> | undefined)>}),
     
 /** fetch data from the table: "marketplace_activity" */
 marketplace_activity: ((args?: {
@@ -1653,8 +1761,24 @@ where?: (indexing_status_bool_exp | null)}) => {get: <R extends indexing_statusR
     
 /** fetch data from the table: "indexing_status" using primary key columns */
 indexing_status_by_pk: ((args: {
-/** COLLECTION: COLLECTION */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
 index: Scalars['String']}) => indexing_statusObservableChain & {get: <R extends indexing_statusRequest>(request: R, defaultValue?: (FieldsSelection<indexing_status, R> | undefined)) => Observable<(FieldsSelection<indexing_status, R> | undefined)>}),
+    
+/** fetch data from the table: "legacy_orders" */
+legacy_orders: ((args?: {
+/** distinct select on columns */
+distinct_on?: (legacy_orders_select_column[] | null),
+/** limit the number of rows returned */
+limit?: (Scalars['Int'] | null),
+/** skip the first n rows. Use only with order_by */
+offset?: (Scalars['Int'] | null),
+/** sort the rows by one or more columns */
+order_by?: (legacy_orders_order_by[] | null),
+/** filter the rows returned */
+where?: (legacy_orders_bool_exp | null)}) => {get: <R extends legacy_ordersRequest>(request: R, defaultValue?: FieldsSelection<legacy_orders, R>[]) => Observable<FieldsSelection<legacy_orders, R>[]>})&({get: <R extends legacy_ordersRequest>(request: R, defaultValue?: FieldsSelection<legacy_orders, R>[]) => Observable<FieldsSelection<legacy_orders, R>[]>}),
+    
+/** fetch data from the table: "legacy_orders" using primary key columns */
+legacy_orders_by_pk: ((args: {hash: Scalars['String']}) => legacy_ordersObservableChain & {get: <R extends legacy_ordersRequest>(request: R, defaultValue?: (FieldsSelection<legacy_orders, R> | undefined)) => Observable<(FieldsSelection<legacy_orders, R> | undefined)>}),
     
 /** fetch data from the table: "marketplace_activity" */
 marketplace_activity: ((args?: {
@@ -1815,8 +1939,24 @@ where?: (indexing_status_bool_exp | null)}) => {get: <R extends indexing_statusR
     
 /** fetch data from the table: "indexing_status" using primary key columns */
 indexing_status_by_pk: ((args: {
-/** COLLECTION: COLLECTION */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
 index: Scalars['String']}) => indexing_statusPromiseChain & {get: <R extends indexing_statusRequest>(request: R, defaultValue?: (FieldsSelection<indexing_status, R> | undefined)) => Promise<(FieldsSelection<indexing_status, R> | undefined)>}),
+    
+/** fetch data from the table: "legacy_orders" */
+legacy_orders: ((args?: {
+/** distinct select on columns */
+distinct_on?: (legacy_orders_select_column[] | null),
+/** limit the number of rows returned */
+limit?: (Scalars['Int'] | null),
+/** skip the first n rows. Use only with order_by */
+offset?: (Scalars['Int'] | null),
+/** sort the rows by one or more columns */
+order_by?: (legacy_orders_order_by[] | null),
+/** filter the rows returned */
+where?: (legacy_orders_bool_exp | null)}) => {get: <R extends legacy_ordersRequest>(request: R, defaultValue?: FieldsSelection<legacy_orders, R>[]) => Promise<FieldsSelection<legacy_orders, R>[]>})&({get: <R extends legacy_ordersRequest>(request: R, defaultValue?: FieldsSelection<legacy_orders, R>[]) => Promise<FieldsSelection<legacy_orders, R>[]>}),
+    
+/** fetch data from the table: "legacy_orders" using primary key columns */
+legacy_orders_by_pk: ((args: {hash: Scalars['String']}) => legacy_ordersPromiseChain & {get: <R extends legacy_ordersRequest>(request: R, defaultValue?: (FieldsSelection<legacy_orders, R> | undefined)) => Promise<(FieldsSelection<legacy_orders, R> | undefined)>}),
     
 /** fetch data from the table: "marketplace_activity" */
 marketplace_activity: ((args?: {
@@ -1977,8 +2117,24 @@ where?: (indexing_status_bool_exp | null)}) => {get: <R extends indexing_statusR
     
 /** fetch data from the table: "indexing_status" using primary key columns */
 indexing_status_by_pk: ((args: {
-/** COLLECTION: COLLECTION */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
 index: Scalars['String']}) => indexing_statusObservableChain & {get: <R extends indexing_statusRequest>(request: R, defaultValue?: (FieldsSelection<indexing_status, R> | undefined)) => Observable<(FieldsSelection<indexing_status, R> | undefined)>}),
+    
+/** fetch data from the table: "legacy_orders" */
+legacy_orders: ((args?: {
+/** distinct select on columns */
+distinct_on?: (legacy_orders_select_column[] | null),
+/** limit the number of rows returned */
+limit?: (Scalars['Int'] | null),
+/** skip the first n rows. Use only with order_by */
+offset?: (Scalars['Int'] | null),
+/** sort the rows by one or more columns */
+order_by?: (legacy_orders_order_by[] | null),
+/** filter the rows returned */
+where?: (legacy_orders_bool_exp | null)}) => {get: <R extends legacy_ordersRequest>(request: R, defaultValue?: FieldsSelection<legacy_orders, R>[]) => Observable<FieldsSelection<legacy_orders, R>[]>})&({get: <R extends legacy_ordersRequest>(request: R, defaultValue?: FieldsSelection<legacy_orders, R>[]) => Observable<FieldsSelection<legacy_orders, R>[]>}),
+    
+/** fetch data from the table: "legacy_orders" using primary key columns */
+legacy_orders_by_pk: ((args: {hash: Scalars['String']}) => legacy_ordersObservableChain & {get: <R extends legacy_ordersRequest>(request: R, defaultValue?: (FieldsSelection<legacy_orders, R> | undefined)) => Observable<(FieldsSelection<legacy_orders, R> | undefined)>}),
     
 /** fetch data from the table: "marketplace_activity" */
 marketplace_activity: ((args?: {
