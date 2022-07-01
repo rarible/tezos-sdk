@@ -95,23 +95,6 @@ input String_comparison_exp {
   _similar: String
 }
 
-scalar bigint
-
-"""
-Boolean expression to compare columns of type "bigint". All fields are combined with logical 'AND'.
-"""
-input bigint_comparison_exp {
-  _eq: bigint
-  _gt: bigint
-  _gte: bigint
-  _in: [bigint!]
-  _is_null: Boolean
-  _lt: bigint
-  _lte: bigint
-  _neq: bigint
-  _nin: [bigint!]
-}
-
 """
 columns and relationships of "dipdup_contract"
 """
@@ -557,9 +540,9 @@ enum dipdup_token_metadata_select_column {
 columns and relationships of "indexing_status"
 """
 type indexing_status {
-  """COLLECTION: COLLECTION"""
+  """COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS"""
   index: String!
-  last_level: bigint!
+  last_level: String!
 }
 
 """
@@ -570,7 +553,7 @@ input indexing_status_bool_exp {
   _not: indexing_status_bool_exp
   _or: [indexing_status_bool_exp!]
   index: String_comparison_exp
-  last_level: bigint_comparison_exp
+  last_level: String_comparison_exp
 }
 
 """Ordering options when selecting data from "indexing_status"."""
@@ -619,6 +602,51 @@ input jsonb_comparison_exp {
   _lte: jsonb
   _neq: jsonb
   _nin: [jsonb!]
+}
+
+"""
+columns and relationships of "legacy_orders"
+"""
+type legacy_orders {
+  data(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+  hash: String!
+  id: uuid!
+}
+
+"""
+Boolean expression to filter rows from the table "legacy_orders". All fields are combined with a logical 'AND'.
+"""
+input legacy_orders_bool_exp {
+  _and: [legacy_orders_bool_exp!]
+  _not: legacy_orders_bool_exp
+  _or: [legacy_orders_bool_exp!]
+  data: jsonb_comparison_exp
+  hash: String_comparison_exp
+  id: uuid_comparison_exp
+}
+
+"""Ordering options when selecting data from "legacy_orders"."""
+input legacy_orders_order_by {
+  data: order_by
+  hash: order_by
+  id: order_by
+}
+
+"""
+select columns of table "legacy_orders"
+"""
+enum legacy_orders_select_column {
+  """column name"""
+  data
+
+  """column name"""
+  hash
+
+  """column name"""
+  id
 }
 
 """
@@ -822,7 +850,7 @@ type marketplace_order {
   HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2
   """
   platform: String!
-  salt: bigint!
+  salt: String!
   start_at: timestamptz!
 
   """
@@ -864,7 +892,7 @@ input marketplace_order_bool_exp {
   origin_fees: jsonb_comparison_exp
   payouts: jsonb_comparison_exp
   platform: String_comparison_exp
-  salt: bigint_comparison_exp
+  salt: String_comparison_exp
   start_at: timestamptz_comparison_exp
   status: String_comparison_exp
   take_asset_class: String_comparison_exp
@@ -1206,9 +1234,32 @@ type query_root {
 
   """fetch data from the table: "indexing_status" using primary key columns"""
   indexing_status_by_pk(
-    """COLLECTION: COLLECTION"""
+    """COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS"""
     index: String!
   ): indexing_status
+
+  """
+  fetch data from the table: "legacy_orders"
+  """
+  legacy_orders(
+    """distinct select on columns"""
+    distinct_on: [legacy_orders_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [legacy_orders_order_by!]
+
+    """filter the rows returned"""
+    where: legacy_orders_bool_exp
+  ): [legacy_orders!]!
+
+  """fetch data from the table: "legacy_orders" using primary key columns"""
+  legacy_orders_by_pk(hash: String!): legacy_orders
 
   """
   fetch data from the table: "marketplace_activity"
@@ -1446,9 +1497,32 @@ type subscription_root {
 
   """fetch data from the table: "indexing_status" using primary key columns"""
   indexing_status_by_pk(
-    """COLLECTION: COLLECTION"""
+    """COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS"""
     index: String!
   ): indexing_status
+
+  """
+  fetch data from the table: "legacy_orders"
+  """
+  legacy_orders(
+    """distinct select on columns"""
+    distinct_on: [legacy_orders_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [legacy_orders_order_by!]
+
+    """filter the rows returned"""
+    where: legacy_orders_bool_exp
+  ): [legacy_orders!]!
+
+  """fetch data from the table: "legacy_orders" using primary key columns"""
+  legacy_orders_by_pk(hash: String!): legacy_orders
 
   """
   fetch data from the table: "marketplace_activity"
