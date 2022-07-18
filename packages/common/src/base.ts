@@ -286,7 +286,6 @@ export async function get_royalties(
 		const result = await r.json()
 		const royalties: Array<Part> = result.royalties
 		for (let share of royalties) {
-			console.log(share.account)
 			share.account = share.account.replace("TEZOS:", "")
 		}
 		return royalties
@@ -302,19 +301,17 @@ export async function are_royalties_on_chain(
 ): Promise<boolean> {
 	let is_on_chain = false
 	const r = await fetch(provider.config.tzkt + `/v1/contracts/${token_contract}/bigmaps/royalties/keys/${token_id}`)
-	if (r.ok) {
+	if (r.status == 200) {
 		is_on_chain = true
 	} else {
 		const key = `{"address":"${token_contract}","nat":"${token_id}"}`
 		const r_provider = await fetch(provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`)
-		const result = await r_provider.json()
-		if(result.ok){
+		if(r_provider.status == 200){
 			is_on_chain = true
 		} else {
 			const key = `{"address":"${token_contract}","nat":null}`
 			const r_provider = await fetch(provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`)
-			const result = await r_provider.json()
-			if(result.ok){
+			if(r_provider.status == 200){
 				is_on_chain = true
 			}
 		}
