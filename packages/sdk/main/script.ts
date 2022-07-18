@@ -1,4 +1,5 @@
 import {
+	are_royalties_on_chain,
 	Auction,
 	AuctionBid,
 	await_order,
@@ -1241,6 +1242,20 @@ export async function testScript(operation?: string, options: any = {}) {
 
 				const [contract, tokenId] = argv.item_id.split(":")
 				return get_royalties(provider, contract, new BigNumber(tokenId))
+			} catch (e) {
+				console.error(e)
+			}
+		}
+
+		case "royalties_on_chain": {
+			try {
+				if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+					throw new Error(
+						"item_id was not set or set incorrectly")
+				}
+
+				const [contract, tokenId] = argv.item_id.split(":")
+				return are_royalties_on_chain(provider, contract, new BigNumber(tokenId))
 			} catch (e) {
 				console.error(e)
 			}
