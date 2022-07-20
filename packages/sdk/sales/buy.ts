@@ -68,7 +68,7 @@ export async function buyV2(
 	console.log("on chain royalties = " + is_on_chain)
 	if(!is_on_chain){
         const royalties = await get_royalties(provider, sale.asset_contract, new BigNumber(sale.asset_token_id))
-        sale.sale_payouts = sale.sale_payouts.concat(royalties)
+        sale.sale_origin_fees = sale.sale_origin_fees.concat(royalties)
     }
 
 	args = args.concat(buy_arg_v2(provider, sale));
