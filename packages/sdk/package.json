@@ -1,6 +1,6 @@
 {
   "name": "@rarible/tezos-sdk",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "main": "dist/main/index.js",
   "types": "dist/main/index.d.ts",
   "author": "",
