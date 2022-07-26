@@ -28,7 +28,12 @@ function mint_param(
   royalties: { [key: string]: BigNumber },
   amount?: BigNumber) : MichelsonData {
   const meta : MichelsonData = Object.keys(metadata).map(function(k) { return {prim: 'Elt', args: [ {string : k}, {bytes: to_hex(metadata[k]) } ] } })
-  const roya = Object.keys(royalties).map(function(k) { return [ {string : k}, {int: royalties[k].toString() }] })
+  let roya = Object.keys(royalties).map(function(k) { return [ {string : k}, {int: royalties[k].toString() }] })
+  if (roya.length == 0){
+    roya = [
+      [{string : owner}, {int: "0" }]
+    ]
+  }
   if (amount==undefined) return [ { int : token_id.toString() }, { string : owner }, meta, roya ]
   else return [ { int : token_id.toString() }, { string : owner }, { int: amount.toString() }, meta, roya ]
 }
