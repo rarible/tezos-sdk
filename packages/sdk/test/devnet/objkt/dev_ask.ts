@@ -34,6 +34,7 @@ export async function dev_objkt_ask() {
   const buyOrder = await testScript('fulfill_ask_v2_objkt', {
     edsk: sellerEdsk,
     item_id: sellOrder,
+    qty: 1,
     is_dev: true
   })
   console.log('buyOrder', buyOrder)

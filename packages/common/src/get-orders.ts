@@ -9,7 +9,7 @@ import {
 } from "@rarible/tezos-sdk/marketplace-client";
 
 export interface OrderDataRequest {
-	order_id?: string,
+	order_id?: string[],
 	maker?: string,
 	make_contract?: string,
 	make_token_id?: BigNumber,
@@ -146,14 +146,14 @@ function process_query(request_params: OrderDataRequest, is_activity: boolean): 
 			where.id = {_eq: request_params.activity_id}
 		}
 		if (request_params.order_id) {
-			where.order_id = {_eq: request_params.order_id}
+			where.order_id = {_in: request_params.order_id}
 		}
 		if (request_params.op_hash) {
 			where.operation_hash = {_eq: request_params.op_hash}
 		}
 	} else {
 		if (request_params.order_id) {
-			where.id = {_eq: request_params.order_id}
+			where.id = {_in: request_params.order_id}
 		}
 		if (request_params.status) {
 			where.status = {_eq: request_params.status}

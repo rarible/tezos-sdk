@@ -8,31 +8,38 @@ import {
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
 
-export async function objkt_fulfill_ask_v2(
+export async function get_objkt_fulfill_ask_v2_transaction(
 	provider: Provider,
 	sale: string,
-): Promise<OperationResult | undefined> {
+): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const ask = await get_orders(provider.config,
 		{internal_order_id: true, take_value: true},
-		{order_id: sale, status: OrderStatus.ACTIVE})
+		{order_id: [sale], status: OrderStatus.ACTIVE})
 	if (ask != undefined && ask.length == 1) {
-		args = args.concat(objkt_fulfill_ask_v2_arg(provider, ask[0].internal_order_id, new BigNumber(ask[0].take_value)));
+		args = args.concat(objkt_fulfill_ask_v2_arg(provider,
+			ask[0].internal_order_id,
+			ask[0].take_value));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}
-		try {
-			const op = await send_batch(provider, args);
-			await op.confirmation();
-			return op
-		} catch (e) {
-			console.log((e as Error).message)
-		}
-
-
 	} else {
-		return undefined
+		throw new Error("OBJKT V2 order does not exist")
 	}
+	return args
+}
+
+export async function objkt_fulfill_ask_v2(
+	provider: Provider,
+	sale: string
+): Promise<OperationResult | undefined> {
+	let args: TransactionArg[] = await get_objkt_fulfill_ask_v2_transaction(provider, sale)
+	if (args.length === 0) {
+		throw new Error("Empty array of transaction arguments")
+	}
+	const op = await send_batch(provider, args);
+	await op.confirmation();
+	return op
 }
 
 

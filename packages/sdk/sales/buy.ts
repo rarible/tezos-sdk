@@ -37,11 +37,11 @@ export declare type BuyBundleRequest = {
 	use_all?: boolean;
 }
 
-export async function buyV2(
+export async function get_rarible_v2_buy_transaction(
 	provider: Provider,
 	sale: BuyRequest,
 	use_all = false
-): Promise<OperationResult> {
+): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const seller = await provider.tezos.address();
 	const processed_amount = await absolute_amount(provider.config,
@@ -66,12 +66,21 @@ export async function buyV2(
 
 	const is_on_chain = await are_royalties_on_chain(provider, sale.asset_contract, new BigNumber(sale.asset_token_id))
 	console.log("on chain royalties = " + is_on_chain)
-	if(!is_on_chain){
-        const royalties = await get_royalties(provider, sale.asset_contract, new BigNumber(sale.asset_token_id))
-        sale.sale_origin_fees = sale.sale_origin_fees.concat(royalties)
-    }
+	if (!is_on_chain) {
+		const royalties = await get_royalties(provider, sale.asset_contract, new BigNumber(sale.asset_token_id))
+		sale.sale_origin_fees = sale.sale_origin_fees.concat(royalties)
+	}
 
 	args = args.concat(buy_arg_v2(provider, sale));
+	return args
+}
+
+export async function buyV2(
+	provider: Provider,
+	sale: BuyRequest,
+	use_all = false
+): Promise<OperationResult> {
+	const args = await get_rarible_v2_buy_transaction(provider, sale, use_all)
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
 	}

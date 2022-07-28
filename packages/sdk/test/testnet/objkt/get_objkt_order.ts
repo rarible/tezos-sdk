@@ -1,7 +1,5 @@
 import {testScript} from "../../../main/script";
 import * as assert from "assert";
-import {AssetTypeV2, ObjktV2OrderData, Part} from "@rarible/tezos-common";
-import BigNumber from "bignumber.js";
 
 export async function get_objkt_order_v2() {
   console.log("--------------------")
