@@ -83,6 +83,8 @@ import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsS
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/ask";
 import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/fulfill_ask";
+import {HENSwapForm, swap} from "../marketplaces/hen/swap";
+import {collect} from "../marketplaces/hen/collect";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -171,7 +173,9 @@ export async function testScript(operation?: string, options: any = {}) {
 		dipdup: "https://test-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://testnet-api.rarible.org/v0.1",
 		objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV",
-		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya"
+		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
+		hen_marketplace: "KT1SakgxbHuJmkMLSsTb37DNtHLz6LzyaMhx",
+		hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn"
 	}
 
 	const devConfig = {
@@ -198,7 +202,9 @@ export async function testScript(operation?: string, options: any = {}) {
 		dipdup: "https://dev-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://dev-api.rarible.org/v0.1",
 		objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L",
-		royalties_provider: "KT1Q6gnT9KB3Y5ause5sZq3pFmBJnAeE5nvi"
+		royalties_provider: "KT1Q6gnT9KB3Y5ause5sZq3pFmBJnAeE5nvi",
+		hen_marketplace: "KT1BCcHJuWyKCWE4q6wJwnaPqfifhm3bWTpS",
+		hen_objkts: "KT1EFwQpD522Vfw7LykZkwbtRXghetRP5jNH"
 	}
 
 	const provider = {
@@ -583,6 +589,30 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'hen_swap': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: HENSwapForm = {
+				token_id: new BigNumber(tokenId),
+				editions: new BigNumber(argv.qty),
+				price_per_item: new BigNumber(argv.amount)
+			}
+
+			const order = await swap(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case "fill": {
 			try {
 				console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
@@ -830,6 +860,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'fulfill_ask_v2_objkt': {
 			console.log("buy item", argv.item_id)
 			const order = await objkt_fulfill_ask_v2(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'hen_collect': {
+			console.log("buy item", argv.item_id)
+			const order = await collect(provider, argv.item_id)
 			console.log('order=', order)
 			return order
 		}
