@@ -39,7 +39,8 @@ export type AssetData = {
 export enum Platform {
 	RARIBLE_V1 = "RARIBLE_V1",
 	RARIBLE_V2 = "RARIBLE_V2",
-	OBJKT_V2 = "OBJKT_V2"
+	OBJKT_V2 = "OBJKT_V2",
+	HEN = "HEN"
 }
 
 export enum OrderStatus {
@@ -139,6 +140,8 @@ export interface Config {
 	dipdup: string,
 	union_api: string,
 	objkt_sales_v2: string,
+	hen_marketplace: string,
+	hen_objkts: string,
 	royalties_provider: string
 }
 

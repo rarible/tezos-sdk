@@ -104,8 +104,7 @@ export async function ask_v2(
         order.token_id
     );
     if (approve_a) args = args.concat(approve_a);
-    //order.shares = await get_royalties(provider, order.token_contract, order.token_id)
-    order.shares = []
+    order.shares = await get_royalties(provider, order.token_contract, order.token_id)
     for(let share of order.shares){
         share.value = new BigNumber(share.value).div(10)
     }
