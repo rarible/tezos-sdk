@@ -84,6 +84,7 @@ import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequ
 import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/ask";
 import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/fulfill_ask";
 import {HENSwapForm, swap} from "../marketplaces/hen/swap";
+import {collect} from "../marketplaces/hen/collect";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -169,7 +170,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ithacanet.tzkt.io",
-		dipdup: "https://test-tezos-indexer.rarible.org/v1/graphql",
+		dipdup: "http://localhost:49180/v1/graphql",
 		union_api: "https://testnet-api.rarible.org/v0.1",
 		objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV",
 		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
@@ -859,6 +860,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'fulfill_ask_v2_objkt': {
 			console.log("buy item", argv.item_id)
 			const order = await objkt_fulfill_ask_v2(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'hen_collect': {
+			console.log("buy item", argv.item_id)
+			const order = await collect(provider, argv.item_id)
 			console.log('order=', order)
 			return order
 		}
