@@ -70,9 +70,8 @@ export async function swap(
         order.token_id
     );
     if (approve_a) args = args.concat(approve_a);
-    //const royalties = await get_royalties(provider, provider.config.hen_objkts, order.token_id)
-    //args = args.concat(hen_swap_arg(provider, order, royalties[0].account, royalties[0].value));
-    args = args.concat(hen_swap_arg(provider, order, "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb", new BigNumber(100)));
+    const royalties = await get_royalties(provider, provider.config.hen_objkts, order.token_id)
+    args = args.concat(hen_swap_arg(provider, order, royalties[0].account, royalties[0].value));
     if (args.length === 0) {
         throw new Error("Empty array of sell args")
     }
