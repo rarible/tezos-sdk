@@ -429,8 +429,9 @@ export async function asset_factor(
 	asset_token_id?: BigNumber
 ): Promise<BigNumber> {
 	let decimals: BigNumber
-	switch (asset_type) {
-		case AssetTypeV2.FA12, AssetTypeV2.FA2:
+	switch (+asset_type) {
+		case AssetTypeV2.FA12:
+		case AssetTypeV2.FA2:
 			decimals = await get_decimals(config, asset_contract!, asset_token_id)
 			break
 		default:
@@ -560,6 +561,7 @@ export async function get_decimals(config: Config, contract: string, token_id = 
 	const token = await result.json()
 	if (token.length == 1 && token[0].metadata != undefined) {
 		if (token[0].metadata.decimals != undefined) {
+			console.log("tzkt decimals = " ,token[0].metadata.decimals)
 			return new BigNumber(token[0].metadata.decimals)
 		} else {
 			return new BigNumber(0)
