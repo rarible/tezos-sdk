@@ -429,8 +429,9 @@ export async function asset_factor(
 	asset_token_id?: BigNumber
 ): Promise<BigNumber> {
 	let decimals: BigNumber
-	switch (asset_type) {
-		case AssetTypeV2.FA12, AssetTypeV2.FA2:
+	switch (+asset_type) {
+		case AssetTypeV2.FA12:
+		case AssetTypeV2.FA2:
 			decimals = await get_decimals(config, asset_contract!, asset_token_id)
 			break
 		default:
