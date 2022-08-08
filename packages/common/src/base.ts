@@ -561,7 +561,6 @@ export async function get_decimals(config: Config, contract: string, token_id = 
 	const token = await result.json()
 	if (token.length == 1 && token[0].metadata != undefined) {
 		if (token[0].metadata.decimals != undefined) {
-			console.log("tzkt decimals = " ,token[0].metadata.decimals)
 			return new BigNumber(token[0].metadata.decimals)
 		} else {
 			return new BigNumber(0)
