@@ -5,7 +5,7 @@ import {
 	await_order,
 	BundleAuction,
 	BundleAuctionBid,
-	burn,
+	burn, cancel,
 	cancel_auction,
 	cancel_bundle_auction,
 	deploy_nft_public,
@@ -178,6 +178,36 @@ export async function testScript(operation?: string, options: any = {}) {
 		hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn"
 	}
 
+	//For prod debug
+	// const config = {
+	// 	chain_id: "NetXnHfVqm9iesp",
+	// 	exchange: argv.exchange,
+	// 	transfer_proxy: argv.transfer_proxy,
+	// 	fees: new BigNumber(argv.protocol_fee),
+	// 	nft_public: "",
+	// 	mt_public: "",
+	// 	api: "https://tezos-api.rarible.org/v0.1",
+	// 	api_permit: "https://tezos-api.rarible.org/v0.1",
+	// 	permit_whitelist: [],
+	// 	wrapper: argv.wrapper,
+	// 	auction: "",
+	// 	auction_storage: "",
+	// 	node_url: argv.endpoint,
+	// 	sales: "KT1N4Rrm6BU6229drs6scrH3vard1pPngMyA",
+	// 	sales_storage: "KT1BEZNm3E25rZtXfPPKr5Jxygbi2kL2cCEW",
+	// 	transfer_manager: "KT1ViAbsAM5rp89yVydEkbQozp1S12zqirwS",
+	// 	bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+	// 	bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
+	// 	sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
+	// 	tzkt: "https://api.tzkt.io",
+	// 	dipdup: "https://tezos-indexer.rarible.org/v1/graphql",
+	// 	union_api: "https://api.rarible.org/v0.1",
+	// 	objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV",
+	// 	royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
+	// 	hen_marketplace: "KT1SakgxbHuJmkMLSsTb37DNtHLz6LzyaMhx",
+	// 	hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn"
+	// }
+
 	const devConfig = {
 		chain_id: "NetXfHjxW3qBoxi",
 		exchange: "KT18isH58SBp7UaRWB652UwLMPxCe1bsjMMe",
@@ -189,20 +219,20 @@ export async function testScript(operation?: string, options: any = {}) {
 		api_permit: "https://dev-tezos-api.rarible.org/v0.1",
 		permit_whitelist: [],
 		wrapper: "",
-		auction: "KT1UThqUUyAM9g8Nk6u74ke6XAFZNycAWU7c",
-		auction_storage: "KT1AJXNtHfFMB4kuJJexdevH2XeULivjThEX",
+		auction: "KT1L8u1GMiKSARujxwQHfMtJTkMBSonQ7FSv",
+		auction_storage: "KT1RtFbGfSbgNVuN9cfvrzhoHcq9CSUH3uMf",
 		node_url: devNode,
-		sales: "KT198cr9bKZDGVtgj7P4DazAjq38r74hFSVu",
-		sales_storage: "KT19i8Dc5Bibei6YrtdzUt27B9UBkQo6oLsG",
-		transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
-		bid: "KT1DJxerfM2nPYYsVNBxaevppwhkCGwZzsGT",
-		bid_storage: "KT1NvX6EQUqjUuQXsBU3eocpkbZsVX71FcTn",
+		sales: "KT1PFCwtC28QJZtsMDi8Gu9ezJydZ812y8Yi",
+		sales_storage: "KT1KJav7CC8ieoLfdpeeDpo7pQbKCJDNP2a6",
+		transfer_manager: "KT1RAjXqJm4MPf1MQr4NdinupYc3NxNaykaz",
+		bid: "KT1Wt3C7M7nJuuA83Ukr572vFc5uk6QJwePZ",
+		bid_storage: "KT1KJRo2tiFBXZnzTJAVxrPnn2jW3LVCZSii",
 		sig_checker: "KT1EiyFnYEGUtfMLKBcWnYzJ95d1hakR5qaX",
 		tzkt: "https://dev-tezos-tzkt.rarible.org",
 		dipdup: "https://dev-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://dev-api.rarible.org/v0.1",
 		objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L",
-		royalties_provider: "KT1Q6gnT9KB3Y5ause5sZq3pFmBJnAeE5nvi",
+		royalties_provider: "KT1ABvSRv27WymHYAyuEVnYktdhiPy3kThjk",
 		hen_marketplace: "KT1BCcHJuWyKCWE4q6wJwnaPqfifhm3bWTpS",
 		hen_objkts: "KT1EFwQpD522Vfw7LykZkwbtRXghetRP5jNH"
 	}
@@ -882,6 +912,32 @@ export async function testScript(operation?: string, options: any = {}) {
 
 			const auction = await cancel_auction(provider, contract, new BigNumber(tokenId))
 			return auction
+		}
+
+		case "cancel": {
+			try {
+				console.log(`cancel legacy order=${argv.order_id} from ${await provider.tezos.address()}`)
+				const response = await get_legacy_orders(
+					provider.config, {
+						data: true
+					}, {
+						order_id: argv.order_id
+					})
+
+				console.log("fetched order = " + JSON.stringify(response[0].data))
+
+				const order = order_of_json(response[0].data)
+				const op = await cancel(provider, order as OrderForm)
+				await op.confirmation()
+				return op
+			} catch (e) {
+				try {
+					console.error(JSON.stringify(e, null, ' '))
+				} catch (e) {
+					console.error(e)
+				}
+			}
+			break
 		}
 
 		case 'cancel_v2': {
