@@ -14,7 +14,7 @@ module.exports.version = version
 module.exports.createClient = function(options) {
   options = options || {}
   var optionsCopy = {
-    url: 'http://test-tezos-indexer.rarible.org/v1/graphql',
+    url: 'http://localhost:49180/v1/graphql',
     queryRoot: typeMap.Query,
     mutationRoot: typeMap.Mutation,
     subscriptionRoot: typeMap.Subscription,
@@ -134,6 +134,7 @@ module.exports.enummarketplaceOrderSelectColumn = {
   last_updated_at: 'last_updated_at',
   make_asset_class: 'make_asset_class',
   make_contract: 'make_contract',
+  make_price: 'make_price',
   make_token_id: 'make_token_id',
   make_value: 'make_value',
   maker: 'maker',
@@ -146,6 +147,7 @@ module.exports.enummarketplaceOrderSelectColumn = {
   status: 'status',
   take_asset_class: 'take_asset_class',
   take_contract: 'take_contract',
+  take_price: 'take_price',
   take_token_id: 'take_token_id',
   take_value: 'take_value',
   taker: 'taker',

@@ -85,6 +85,7 @@ import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/ask";
 import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/fulfill_ask";
 import {HENSwapForm, swap} from "../marketplaces/hen/swap";
 import {collect} from "../marketplaces/hen/collect";
+import {cancel_swap} from "../marketplaces/hen/cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -170,12 +171,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ithacanet.tzkt.io",
-		dipdup: "https://test-tezos-indexer.rarible.org/v1/graphql",
+		dipdup: "http://localhost:49180/v1/graphql",
 		union_api: "https://testnet-api.rarible.org/v0.1",
-		objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV",
+		objkt_sales_v1: "KT1Ax5fm2UNxjXGmrMDytREfqvYoCXoBB4Jo",
+		objkt_sales_v2: "KT1GiZuR6TdkgxZGQGZSdbC3Jox9JTSbqTB6",
 		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
-		hen_marketplace: "KT1SakgxbHuJmkMLSsTb37DNtHLz6LzyaMhx",
-		hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn"
+		hen_marketplace: "KT1XYgjgFQutFfgEiD7RuppSKZsawZbkpKxL",
+		hen_objkts: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw"
 	}
 
 	//For prod debug
@@ -231,10 +233,11 @@ export async function testScript(operation?: string, options: any = {}) {
 		tzkt: "https://dev-tezos-tzkt.rarible.org",
 		dipdup: "https://dev-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://dev-api.rarible.org/v0.1",
+		objkt_sales_v1: "KT1Qa7sQdZrsuPMA7NFg5hMF9iadtoYSF8m9",
 		objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L",
 		royalties_provider: "KT1ABvSRv27WymHYAyuEVnYktdhiPy3kThjk",
-		hen_marketplace: "KT1BCcHJuWyKCWE4q6wJwnaPqfifhm3bWTpS",
-		hen_objkts: "KT1EFwQpD522Vfw7LykZkwbtRXghetRP5jNH"
+		hen_marketplace: "KT1MvX3Z4WWHKutC9WpXXY471R4WmcSewb6a",
+		hen_objkts: "KT1E59fZ5vxx67h8spyQqT8nC3k9scmBBkkd"
 	}
 
 	const provider = {
@@ -898,6 +901,12 @@ export async function testScript(operation?: string, options: any = {}) {
 			console.log("buy item", argv.item_id)
 			const order = await collect(provider, argv.item_id)
 			console.log('order=', order)
+			return order
+		}
+
+		case 'hen_cancel_swap': {
+			console.log("cancel swap", argv.item_id)
+			const order = await cancel_swap(provider, argv.item_id)
 			return order
 		}
 

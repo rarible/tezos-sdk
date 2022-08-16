@@ -20,7 +20,7 @@
     "test-rarible-devnet": "ts-node test/rarible-devnet-tests.ts",
     "test-rarible-testnet": "ts-node test/rarible-testnet-tests.ts",
     "build-webpack": "webpack --config webpack.config.js",
-    "build-gql-client": "genql --endpoint http://dev-tezos-indexer.rarible.org/v1/graphql --output ./marketplace-client",
+    "build-gql-client": "genql --endpoint http://localhost:49180/v1/graphql --output ./marketplace-client",
     "verify": "tsc --noEmit",
     "clean": "rimraf ./dist"
   },

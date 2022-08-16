@@ -139,6 +139,7 @@ export interface Config {
 	tzkt: string,
 	dipdup: string,
 	union_api: string,
+	objkt_sales_v1: string,
 	objkt_sales_v2: string,
 	hen_marketplace: string,
 	hen_objkts: string,
