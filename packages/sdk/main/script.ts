@@ -381,7 +381,7 @@ export async function testScript(operation?: string, options: any = {}) {
 					asset_class: "XTZ"
 				},
 				amount: new BigNumber("1"),
-				price: new BigNumber("1"),
+				price: new BigNumber("0.1"),
 				payouts: [{
 					account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
 					value: new BigNumber(10000)
