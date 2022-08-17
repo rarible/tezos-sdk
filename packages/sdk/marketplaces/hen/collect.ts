@@ -8,10 +8,10 @@ import {
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
 
-export async function collect(
+export async function get_hen_collect_transaction(
 	provider: Provider,
 	sale: string,
-): Promise<OperationResult | undefined> {
+): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const ask = await get_orders(provider.config,
 		{internal_order_id: true, make_price: true},
@@ -21,17 +21,23 @@ export async function collect(
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}
-		try {
-			const op = await send_batch(provider, args);
-			await op.confirmation();
-			return op
-		} catch (e) {
-			console.log(JSON.stringify(e))
-			console.log((e as Error).message)
-		}
 	} else {
-		return undefined
+		throw new Error("HEN order does not exist")
 	}
+	return args
+}
+
+export async function collect(
+	provider: Provider,
+	sale: string
+): Promise<OperationResult | undefined> {
+	let args: TransactionArg[] = await get_hen_collect_transaction(provider, sale)
+	if (args.length === 0) {
+		throw new Error("Empty array of transaction arguments")
+	}
+	const op = await send_batch(provider, args);
+	await op.confirmation();
+	return op
 }
 
 export function hen_collect_arg(

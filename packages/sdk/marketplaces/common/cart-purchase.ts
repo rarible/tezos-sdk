@@ -10,7 +10,9 @@ import {
 import BigNumber from "bignumber.js";
 import {get_rarible_legacy_buy_transaction, order_of_json, OrderForm} from "../../order";
 import {BuyRequest, get_rarible_v2_buy_transaction} from "../../sales/buy";
-import {get_objkt_fulfill_ask_v2_transaction} from "../objkt/fulfill_ask";
+import {get_objkt_fulfill_ask_v2_transaction} from "../objkt/v2/fulfill_ask";
+import {get_objkt_fulfill_ask_v1_transaction} from "../objkt/v1/fulfill_ask";
+import {get_hen_collect_transaction} from "../hen/collect";
 
 export interface CartOrder {
 	order_id: string,
@@ -87,10 +89,20 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 				const rarible_v2_txs = await get_rarible_v2_buy_transaction(provider, buyRequest)
 				transactions = transactions.concat(rarible_v2_txs)
 				break;
+			case "OBJKT_V1":
+				const objkt_v1_txs = await get_objkt_fulfill_ask_v1_transaction(provider,
+					cart_order.order_id)
+				transactions = transactions.concat(objkt_v1_txs)
+				break;
 			case "OBJKT_V2":
 				const objkt_v2_txs = await get_objkt_fulfill_ask_v2_transaction(provider,
 					cart_order.order_id)
 				transactions = transactions.concat(objkt_v2_txs)
+				break;
+			case "HEN":
+				const hen_txs = await get_hen_collect_transaction(provider,
+					cart_order.order_id)
+				transactions = transactions.concat(hen_txs)
 				break;
 		}
 	}
