@@ -833,6 +833,7 @@ type marketplace_order {
   """
   make_asset_class: String!
   make_contract: String
+  make_price: numeric
   make_token_id: String
   make_value: numeric!
   maker: String!
@@ -863,6 +864,7 @@ type marketplace_order {
   """
   take_asset_class: String
   take_contract: String
+  take_price: numeric
   take_token_id: String
   take_value: numeric
   taker: String
@@ -885,6 +887,7 @@ input marketplace_order_bool_exp {
   last_updated_at: timestamptz_comparison_exp
   make_asset_class: String_comparison_exp
   make_contract: String_comparison_exp
+  make_price: numeric_comparison_exp
   make_token_id: String_comparison_exp
   make_value: numeric_comparison_exp
   maker: String_comparison_exp
@@ -897,6 +900,7 @@ input marketplace_order_bool_exp {
   status: String_comparison_exp
   take_asset_class: String_comparison_exp
   take_contract: String_comparison_exp
+  take_price: numeric_comparison_exp
   take_token_id: String_comparison_exp
   take_value: numeric_comparison_exp
   taker: String_comparison_exp
@@ -914,6 +918,7 @@ input marketplace_order_order_by {
   last_updated_at: order_by
   make_asset_class: order_by
   make_contract: order_by
+  make_price: order_by
   make_token_id: order_by
   make_value: order_by
   maker: order_by
@@ -926,6 +931,7 @@ input marketplace_order_order_by {
   status: order_by
   take_asset_class: order_by
   take_contract: order_by
+  take_price: order_by
   take_token_id: order_by
   take_value: order_by
   taker: order_by
@@ -966,6 +972,9 @@ enum marketplace_order_select_column {
   make_contract
 
   """column name"""
+  make_price
+
+  """column name"""
   make_token_id
 
   """column name"""
@@ -1000,6 +1009,9 @@ enum marketplace_order_select_column {
 
   """column name"""
   take_contract
+
+  """column name"""
+  take_price
 
   """column name"""
   take_token_id

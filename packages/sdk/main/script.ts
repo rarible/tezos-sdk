@@ -5,7 +5,7 @@ import {
 	await_order,
 	BundleAuction,
 	BundleAuctionBid,
-	burn,
+	burn, cancel,
 	cancel_auction,
 	cancel_bundle_auction,
 	deploy_nft_public,
@@ -81,8 +81,15 @@ import {
 import {BundleOrderForm, OrderFormV2, sell_v2_batch, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
-import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/ask";
-import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/fulfill_ask";
+import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/v2/ask";
+import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/v2/fulfill_ask";
+import {HENSwapForm, swap} from "../marketplaces/hen/swap";
+import {collect} from "../marketplaces/hen/collect";
+import {cancel_swap} from "../marketplaces/hen/cancel";
+import {objkt_fulfill_ask_v1} from "../marketplaces/objkt/v1/fulfill_ask";
+import {ask_v1, ObjktAskV1Form} from "../marketplaces/objkt/v1/ask";
+import {objkt_retract_ask_v2} from "../marketplaces/objkt/v2/retract_ask";
+import {objkt_retract_ask_v1} from "../marketplaces/objkt/v1/retract_aks";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -170,9 +177,42 @@ export async function testScript(operation?: string, options: any = {}) {
 		tzkt: "https://api.ithacanet.tzkt.io",
 		dipdup: "https://test-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://testnet-api.rarible.org/v0.1",
-		objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV",
-		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya"
+		objkt_sales_v1: "KT1Ax5fm2UNxjXGmrMDytREfqvYoCXoBB4Jo",
+		objkt_sales_v2: "KT1GiZuR6TdkgxZGQGZSdbC3Jox9JTSbqTB6",
+		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
+		hen_marketplace: "KT1XYgjgFQutFfgEiD7RuppSKZsawZbkpKxL",
+		hen_objkts: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw"
 	}
+
+	//For prod debug
+	// const config = {
+	// 	chain_id: "NetXnHfVqm9iesp",
+	// 	exchange: argv.exchange,
+	// 	transfer_proxy: argv.transfer_proxy,
+	// 	fees: new BigNumber(argv.protocol_fee),
+	// 	nft_public: "",
+	// 	mt_public: "",
+	// 	api: "https://tezos-api.rarible.org/v0.1",
+	// 	api_permit: "https://tezos-api.rarible.org/v0.1",
+	// 	permit_whitelist: [],
+	// 	wrapper: argv.wrapper,
+	// 	auction: "",
+	// 	auction_storage: "",
+	// 	node_url: argv.endpoint,
+	// 	sales: "KT1N4Rrm6BU6229drs6scrH3vard1pPngMyA",
+	// 	sales_storage: "KT1BEZNm3E25rZtXfPPKr5Jxygbi2kL2cCEW",
+	// 	transfer_manager: "KT1ViAbsAM5rp89yVydEkbQozp1S12zqirwS",
+	// 	bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+	// 	bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
+	// 	sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
+	// 	tzkt: "https://api.tzkt.io",
+	// 	dipdup: "https://tezos-indexer.rarible.org/v1/graphql",
+	// 	union_api: "https://api.rarible.org/v0.1",
+	// 	objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV",
+	// 	royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
+	// 	hen_marketplace: "KT1SakgxbHuJmkMLSsTb37DNtHLz6LzyaMhx",
+	// 	hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn"
+	// }
 
 	const devConfig = {
 		chain_id: "NetXfHjxW3qBoxi",
@@ -185,20 +225,23 @@ export async function testScript(operation?: string, options: any = {}) {
 		api_permit: "https://dev-tezos-api.rarible.org/v0.1",
 		permit_whitelist: [],
 		wrapper: "",
-		auction: "KT1UThqUUyAM9g8Nk6u74ke6XAFZNycAWU7c",
-		auction_storage: "KT1AJXNtHfFMB4kuJJexdevH2XeULivjThEX",
+		auction: "KT1L8u1GMiKSARujxwQHfMtJTkMBSonQ7FSv",
+		auction_storage: "KT1RtFbGfSbgNVuN9cfvrzhoHcq9CSUH3uMf",
 		node_url: devNode,
-		sales: "KT198cr9bKZDGVtgj7P4DazAjq38r74hFSVu",
-		sales_storage: "KT19i8Dc5Bibei6YrtdzUt27B9UBkQo6oLsG",
-		transfer_manager: "KT1Xj6gsE694LkMg25SShYkU7dGzagm7BTSK",
-		bid: "KT1DJxerfM2nPYYsVNBxaevppwhkCGwZzsGT",
-		bid_storage: "KT1NvX6EQUqjUuQXsBU3eocpkbZsVX71FcTn",
+		sales: "KT1PFCwtC28QJZtsMDi8Gu9ezJydZ812y8Yi",
+		sales_storage: "KT1KJav7CC8ieoLfdpeeDpo7pQbKCJDNP2a6",
+		transfer_manager: "KT1RAjXqJm4MPf1MQr4NdinupYc3NxNaykaz",
+		bid: "KT1Wt3C7M7nJuuA83Ukr572vFc5uk6QJwePZ",
+		bid_storage: "KT1KJRo2tiFBXZnzTJAVxrPnn2jW3LVCZSii",
 		sig_checker: "KT1EiyFnYEGUtfMLKBcWnYzJ95d1hakR5qaX",
 		tzkt: "https://dev-tezos-tzkt.rarible.org",
 		dipdup: "https://dev-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://dev-api.rarible.org/v0.1",
+		objkt_sales_v1: "KT1Qa7sQdZrsuPMA7NFg5hMF9iadtoYSF8m9",
 		objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L",
-		royalties_provider: "KT1Q6gnT9KB3Y5ause5sZq3pFmBJnAeE5nvi"
+		royalties_provider: "KT1ABvSRv27WymHYAyuEVnYktdhiPy3kThjk",
+		hen_marketplace: "KT1MvX3Z4WWHKutC9WpXXY471R4WmcSewb6a",
+		hen_objkts: "KT1E59fZ5vxx67h8spyQqT8nC3k9scmBBkkd"
 	}
 
 	const provider = {
@@ -583,6 +626,56 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'ask_v1_objkt': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: ObjktAskV1Form = {
+				token_contract: contract,
+				token_id: new BigNumber(tokenId),
+				amount: new BigNumber(argv.amount),
+				editions: new BigNumber(argv.qty),
+				shares: []
+			}
+
+			const order = await ask_v1(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'hen_swap': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: HENSwapForm = {
+				token_id: new BigNumber(tokenId),
+				editions: new BigNumber(argv.qty),
+				price_per_item: new BigNumber(argv.amount)
+			}
+
+			const order = await swap(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case "fill": {
 			try {
 				console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
@@ -866,6 +959,40 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'fulfill_ask_v1_objkt': {
+			console.log("buy item", argv.item_id)
+			const order = await objkt_fulfill_ask_v1(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'retract_ask_v2_objkt': {
+			console.log("cancel ask", argv.item_id)
+			const order = await objkt_retract_ask_v2(provider, argv.item_id)
+			console.log('cancel=', order)
+			return order
+		}
+
+		case 'retract_ask_v1_objkt': {
+			console.log("cancel ask", argv.item_id)
+			const order = await objkt_retract_ask_v1(provider, argv.item_id)
+			console.log('cancel=', order)
+			return order
+		}
+
+		case 'hen_collect': {
+			console.log("buy item", argv.item_id)
+			const order = await collect(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'hen_cancel_swap': {
+			console.log("cancel swap", argv.item_id)
+			const order = await cancel_swap(provider, argv.item_id)
+			return order
+		}
+
 		case 'cancel_auction': {
 			console.log("cancel auction", argv.item_id)
 			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
@@ -877,6 +1004,32 @@ export async function testScript(operation?: string, options: any = {}) {
 
 			const auction = await cancel_auction(provider, contract, new BigNumber(tokenId))
 			return auction
+		}
+
+		case "cancel": {
+			try {
+				console.log(`cancel legacy order=${argv.order_id} from ${await provider.tezos.address()}`)
+				const response = await get_legacy_orders(
+					provider.config, {
+						data: true
+					}, {
+						order_id: [argv.order_id]
+					})
+
+				console.log("fetched order = " + JSON.stringify(response[0].data))
+
+				const order = order_of_json(response[0].data)
+				const op = await cancel(provider, order as OrderForm)
+				await op.confirmation()
+				return op
+			} catch (e) {
+				try {
+					console.error(JSON.stringify(e, null, ' '))
+				} catch (e) {
+					console.error(e)
+				}
+			}
+			break
 		}
 
 		case 'cancel_v2': {

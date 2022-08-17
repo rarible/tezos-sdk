@@ -39,7 +39,9 @@ export type AssetData = {
 export enum Platform {
 	RARIBLE_V1 = "RARIBLE_V1",
 	RARIBLE_V2 = "RARIBLE_V2",
-	OBJKT_V2 = "OBJKT_V2"
+	OBJKT_V1 = "OBJKT_V1",
+	OBJKT_V2 = "OBJKT_V2",
+	HEN = "HEN"
 }
 
 export enum OrderStatus {
@@ -138,7 +140,10 @@ export interface Config {
 	tzkt: string,
 	dipdup: string,
 	union_api: string,
+	objkt_sales_v1: string,
 	objkt_sales_v2: string,
+	hen_marketplace: string,
+	hen_objkts: string,
 	royalties_provider: string
 }
 
@@ -426,8 +431,9 @@ export async function asset_factor(
 	asset_token_id?: BigNumber
 ): Promise<BigNumber> {
 	let decimals: BigNumber
-	switch (asset_type) {
-		case AssetTypeV2.FA12, AssetTypeV2.FA2:
+	switch (+asset_type) {
+		case AssetTypeV2.FA12:
+		case AssetTypeV2.FA2:
 			decimals = await get_decimals(config, asset_contract!, asset_token_id)
 			break
 		default:

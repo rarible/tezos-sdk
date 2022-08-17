@@ -1,4 +1,4 @@
-import {testScript} from "../../../main/script";
+import {testScript} from "../../../../main/script";
 import * as assert from "assert";
 
 export async function get_objkt_order_v2() {
