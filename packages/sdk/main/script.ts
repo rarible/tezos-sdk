@@ -88,6 +88,8 @@ import {collect} from "../marketplaces/hen/collect";
 import {cancel_swap} from "../marketplaces/hen/cancel";
 import {objkt_fulfill_ask_v1} from "../marketplaces/objkt/v1/fulfill_ask";
 import {ask_v1, ObjktAskV1Form} from "../marketplaces/objkt/v1/ask";
+import {objkt_retract_ask_v2} from "../marketplaces/objkt/v2/retract_ask";
+import {objkt_retract_ask_v1} from "../marketplaces/objkt/v1/retract_aks";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -929,6 +931,20 @@ export async function testScript(operation?: string, options: any = {}) {
 			console.log("buy item", argv.item_id)
 			const order = await objkt_fulfill_ask_v1(provider, argv.item_id)
 			console.log('order=', order)
+			return order
+		}
+
+		case 'retract_ask_v2_objkt': {
+			console.log("cancel ask", argv.item_id)
+			const order = await objkt_retract_ask_v2(provider, argv.item_id)
+			console.log('cancel=', order)
+			return order
+		}
+
+		case 'retract_ask_v1_objkt': {
+			console.log("cancel ask", argv.item_id)
+			const order = await objkt_retract_ask_v1(provider, argv.item_id)
+			console.log('cancel=', order)
 			return order
 		}
 
