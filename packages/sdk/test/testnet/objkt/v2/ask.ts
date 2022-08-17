@@ -1,9 +1,9 @@
-import {testScript} from "../../../main/script";
-import {awaitItem} from "../../common/utils";
+import {testScript} from "../../../../main/script";
+import {awaitItem} from "../../../common/utils";
 
-export async function objkt_ask() {
+export async function objkt_ask_v2() {
   console.log("--------------------")
-  console.log("Running objkt_ask test")
+  console.log("Running objkt_ask_v2 test")
   console.log("--------------------")
 
   const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"

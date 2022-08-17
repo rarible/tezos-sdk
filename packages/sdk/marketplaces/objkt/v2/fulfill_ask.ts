@@ -14,10 +14,10 @@ export async function objkt_fulfill_ask_v2(
 ): Promise<OperationResult | undefined> {
 	let args: TransactionArg[] = [];
 	const ask = await get_orders(provider.config,
-		{internal_order_id: true, take_value: true},
+		{internal_order_id: true, make_price: true},
 		{order_id: sale, status: OrderStatus.ACTIVE})
 	if (ask != undefined && ask.length == 1) {
-		args = args.concat(objkt_fulfill_ask_v2_arg(provider, ask[0].internal_order_id, new BigNumber(ask[0].take_value)));
+		args = args.concat(objkt_fulfill_ask_v2_arg(provider, ask[0].internal_order_id, new BigNumber(ask[0].make_price)));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}

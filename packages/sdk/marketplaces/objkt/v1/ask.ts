@@ -2,81 +2,66 @@ import {
     absolute_amount,
     approve_v2,
     AssetTypeV2, await_order, get_royalties,
-    objkt_parts_to_micheline,
-    optional_date_arg, OrderStatus,
+    OrderStatus,
     Part, Platform,
     Provider,
-    retry,
     send_batch,
     TransactionArg
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
-import {sell_arg_v2} from "../../sales/sell";
 
 
-export declare type ObjktAskV2Form = {
+export declare type ObjktAskV1Form = {
     token_contract: string;
     token_id: BigNumber;
     amount: BigNumber;
     editions: BigNumber;
     shares: Array<Part>;
-    expiry_time?: number;
 }
 
-export function objkt_ask_v2_arg(
+export function objkt_ask_v1_arg(
     provider: Provider,
-    ask: ObjktAskV2Form,
-    processed_amount: BigNumber
+    ask: ObjktAskV1Form,
+    processed_amount: BigNumber,
+    seller: string
 ): TransactionArg {
     const parameter: MichelsonData = {
         prim: "Pair",
-        args: [{
-            prim: "Pair",
-            args: [{
-                string: ask.token_contract
-            },
-                {
-                    int: ask.token_id.toString()
-                }
-            ]
-        },
+        args: [
             {
                 prim: "Pair",
-                args: [{
-                    prim: "Right",
-                    args: [{
-                        prim: "Right",
-                        args: [{
-                            prim: "Unit"
-                        }]
-                    }]
-                },
+                args: [
+                    {
+                        int: `${ask.editions}`
+                    },
                     {
                         prim: "Pair",
-                        args: [{
-                            int: processed_amount.toString()
-                        },
+                        args: [
                             {
-                                prim: "Pair",
-                                args: [{
-                                    int: ask.editions.toString()
-                                },
-                                    {
-                                        prim: "Pair",
-                                        args: [
-                                            objkt_parts_to_micheline(ask.shares),
-                                            {
-                                                prim: "Pair",
-                                                args: [
-                                                    optional_date_arg(ask.expiry_time),
-                                                    {
-                                                        prim: "None"
-                                                    }]
-                                            }
-                                        ]
-                                    }
-                                ]
+                                string: `${seller}`
+                            },
+                            {
+                                string: `${ask.token_contract}`
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                prim: "Pair",
+                args: [
+                    {
+                        int: `${ask.token_id}`
+                    },
+                    {
+                        prim: "Pair",
+                        args: [
+                            {
+                                int: `${processed_amount}`
+                            },
+                            {
+                                int: `${ask.shares[0].value}`
                             }
                         ]
                     }
@@ -84,12 +69,12 @@ export function objkt_ask_v2_arg(
             }
         ]
     };
-    return {destination: provider.config.objkt_sales_v2, entrypoint: "ask", parameter};
+    return {destination: provider.config.objkt_sales_v1, entrypoint: "ask", parameter};
 }
 
-export async function ask_v2(
+export async function ask_v1(
     provider: Provider,
-    order: ObjktAskV2Form,
+    order: ObjktAskV1Form,
 ): Promise<string> {
     let args: TransactionArg[] = [];
     const seller = await provider.tezos.address();
@@ -99,7 +84,7 @@ export async function ask_v2(
         provider,
         seller,
         AssetTypeV2.FA2,
-        provider.config.objkt_sales_v2,
+        provider.config.objkt_sales_v1,
         order.token_contract,
         order.token_id
     );
@@ -108,7 +93,7 @@ export async function ask_v2(
     for(let share of order.shares){
         share.value = new BigNumber(share.value).div(10)
     }
-    args = args.concat(objkt_ask_v2_arg(provider, order, processed_amount));
+    args = args.concat(objkt_ask_v1_arg(provider, order, processed_amount, seller));
     if (args.length === 0) {
         throw new Error("Empty array of sell args")
     }
@@ -120,7 +105,7 @@ export async function ask_v2(
             {
                 make_contract: order.token_contract,
                 maker: seller,
-                platform: Platform.OBJKT_V2,
+                platform: Platform.OBJKT_V1,
                 op_hash: op.hash,
                 make_token_id: order.token_id,
                 status: OrderStatus.ACTIVE

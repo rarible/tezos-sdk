@@ -81,11 +81,13 @@ import {
 import {BundleOrderForm, OrderFormV2, sell_v2_batch, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
-import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/ask";
-import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/fulfill_ask";
+import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/v2/ask";
+import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/v2/fulfill_ask";
 import {HENSwapForm, swap} from "../marketplaces/hen/swap";
 import {collect} from "../marketplaces/hen/collect";
 import {cancel_swap} from "../marketplaces/hen/cancel";
+import {objkt_fulfill_ask_v1} from "../marketplaces/objkt/v1/fulfill_ask";
+import {ask_v1, ObjktAskV1Form} from "../marketplaces/objkt/v1/ask";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -622,6 +624,32 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'ask_v1_objkt': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: ObjktAskV1Form = {
+				token_contract: contract,
+				token_id: new BigNumber(tokenId),
+				amount: new BigNumber(argv.amount),
+				editions: new BigNumber(argv.qty),
+				shares: []
+			}
+
+			const order = await ask_v1(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case 'hen_swap': {
 			console.log("sell item", argv.item_id)
 			const publicKey = await get_public_key(provider)
@@ -893,6 +921,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'fulfill_ask_v2_objkt': {
 			console.log("buy item", argv.item_id)
 			const order = await objkt_fulfill_ask_v2(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fulfill_ask_v1_objkt': {
+			console.log("buy item", argv.item_id)
+			const order = await objkt_fulfill_ask_v1(provider, argv.item_id)
 			console.log('order=', order)
 			return order
 		}
