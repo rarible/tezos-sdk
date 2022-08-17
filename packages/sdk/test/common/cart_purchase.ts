@@ -50,7 +50,7 @@ export async function cart_purchase() {
 
 	const hen_order = await testScript('hen_swap', {
 		edsk: sellerEdsk,
-		item_id: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn:763002",
+		item_id: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn:763001",
 		qty: 1,
 		amount: 10000,
 	})
@@ -62,7 +62,7 @@ export async function cart_purchase() {
 	})
 	console.log('rarible_v1_order', rarible_v1_order)
 
-	const sellOrder = await testScript('sell_v2', {
+	const rarible_v2_order = await testScript('sell_v2', {
 		edsk: sellerEdsk,
 		item_id: mintedItemId_v2,
 		sale_type: AssetTypeV2.XTZ,
@@ -71,7 +71,12 @@ export async function cart_purchase() {
 		qty: 1,
 		amount: 0.1,
 	})
-	console.log('sellOrder', sellOrder)
+	console.log('rarible_v2_order', rarible_v2_order)
 
+	const cart_purchase = await testScript('cart_purchase', {
+		edsk: buyerEdsk,
+		item_id: `${objkt_v1_order},${objkt_v2_order},${hen_order},${rarible_v2_order}`
+	})
+	console.log('cart_purchase', cart_purchase)
 
 }

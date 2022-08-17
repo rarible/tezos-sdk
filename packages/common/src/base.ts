@@ -451,7 +451,7 @@ export async function absolute_amount(
 	asset_token_id?: BigNumber
 ): Promise<BigNumber> {
 	const factor = await asset_factor(config, asset_type, asset_contract, asset_token_id)
-	return amount.times(factor).integerValue()
+	return new BigNumber(amount).times(factor).integerValue()
 }
 
 export function packFA2Asset(assetContract: String, assetId: BigNumber) {

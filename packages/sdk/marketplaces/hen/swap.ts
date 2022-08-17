@@ -7,7 +7,6 @@ import {
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
 
-
 export declare type HENSwapForm = {
     editions: BigNumber;
     token_id: BigNumber;
@@ -88,7 +87,7 @@ export async function swap(
                 make_token_id: order.token_id,
                 status: OrderStatus.ACTIVE
             },
-            20,
+            40,
             2000)
         if (order_id == undefined || order_id.length == 0) {
             throw new Error("Order was not found")

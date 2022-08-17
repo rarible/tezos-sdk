@@ -10,7 +10,7 @@ export async function hen_swap() {
 
   const sellOrder = await testScript('hen_swap', {
     edsk: sellerEdsk,
-    item_id: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn:763002",
+    item_id: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn:763001",
     qty: 1,
     amount: 100,
   })

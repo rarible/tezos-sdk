@@ -90,6 +90,7 @@ import {objkt_fulfill_ask_v1} from "../marketplaces/objkt/v1/fulfill_ask";
 import {ask_v1, ObjktAskV1Form} from "../marketplaces/objkt/v1/ask";
 import {objkt_retract_ask_v2} from "../marketplaces/objkt/v2/retract_ask";
 import {objkt_retract_ask_v1} from "../marketplaces/objkt/v1/retract_aks";
+import {cart_purchase, CartOrder} from "../marketplaces/common/cart-purchase";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -175,7 +176,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ithacanet.tzkt.io",
-		dipdup: "https://test-tezos-indexer.rarible.org/v1/graphql",
+		dipdup: "http://localhost:8088/v1/graphql",
 		union_api: "https://testnet-api.rarible.org/v0.1",
 		objkt_sales_v1: "KT1Ax5fm2UNxjXGmrMDytREfqvYoCXoBB4Jo",
 		objkt_sales_v2: "KT1GiZuR6TdkgxZGQGZSdbC3Jox9JTSbqTB6",
@@ -776,35 +777,18 @@ export async function testScript(operation?: string, options: any = {}) {
 		}
 
 		case "cart_purchase": {
-			// const batch_buy_form: Array<BuyRequest> = []
-			// const publicKey = await get_public_key(provider)
-			// if (!publicKey) {
-			// 	throw new Error("publicKey is undefined")
-			// }
-			//
-			// const ft_token_id = (argv.ft_token_id != undefined) ? new BigNumber(argv.ft_token_id) : new BigNumber(0)
-			// const amount = (argv.amount != undefined) ? new BigNumber(argv.amount) : new BigNumber(0)
-			//
-			// const items = argv.item_id.split(",")
-			// items.forEach(item => {
-			// 	const [contract, tokenId] = item.split(":")
-			// 	batch_buy_form.push({
-			// 		asset_contract: contract,
-			// 		asset_token_id: new BigNumber(tokenId),
-			// 		asset_seller: argv.owner!,
-			// 		sale_type: argv.sale_type,
-			// 		sale_asset_contract: argv.ft_contract,
-			// 		sale_asset_token_id: ft_token_id,
-			// 		sale_amount: amount,
-			// 		sale_qty: new BigNumber(argv.qty),
-			// 		sale_payouts: [],
-			// 		sale_origin_fees: [],
-			// 		use_all: false,
-			// 	})
-			// })
-			//
-			// const op = await buy_v2_batch(provider, batch_buy_form)
-			// return op
+			const orders = argv.item_id.split(",")
+			const cart_orders: CartOrder[] = []
+			for (let order of orders){
+				cart_orders.push({
+					order_id: order,
+					amount: new BigNumber(1),
+					payouts: [],
+					origin_fees: []
+				})
+			}
+			const op = await cart_purchase(provider, cart_orders)
+			return op
 		}
 
 		case "buy_bundle": {

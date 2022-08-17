@@ -13,6 +13,7 @@ import {BuyRequest, get_rarible_v2_buy_transaction} from "../../sales/buy";
 import {get_objkt_fulfill_ask_v2_transaction} from "../objkt/v2/fulfill_ask";
 import {get_objkt_fulfill_ask_v1_transaction} from "../objkt/v1/fulfill_ask";
 import {get_hen_collect_transaction} from "../hen/collect";
+import {marketplace_order} from "../../marketplace-client";
 
 export interface CartOrder {
 	order_id: string,
@@ -26,6 +27,7 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 		return order.order_id;
 	})
 	const orders_data = await get_orders(provider.config, {
+		id: true,
 		make_contract: true,
 		make_token_id: true,
 		make_value: true,
@@ -39,13 +41,13 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 	}, {
 		order_id: order_ids
 	})
-	const order_map = orders_data.reduce(function (map, order) {
-		map[order.id] = order
-		return map
-	})
+	const order_map: Map<string, marketplace_order> = new Map()
+	for(let order_data of orders_data){
+		order_map.set(order_data.id, order_data)
+	}
 	let transactions: TransactionArg[] = []
 	for (let cart_order of orders) {
-		const order = order_map[cart_order.order_id]
+		const order: marketplace_order = order_map.get(cart_order.order_id)!
 		switch (order.platform) {
 			case "RARIBLE_V1":
 				const response = await get_legacy_orders(
@@ -73,13 +75,19 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 							asset_type = AssetTypeV2.FA12
 						}
 				}
+				let take_token_id = undefined;
+				if(order.take_token_id != undefined){
+					take_token_id = new BigNumber(order.take_token_id)
+				} else {
+					take_token_id = undefined
+				}
 				const buyRequest: BuyRequest = {
-					asset_contract: order.make_contract,
-					asset_token_id: new BigNumber(order.make_token_id),
+					asset_contract: order.make_contract!,
+					asset_token_id: new BigNumber(order.make_token_id!),
 					asset_seller: order.maker,
 					sale_type: asset_type,
 					sale_asset_contract: order.take_contract,
-					sale_asset_token_id: new BigNumber(order.take_token_id),
+					sale_asset_token_id: take_token_id,
 					sale_amount: order.take_value,
 					sale_qty: new BigNumber(cart_order.amount),
 					sale_payouts: cart_order.payouts,

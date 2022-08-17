@@ -65,7 +65,7 @@ export async function get_rarible_v2_buy_transaction(
 	}
 
 	const is_on_chain = await are_royalties_on_chain(provider, sale.asset_contract, new BigNumber(sale.asset_token_id))
-	console.log("on chain royalties = " + is_on_chain)
+
 	if (!is_on_chain) {
 		const royalties = await get_royalties(provider, sale.asset_contract, new BigNumber(sale.asset_token_id))
 		sale.sale_origin_fees = sale.sale_origin_fees.concat(royalties)

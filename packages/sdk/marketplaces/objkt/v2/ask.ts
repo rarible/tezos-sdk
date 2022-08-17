@@ -123,7 +123,7 @@ export async function ask_v2(
                 make_token_id: order.token_id,
                 status: OrderStatus.ACTIVE
             },
-            20,
+            40,
             2000)
         if (order_id == undefined || order_id.length == 0) {
             throw new Error("Order was not found")
