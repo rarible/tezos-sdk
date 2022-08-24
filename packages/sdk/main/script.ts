@@ -81,10 +81,16 @@ import {
 import {BundleOrderForm, OrderFormV2, sell_v2_batch, sellBundle, sellV2} from "../sales/sell";
 import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsSaleOrder} from "../sales/buy";
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
-import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/ask";
-import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/fulfill_ask";
+import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/v2/ask";
+import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/v2/fulfill_ask";
 import {HENSwapForm, swap} from "../marketplaces/hen/swap";
 import {collect} from "../marketplaces/hen/collect";
+import {cancel_swap} from "../marketplaces/hen/cancel";
+import {objkt_fulfill_ask_v1} from "../marketplaces/objkt/v1/fulfill_ask";
+import {ask_v1, ObjktAskV1Form} from "../marketplaces/objkt/v1/ask";
+import {objkt_retract_ask_v2} from "../marketplaces/objkt/v2/retract_ask";
+import {objkt_retract_ask_v1} from "../marketplaces/objkt/v1/retract_aks";
+import {cart_purchase, CartOrder} from "../marketplaces/common/cart-purchase";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -170,12 +176,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ithacanet.tzkt.io",
-		dipdup: "https://test-tezos-indexer.rarible.org/v1/graphql",
+		dipdup: "https://testnet-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://testnet-api.rarible.org/v0.1",
-		objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV",
+		objkt_sales_v1: "KT1Ax5fm2UNxjXGmrMDytREfqvYoCXoBB4Jo",
+		objkt_sales_v2: "KT1GiZuR6TdkgxZGQGZSdbC3Jox9JTSbqTB6",
 		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
-		hen_marketplace: "KT1SakgxbHuJmkMLSsTb37DNtHLz6LzyaMhx",
-		hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn"
+		hen_marketplace: "KT1XYgjgFQutFfgEiD7RuppSKZsawZbkpKxL",
+		hen_objkts: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw"
 	}
 
 	//For prod debug
@@ -231,10 +238,11 @@ export async function testScript(operation?: string, options: any = {}) {
 		tzkt: "https://dev-tezos-tzkt.rarible.org",
 		dipdup: "https://dev-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://dev-api.rarible.org/v0.1",
+		objkt_sales_v1: "KT1Qa7sQdZrsuPMA7NFg5hMF9iadtoYSF8m9",
 		objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L",
 		royalties_provider: "KT1ABvSRv27WymHYAyuEVnYktdhiPy3kThjk",
-		hen_marketplace: "KT1BCcHJuWyKCWE4q6wJwnaPqfifhm3bWTpS",
-		hen_objkts: "KT1EFwQpD522Vfw7LykZkwbtRXghetRP5jNH"
+		hen_marketplace: "KT1MvX3Z4WWHKutC9WpXXY471R4WmcSewb6a",
+		hen_objkts: "KT1E59fZ5vxx67h8spyQqT8nC3k9scmBBkkd"
 	}
 
 	const provider = {
@@ -374,7 +382,7 @@ export async function testScript(operation?: string, options: any = {}) {
 					asset_class: "XTZ"
 				},
 				amount: new BigNumber("1"),
-				price: new BigNumber("1"),
+				price: new BigNumber("0.1"),
 				payouts: [{
 					account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
 					value: new BigNumber(10000)
@@ -619,6 +627,32 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'ask_v1_objkt': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: ObjktAskV1Form = {
+				token_contract: contract,
+				token_id: new BigNumber(tokenId),
+				amount: new BigNumber(argv.amount),
+				editions: new BigNumber(argv.qty),
+				shares: []
+			}
+
+			const order = await ask_v1(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case 'hen_swap': {
 			console.log("sell item", argv.item_id)
 			const publicKey = await get_public_key(provider)
@@ -650,7 +684,7 @@ export async function testScript(operation?: string, options: any = {}) {
 					provider.config, {
 						data: true
 					}, {
-						order_id: argv.order_id
+						order_id: [argv.order_id]
 					})
 
 				console.log("fetched order = " + JSON.stringify(response[0].data))
@@ -739,6 +773,21 @@ export async function testScript(operation?: string, options: any = {}) {
 			})
 
 			const op = await buy_v2_batch(provider, batch_buy_form)
+			return op
+		}
+
+		case "cart_purchase": {
+			const orders = argv.item_id.split(",")
+			const cart_orders: CartOrder[] = []
+			for (let order of orders){
+				cart_orders.push({
+					order_id: order,
+					amount: new BigNumber(1),
+					payouts: [],
+					origin_fees: []
+				})
+			}
+			const op = await cart_purchase(provider, cart_orders)
 			return op
 		}
 
@@ -894,10 +943,37 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'fulfill_ask_v1_objkt': {
+			console.log("buy item", argv.item_id)
+			const order = await objkt_fulfill_ask_v1(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'retract_ask_v2_objkt': {
+			console.log("cancel ask", argv.item_id)
+			const order = await objkt_retract_ask_v2(provider, argv.item_id)
+			console.log('cancel=', order)
+			return order
+		}
+
+		case 'retract_ask_v1_objkt': {
+			console.log("cancel ask", argv.item_id)
+			const order = await objkt_retract_ask_v1(provider, argv.item_id)
+			console.log('cancel=', order)
+			return order
+		}
+
 		case 'hen_collect': {
 			console.log("buy item", argv.item_id)
 			const order = await collect(provider, argv.item_id)
 			console.log('order=', order)
+			return order
+		}
+
+		case 'hen_cancel_swap': {
+			console.log("cancel swap", argv.item_id)
+			const order = await cancel_swap(provider, argv.item_id)
 			return order
 		}
 
@@ -921,7 +997,7 @@ export async function testScript(operation?: string, options: any = {}) {
 					provider.config, {
 						data: true
 					}, {
-						order_id: argv.order_id
+						order_id: [argv.order_id]
 					})
 
 				console.log("fetched order = " + JSON.stringify(response[0].data))
@@ -1277,7 +1353,7 @@ export async function testScript(operation?: string, options: any = {}) {
 						make_contract: argv.ft_contract!,
 						maker: argv.owner!,
 						platform: Platform.RARIBLE_V2,
-						order_id: argv.order_id,
+						order_id: [argv.order_id],
 						make_token_id: argv.ft_token_id!,
 						status: OrderStatus.ACTIVE
 					},

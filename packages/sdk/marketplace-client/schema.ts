@@ -200,6 +200,7 @@ export interface marketplace_order {
     /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
     make_asset_class: Scalars['String']
     make_contract?: Scalars['String']
+    make_price?: Scalars['numeric']
     make_token_id?: Scalars['String']
     make_value: Scalars['numeric']
     maker: Scalars['String']
@@ -215,6 +216,7 @@ export interface marketplace_order {
     /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
     take_asset_class?: Scalars['String']
     take_contract?: Scalars['String']
+    take_price?: Scalars['numeric']
     take_token_id?: Scalars['String']
     take_value?: Scalars['numeric']
     taker?: Scalars['String']
@@ -223,7 +225,7 @@ export interface marketplace_order {
 
 
 /** select columns of table "marketplace_order" */
-export type marketplace_order_select_column = 'cancelled' | 'created_at' | 'end_at' | 'ended_at' | 'fill' | 'id' | 'internal_order_id' | 'last_updated_at' | 'make_asset_class' | 'make_contract' | 'make_token_id' | 'make_value' | 'maker' | 'network' | 'origin_fees' | 'payouts' | 'platform' | 'salt' | 'start_at' | 'status' | 'take_asset_class' | 'take_contract' | 'take_token_id' | 'take_value' | 'taker'
+export type marketplace_order_select_column = 'cancelled' | 'created_at' | 'end_at' | 'ended_at' | 'fill' | 'id' | 'internal_order_id' | 'last_updated_at' | 'make_asset_class' | 'make_contract' | 'make_price' | 'make_token_id' | 'make_value' | 'maker' | 'network' | 'origin_fees' | 'payouts' | 'platform' | 'salt' | 'start_at' | 'status' | 'take_asset_class' | 'take_contract' | 'take_price' | 'take_token_id' | 'take_value' | 'taker'
 
 
 /** column ordering options */
@@ -618,6 +620,7 @@ export interface marketplace_orderRequest{
     /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
     make_asset_class?: boolean | number
     make_contract?: boolean | number
+    make_price?: boolean | number
     make_token_id?: boolean | number
     make_value?: boolean | number
     maker?: boolean | number
@@ -637,6 +640,7 @@ export interface marketplace_orderRequest{
     /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
     take_asset_class?: boolean | number
     take_contract?: boolean | number
+    take_price?: boolean | number
     take_token_id?: boolean | number
     take_value?: boolean | number
     taker?: boolean | number
@@ -646,11 +650,11 @@ export interface marketplace_orderRequest{
 
 
 /** Boolean expression to filter rows from the table "marketplace_order". All fields are combined with a logical 'AND'. */
-export interface marketplace_order_bool_exp {_and?: (marketplace_order_bool_exp[] | null),_not?: (marketplace_order_bool_exp | null),_or?: (marketplace_order_bool_exp[] | null),cancelled?: (Boolean_comparison_exp | null),created_at?: (timestamptz_comparison_exp | null),end_at?: (timestamptz_comparison_exp | null),ended_at?: (timestamptz_comparison_exp | null),fill?: (numeric_comparison_exp | null),id?: (uuid_comparison_exp | null),internal_order_id?: (String_comparison_exp | null),last_updated_at?: (timestamptz_comparison_exp | null),make_asset_class?: (String_comparison_exp | null),make_contract?: (String_comparison_exp | null),make_token_id?: (String_comparison_exp | null),make_value?: (numeric_comparison_exp | null),maker?: (String_comparison_exp | null),network?: (String_comparison_exp | null),origin_fees?: (jsonb_comparison_exp | null),payouts?: (jsonb_comparison_exp | null),platform?: (String_comparison_exp | null),salt?: (String_comparison_exp | null),start_at?: (timestamptz_comparison_exp | null),status?: (String_comparison_exp | null),take_asset_class?: (String_comparison_exp | null),take_contract?: (String_comparison_exp | null),take_token_id?: (String_comparison_exp | null),take_value?: (numeric_comparison_exp | null),taker?: (String_comparison_exp | null)}
+export interface marketplace_order_bool_exp {_and?: (marketplace_order_bool_exp[] | null),_not?: (marketplace_order_bool_exp | null),_or?: (marketplace_order_bool_exp[] | null),cancelled?: (Boolean_comparison_exp | null),created_at?: (timestamptz_comparison_exp | null),end_at?: (timestamptz_comparison_exp | null),ended_at?: (timestamptz_comparison_exp | null),fill?: (numeric_comparison_exp | null),id?: (uuid_comparison_exp | null),internal_order_id?: (String_comparison_exp | null),last_updated_at?: (timestamptz_comparison_exp | null),make_asset_class?: (String_comparison_exp | null),make_contract?: (String_comparison_exp | null),make_price?: (numeric_comparison_exp | null),make_token_id?: (String_comparison_exp | null),make_value?: (numeric_comparison_exp | null),maker?: (String_comparison_exp | null),network?: (String_comparison_exp | null),origin_fees?: (jsonb_comparison_exp | null),payouts?: (jsonb_comparison_exp | null),platform?: (String_comparison_exp | null),salt?: (String_comparison_exp | null),start_at?: (timestamptz_comparison_exp | null),status?: (String_comparison_exp | null),take_asset_class?: (String_comparison_exp | null),take_contract?: (String_comparison_exp | null),take_price?: (numeric_comparison_exp | null),take_token_id?: (String_comparison_exp | null),take_value?: (numeric_comparison_exp | null),taker?: (String_comparison_exp | null)}
 
 
 /** Ordering options when selecting data from "marketplace_order". */
-export interface marketplace_order_order_by {cancelled?: (order_by | null),created_at?: (order_by | null),end_at?: (order_by | null),ended_at?: (order_by | null),fill?: (order_by | null),id?: (order_by | null),internal_order_id?: (order_by | null),last_updated_at?: (order_by | null),make_asset_class?: (order_by | null),make_contract?: (order_by | null),make_token_id?: (order_by | null),make_value?: (order_by | null),maker?: (order_by | null),network?: (order_by | null),origin_fees?: (order_by | null),payouts?: (order_by | null),platform?: (order_by | null),salt?: (order_by | null),start_at?: (order_by | null),status?: (order_by | null),take_asset_class?: (order_by | null),take_contract?: (order_by | null),take_token_id?: (order_by | null),take_value?: (order_by | null),taker?: (order_by | null)}
+export interface marketplace_order_order_by {cancelled?: (order_by | null),created_at?: (order_by | null),end_at?: (order_by | null),ended_at?: (order_by | null),fill?: (order_by | null),id?: (order_by | null),internal_order_id?: (order_by | null),last_updated_at?: (order_by | null),make_asset_class?: (order_by | null),make_contract?: (order_by | null),make_price?: (order_by | null),make_token_id?: (order_by | null),make_value?: (order_by | null),maker?: (order_by | null),network?: (order_by | null),origin_fees?: (order_by | null),payouts?: (order_by | null),platform?: (order_by | null),salt?: (order_by | null),start_at?: (order_by | null),status?: (order_by | null),take_asset_class?: (order_by | null),take_contract?: (order_by | null),take_price?: (order_by | null),take_token_id?: (order_by | null),take_value?: (order_by | null),taker?: (order_by | null)}
 
 
 /** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
@@ -1388,6 +1392,7 @@ export interface marketplace_orderPromiseChain{
 /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
 make_asset_class: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
     make_contract: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Promise<(Scalars['String'] | undefined)>}),
+    make_price: ({get: (request?: boolean|number, defaultValue?: (Scalars['numeric'] | undefined)) => Promise<(Scalars['numeric'] | undefined)>}),
     make_token_id: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Promise<(Scalars['String'] | undefined)>}),
     make_value: ({get: (request?: boolean|number, defaultValue?: Scalars['numeric']) => Promise<Scalars['numeric']>}),
     maker: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
@@ -1410,6 +1415,7 @@ status: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => P
 /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
 take_asset_class: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Promise<(Scalars['String'] | undefined)>}),
     take_contract: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Promise<(Scalars['String'] | undefined)>}),
+    take_price: ({get: (request?: boolean|number, defaultValue?: (Scalars['numeric'] | undefined)) => Promise<(Scalars['numeric'] | undefined)>}),
     take_token_id: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Promise<(Scalars['String'] | undefined)>}),
     take_value: ({get: (request?: boolean|number, defaultValue?: (Scalars['numeric'] | undefined)) => Promise<(Scalars['numeric'] | undefined)>}),
     taker: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Promise<(Scalars['String'] | undefined)>})
@@ -1430,6 +1436,7 @@ export interface marketplace_orderObservableChain{
 /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
 make_asset_class: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
     make_contract: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Observable<(Scalars['String'] | undefined)>}),
+    make_price: ({get: (request?: boolean|number, defaultValue?: (Scalars['numeric'] | undefined)) => Observable<(Scalars['numeric'] | undefined)>}),
     make_token_id: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Observable<(Scalars['String'] | undefined)>}),
     make_value: ({get: (request?: boolean|number, defaultValue?: Scalars['numeric']) => Observable<Scalars['numeric']>}),
     maker: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
@@ -1452,6 +1459,7 @@ status: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => O
 /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
 take_asset_class: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Observable<(Scalars['String'] | undefined)>}),
     take_contract: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Observable<(Scalars['String'] | undefined)>}),
+    take_price: ({get: (request?: boolean|number, defaultValue?: (Scalars['numeric'] | undefined)) => Observable<(Scalars['numeric'] | undefined)>}),
     take_token_id: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Observable<(Scalars['String'] | undefined)>}),
     take_value: ({get: (request?: boolean|number, defaultValue?: (Scalars['numeric'] | undefined)) => Observable<(Scalars['numeric'] | undefined)>}),
     taker: ({get: (request?: boolean|number, defaultValue?: (Scalars['String'] | undefined)) => Observable<(Scalars['String'] | undefined)>})

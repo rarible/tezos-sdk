@@ -7,7 +7,6 @@ import {
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
 
-
 export declare type HENSwapForm = {
     editions: BigNumber;
     token_id: BigNumber;
@@ -71,7 +70,7 @@ export async function swap(
     );
     if (approve_a) args = args.concat(approve_a);
     const royalties = await get_royalties(provider, provider.config.hen_objkts, order.token_id)
-    args = args.concat(hen_swap_arg(provider, order, royalties[0].account, royalties[0].value));
+    args = args.concat(hen_swap_arg(provider, order, royalties[0].account, new BigNumber(royalties[0].value).div(10)));
     if (args.length === 0) {
         throw new Error("Empty array of sell args")
     }
@@ -88,7 +87,7 @@ export async function swap(
                 make_token_id: order.token_id,
                 status: OrderStatus.ACTIVE
             },
-            20,
+            40,
             2000)
         if (order_id == undefined || order_id.length == 0) {
             throw new Error("Order was not found")

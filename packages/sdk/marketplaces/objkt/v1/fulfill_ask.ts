@@ -7,8 +7,9 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import {objkt_fulfill_ask_v2_arg} from "../v2/fulfill_ask";
 
-export async function get_hen_collect_transaction(
+export async function get_objkt_fulfill_ask_v1_transaction(
 	provider: Provider,
 	sale: string,
 ): Promise<TransactionArg[]> {
@@ -17,21 +18,23 @@ export async function get_hen_collect_transaction(
 		{internal_order_id: true, make_price: true},
 		{order_id: [sale], status: OrderStatus.ACTIVE})
 	if (ask != undefined && ask.length == 1) {
-		args = args.concat(hen_collect_arg(provider, ask[0].internal_order_id, new BigNumber(ask[0].make_price)));
+		args = args.concat(objkt_fulfill_ask_v1_arg(provider,
+			ask[0].internal_order_id,
+			ask[0].make_price));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}
 	} else {
-		throw new Error("HEN order does not exist")
+		throw new Error("OBJKT V2 order does not exist")
 	}
 	return args
 }
 
-export async function collect(
+export async function objkt_fulfill_ask_v1(
 	provider: Provider,
 	sale: string
 ): Promise<OperationResult | undefined> {
-	let args: TransactionArg[] = await get_hen_collect_transaction(provider, sale)
+	let args: TransactionArg[] = await get_objkt_fulfill_ask_v1_transaction(provider, sale)
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
 	}
@@ -40,7 +43,8 @@ export async function collect(
 	return op
 }
 
-export function hen_collect_arg(
+
+export function objkt_fulfill_ask_v1_arg(
 	provider: Provider,
 	sale: string,
 	amount: BigNumber
@@ -49,6 +53,6 @@ export function hen_collect_arg(
 		{
 			int: `${sale}`
 		}
-	return {destination: provider.config.hen_marketplace, entrypoint: "collect", parameter, amount: amount};
+	return {destination: provider.config.objkt_sales_v1, entrypoint: "fulfill_ask", parameter, amount: amount};
 }
 

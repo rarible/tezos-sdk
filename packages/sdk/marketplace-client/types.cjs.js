@@ -1111,6 +1111,9 @@ module.exports = {
             "make_contract": [
                 4
             ],
+            "make_price": [
+                52
+            ],
             "make_token_id": [
                 4
             ],
@@ -1156,6 +1159,9 @@ module.exports = {
             ],
             "take_contract": [
                 4
+            ],
+            "take_price": [
+                52
             ],
             "take_token_id": [
                 4
@@ -1210,6 +1216,9 @@ module.exports = {
             "make_contract": [
                 5
             ],
+            "make_price": [
+                53
+            ],
             "make_token_id": [
                 5
             ],
@@ -1245,6 +1254,9 @@ module.exports = {
             ],
             "take_contract": [
                 5
+            ],
+            "take_price": [
+                53
             ],
             "take_token_id": [
                 5
@@ -1290,6 +1302,9 @@ module.exports = {
             "make_contract": [
                 54
             ],
+            "make_price": [
+                54
+            ],
             "make_token_id": [
                 54
             ],
@@ -1324,6 +1339,9 @@ module.exports = {
                 54
             ],
             "take_contract": [
+                54
+            ],
+            "take_price": [
                 54
             ],
             "take_token_id": [

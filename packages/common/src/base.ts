@@ -39,6 +39,7 @@ export type AssetData = {
 export enum Platform {
 	RARIBLE_V1 = "RARIBLE_V1",
 	RARIBLE_V2 = "RARIBLE_V2",
+	OBJKT_V1 = "OBJKT_V1",
 	OBJKT_V2 = "OBJKT_V2",
 	HEN = "HEN"
 }
@@ -139,6 +140,7 @@ export interface Config {
 	tzkt: string,
 	dipdup: string,
 	union_api: string,
+	objkt_sales_v1: string,
 	objkt_sales_v2: string,
 	hen_marketplace: string,
 	hen_objkts: string,
@@ -449,7 +451,7 @@ export async function absolute_amount(
 	asset_token_id?: BigNumber
 ): Promise<BigNumber> {
 	const factor = await asset_factor(config, asset_type, asset_contract, asset_token_id)
-	return amount.times(factor).integerValue()
+	return new BigNumber(amount).times(factor).integerValue()
 }
 
 export function packFA2Asset(assetContract: String, assetId: BigNumber) {
