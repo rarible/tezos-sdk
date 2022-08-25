@@ -19,6 +19,8 @@
     "test-hen-testnet": "ts-node test/hen-testnet-tests.ts",
     "test-teia-devnet": "ts-node test/teia-devnet-tests.ts",
     "test-teia-testnet": "ts-node test/teia-testnet-tests.ts",
+    "test-versum-devnet": "ts-node test/versum-devnet-tests.ts",
+    "test-versum-testnet": "ts-node test/versum-testnet-tests.ts",
     "test-rarible-devnet": "ts-node test/rarible-devnet-tests.ts",
     "test-rarible-testnet": "ts-node test/rarible-testnet-tests.ts",
     "test-common-testnet": "ts-node test/common-testnet-tests.ts",

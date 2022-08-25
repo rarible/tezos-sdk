@@ -94,6 +94,9 @@ import {cart_purchase, CartOrder} from "../marketplaces/common/cart-purchase";
 import {TEIASwapForm, teia_swap} from "../marketplaces/teia/teia_swap";
 import {teia_collect} from "../marketplaces/teia/teia_collect";
 import {teia_cancel_swap} from "../marketplaces/teia/cancel";
+import {versum_swap, VersumSwapForm} from "../marketplaces/versum/versum_swap";
+import {versum_collect} from "../marketplaces/versum/versum_collect";
+import {versum_cancel_swap} from "../marketplaces/versum/versum_cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -710,6 +713,30 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'versum_swap': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: VersumSwapForm = {
+				token_id: new BigNumber(tokenId),
+				editions: new BigNumber(argv.qty),
+				price_per_item: new BigNumber(argv.amount)
+			}
+
+			const order = await versum_swap(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case "fill": {
 			try {
 				console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
@@ -1011,6 +1038,13 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'versum_collect': {
+			console.log("buy item", argv.item_id)
+			const order = await versum_collect(provider, argv.item_id, new BigNumber(argv.qty))
+			console.log('order=', order)
+			return order
+		}
+
 		case 'hen_cancel_swap': {
 			console.log("cancel swap", argv.item_id)
 			const order = await hen_cancel_swap(provider, argv.item_id)
@@ -1020,6 +1054,12 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'teia_cancel_swap': {
 			console.log("cancel swap", argv.item_id)
 			const order = await teia_cancel_swap(provider, argv.item_id)
+			return order
+		}
+
+		case 'versum_cancel_swap': {
+			console.log("cancel swap", argv.item_id)
+			const order = await versum_cancel_swap(provider, argv.item_id)
 			return order
 		}
 
