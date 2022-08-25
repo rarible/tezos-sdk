@@ -1,6 +1,6 @@
 import {
     approve_v2,
-    AssetTypeV2, await_order, get_royalties, OrderStatus, Platform,
+    AssetTypeV2, await_order, OrderStatus, Platform,
     Provider, send_batch,
     TransactionArg
 } from "@rarible/tezos-common";
