@@ -187,8 +187,8 @@ export async function testScript(operation?: string, options: any = {}) {
 		hen_marketplace: "KT1XYgjgFQutFfgEiD7RuppSKZsawZbkpKxL",
 		hen_objkts: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw",
 		teia_marketplace: "KT1Anx515N2PK8A2ZX5uGNn7Gckh4WytLJmK",
-		versum_marketplace: "string",
-		versum_nfts: "string"
+		versum_marketplace: "KT1B1Wz7jPH23EqKUpDwFDkw3A1yLxGZ4uJy",
+		versum_nfts: "KT1UH5RSbomuV1o6UuDB9yeACbqRMup3utGu"
 	}
 
 	//For prod debug
@@ -250,8 +250,8 @@ export async function testScript(operation?: string, options: any = {}) {
 		hen_marketplace: "KT1MoWbKvxhsuckLUnQUPjrnGRugiret3pSQ",
 		hen_objkts: "KT1E59fZ5vxx67h8spyQqT8nC3k9scmBBkkd",
 		teia_marketplace: "KT1SMn9NzXNvdMvtaK8gE5GHgYj8ZxCuSyWN",
-		versum_marketplace: "string",
-		versum_nfts: "string"
+		versum_marketplace: "KT1FQQttioJYMHYzJo97A2cxfdAqnUHoVjiG",
+		versum_nfts: "KT1DtDzPUe7Do3QQQ739RG3Z4fWgwbuy2srB"
 	}
 
 	const provider = {
