@@ -14,6 +14,8 @@ import {get_objkt_fulfill_ask_v2_transaction} from "../objkt/v2/fulfill_ask";
 import {get_objkt_fulfill_ask_v1_transaction} from "../objkt/v1/fulfill_ask";
 import {get_hen_collect_transaction} from "../hen/hen_collect";
 import {marketplace_order} from "../../marketplace-client";
+import {get_teia_collect_transaction} from "../teia/teia_collect";
+import {get_versum_collect_transaction} from "../versum/versum_collect";
 
 export interface CartOrder {
 	order_id: string,
@@ -111,6 +113,16 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 				const hen_txs = await get_hen_collect_transaction(provider,
 					cart_order.order_id)
 				transactions = transactions.concat(hen_txs)
+				break;
+			case "TEIA_V1":
+				const teia_txs = await get_teia_collect_transaction(provider,
+					cart_order.order_id)
+				transactions = transactions.concat(teia_txs)
+				break;
+			case "VERSUM_V1":
+				const versum_txs = await get_versum_collect_transaction(provider,
+					cart_order.order_id, cart_order.amount)
+				transactions = transactions.concat(versum_txs)
 				break;
 		}
 	}

@@ -1,4 +1,4 @@
-import {testScript} from "../../main/script";
+import {testScript} from "../../../main/script";
 import {AssetTypeV2} from "@rarible/tezos-common";
 import {awaitItem} from "./utils";
 
@@ -56,6 +56,22 @@ export async function cart_purchase() {
 	})
 	console.log('hen_order', hen_order)
 
+	const teia_order = await testScript('teia_swap', {
+		edsk: sellerEdsk,
+		item_id: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw:763001",
+		qty: 1,
+		amount: 100,
+	})
+	console.log('teia_order', teia_order)
+
+	const versum_order = await testScript('versum_swap', {
+		edsk: sellerEdsk,
+		item_id: "KT1UH5RSbomuV1o6UuDB9yeACbqRMup3utGu:0",
+		qty: 1,
+		amount: 100,
+	})
+	console.log('versum_order', versum_order)
+
 	const rarible_v1_order = await testScript('sell', {
 		edsk: sellerEdsk,
 		item_id: mintedItemId_v1
@@ -75,7 +91,7 @@ export async function cart_purchase() {
 
 	const cart_purchase = await testScript('cart_purchase', {
 		edsk: buyerEdsk,
-		item_id: `${objkt_v1_order},${objkt_v2_order},${hen_order},${rarible_v2_order}`
+		item_id: `${objkt_v1_order},${objkt_v2_order},${hen_order},${rarible_v2_order},${teia_order},${versum_order}`
 	})
 	console.log('cart_purchase', cart_purchase)
 
