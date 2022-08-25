@@ -41,7 +41,9 @@ export enum Platform {
 	RARIBLE_V2 = "RARIBLE_V2",
 	OBJKT_V1 = "OBJKT_V1",
 	OBJKT_V2 = "OBJKT_V2",
-	HEN = "HEN"
+	HEN = "HEN",
+	TEIA_V1 = "TEIA_V1",
+	VERSUM_V1 = "VERSUM_V1"
 }
 
 export enum OrderStatus {
@@ -144,6 +146,9 @@ export interface Config {
 	objkt_sales_v2: string,
 	hen_marketplace: string,
 	hen_objkts: string,
+	teia_marketplace: string,
+	versum_marketplace: string,
+	versum_nfts: string,
 	royalties_provider: string
 }
 

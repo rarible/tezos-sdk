@@ -83,14 +83,17 @@ import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsS
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/v2/ask";
 import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/v2/fulfill_ask";
-import {HENSwapForm, swap} from "../marketplaces/hen/swap";
-import {collect} from "../marketplaces/hen/collect";
-import {cancel_swap} from "../marketplaces/hen/cancel";
+import {HENSwapForm, hen_swap} from "../marketplaces/hen/hen_swap";
+import {hen_collect} from "../marketplaces/hen/hen_collect";
+import {hen_cancel_swap} from "../marketplaces/hen/cancel";
 import {objkt_fulfill_ask_v1} from "../marketplaces/objkt/v1/fulfill_ask";
 import {ask_v1, ObjktAskV1Form} from "../marketplaces/objkt/v1/ask";
 import {objkt_retract_ask_v2} from "../marketplaces/objkt/v2/retract_ask";
 import {objkt_retract_ask_v1} from "../marketplaces/objkt/v1/retract_aks";
 import {cart_purchase, CartOrder} from "../marketplaces/common/cart-purchase";
+import {TEIASwapForm, teia_swap} from "../marketplaces/teia/teia_swap";
+import {teia_collect} from "../marketplaces/teia/teia_collect";
+import {teia_cancel_swap} from "../marketplaces/teia/cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -152,7 +155,7 @@ export async function testScript(operation?: string, options: any = {}) {
 	const amount = (argv.amount) ? new BigNumber(argv.amount as number) : undefined
 	const metadata = JSON.parse(argv.metadata) as { [_: string]: string }
 
-	const devNode = "https://dev-tezos-node.rarible.org"
+	const devNode = "http://tezos-node.dev.rarible.int"
 	const tezos = in_memory_provider(argv.edsk, argv.is_dev ? devNode : argv.endpoint)
 
 	const config = {
@@ -182,7 +185,10 @@ export async function testScript(operation?: string, options: any = {}) {
 		objkt_sales_v2: "KT1GiZuR6TdkgxZGQGZSdbC3Jox9JTSbqTB6",
 		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
 		hen_marketplace: "KT1XYgjgFQutFfgEiD7RuppSKZsawZbkpKxL",
-		hen_objkts: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw"
+		hen_objkts: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw",
+		teia_marketplace: "KT1Anx515N2PK8A2ZX5uGNn7Gckh4WytLJmK",
+		versum_marketplace: "string",
+		versum_nfts: "string"
 	}
 
 	//For prod debug
@@ -242,7 +248,10 @@ export async function testScript(operation?: string, options: any = {}) {
 		objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L",
 		royalties_provider: "KT1ABvSRv27WymHYAyuEVnYktdhiPy3kThjk",
 		hen_marketplace: "KT1MvX3Z4WWHKutC9WpXXY471R4WmcSewb6a",
-		hen_objkts: "KT1E59fZ5vxx67h8spyQqT8nC3k9scmBBkkd"
+		hen_objkts: "KT1E59fZ5vxx67h8spyQqT8nC3k9scmBBkkd",
+		teia_marketplace: "KT1SMn9NzXNvdMvtaK8gE5GHgYj8ZxCuSyWN",
+		versum_marketplace: "string",
+		versum_nfts: "string"
 	}
 
 	const provider = {
@@ -672,7 +681,31 @@ export async function testScript(operation?: string, options: any = {}) {
 				price_per_item: new BigNumber(argv.amount)
 			}
 
-			const order = await swap(provider, sell_request)
+			const order = await teia_swap(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'teia_swap': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: TEIASwapForm = {
+				token_id: new BigNumber(tokenId),
+				editions: new BigNumber(argv.qty),
+				price_per_item: new BigNumber(argv.amount)
+			}
+
+			const order = await teia_swap(provider, sell_request)
 			console.log('order=', order)
 			return order
 		}
@@ -966,14 +999,27 @@ export async function testScript(operation?: string, options: any = {}) {
 
 		case 'hen_collect': {
 			console.log("buy item", argv.item_id)
-			const order = await collect(provider, argv.item_id)
+			const order = await hen_collect(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'teia_collect': {
+			console.log("buy item", argv.item_id)
+			const order = await teia_collect(provider, argv.item_id)
 			console.log('order=', order)
 			return order
 		}
 
 		case 'hen_cancel_swap': {
 			console.log("cancel swap", argv.item_id)
-			const order = await cancel_swap(provider, argv.item_id)
+			const order = await hen_cancel_swap(provider, argv.item_id)
+			return order
+		}
+
+		case 'teia_cancel_swap': {
+			console.log("cancel swap", argv.item_id)
+			const order = await teia_cancel_swap(provider, argv.item_id)
 			return order
 		}
 

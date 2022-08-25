@@ -12,7 +12,7 @@ import {get_rarible_legacy_buy_transaction, order_of_json, OrderForm} from "../.
 import {BuyRequest, get_rarible_v2_buy_transaction} from "../../sales/buy";
 import {get_objkt_fulfill_ask_v2_transaction} from "../objkt/v2/fulfill_ask";
 import {get_objkt_fulfill_ask_v1_transaction} from "../objkt/v1/fulfill_ask";
-import {get_hen_collect_transaction} from "../hen/collect";
+import {get_hen_collect_transaction} from "../hen/hen_collect";
 import {marketplace_order} from "../../marketplace-client";
 
 export interface CartOrder {
