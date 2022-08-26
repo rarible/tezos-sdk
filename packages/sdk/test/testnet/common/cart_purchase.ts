@@ -1,6 +1,6 @@
 import {testScript} from "../../../main/script";
 import {AssetTypeV2} from "@rarible/tezos-common";
-import {awaitItem} from "./utils";
+import {awaitItem} from "../../common/utils";
 
 export async function cart_purchase() {
 	console.log("--------------------")
