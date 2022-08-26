@@ -53,7 +53,7 @@ export function hen_swap_arg(
     return {destination: provider.config.hen_marketplace, entrypoint: "swap", parameter};
 }
 
-export async function swap(
+export async function hen_swap(
     provider: Provider,
     order: HENSwapForm,
 ): Promise<string> {

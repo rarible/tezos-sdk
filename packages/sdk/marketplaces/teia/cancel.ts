@@ -7,7 +7,7 @@ import {
 } from "@rarible/tezos-common";
 import {MichelsonData} from "@taquito/michel-codec";
 
-export async function hen_cancel_swap(
+export async function teia_cancel_swap(
 	provider: Provider,
 	sale: string,
 ): Promise<OperationResult | undefined> {
@@ -16,7 +16,7 @@ export async function hen_cancel_swap(
 		{internal_order_id: true},
 		{order_id: [sale], status: OrderStatus.ACTIVE})
 	if (ask != undefined && ask.length == 1) {
-		args = args.concat(hen_cancel_arg(provider, ask[0].internal_order_id));
+		args = args.concat(teia_cancel_arg(provider, ask[0].internal_order_id));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}
@@ -33,7 +33,7 @@ export async function hen_cancel_swap(
 	}
 }
 
-export function hen_cancel_arg(
+export function teia_cancel_arg(
 	provider: Provider,
 	sale: string,
 ): TransactionArg {
@@ -41,6 +41,6 @@ export function hen_cancel_arg(
 		{
 			int: `${sale}`
 		}
-	return {destination: provider.config.hen_marketplace, entrypoint: "cancel_swap", parameter};
+	return {destination: provider.config.teia_marketplace, entrypoint: "cancel_swap", parameter};
 }
 

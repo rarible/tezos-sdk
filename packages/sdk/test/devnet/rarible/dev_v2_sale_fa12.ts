@@ -9,7 +9,7 @@ export async function dev_v2_sale_fa12() {
   console.log("--------------------")
   const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
   const buyerEdsk = "edskS4QxJFDSkHaf6Ax3ByfrZj5cKvLUR813uqwE94baan31c1cPPTMvoAvUKbEv2xM9mvtwoLANNTBSdyZf3CCyN2re7qZyi3"
-  const buyerProvider = in_memory_provider(buyerEdsk, "https://dev-tezos-node.rarible.org")
+  const buyerProvider = in_memory_provider(buyerEdsk, "http://tezos-node.dev.rarible.int")
 
   const mintedItemId = await testScript('mint', {
     edsk: sellerEdsk,
