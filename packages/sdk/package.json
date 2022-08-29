@@ -1,6 +1,6 @@
 {
   "name": "@rarible/tezos-sdk",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "main": "dist/main/index.js",
   "types": "dist/main/index.d.ts",
   "author": "",
@@ -32,8 +32,8 @@
   "dependencies": {
     "@airgap/beacon-sdk": "2.3.13",
     "@genql/runtime": "2.10.0",
-    "@rarible/tezos-common": "^0.1.32",
-    "@rarible/tezos-contracts": "^0.1.32",
+    "@rarible/tezos-common": "^0.1.33",
+    "@rarible/tezos-contracts": "^0.1.33",
     "@taquito/beacon-wallet": "12.0.3",
     "@taquito/signer": "^12.0.0",
     "@taquito/taquito": "^12.0.0",
