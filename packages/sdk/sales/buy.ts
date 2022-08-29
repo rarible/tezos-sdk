@@ -1,9 +1,17 @@
 import {
-	absolute_amount, are_royalties_on_chain,
-	AssetTypeV2, BundleItem, get_royalties, getAsset, mkPackedBundle, OperationResult,
-	Part, parts_to_micheline,
+	absolute_amount,
+	are_royalties_on_chain,
+	AssetTypeV2,
+	BundleItem, Config, get_ft_type,
+	get_royalties,
+	getAsset,
+	mkPackedBundle,
+	OperationResult,
+	Part,
+	parts_to_micheline, process_token_id,
 	Provider,
-	send_batch, StorageSalesV2,
+	send_batch,
+	StorageSalesV2,
 	TransactionArg
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
@@ -37,6 +45,17 @@ export declare type BuyBundleRequest = {
 	use_all?: boolean;
 }
 
+export async function process_buy_request(config: Config, order: BuyRequest): Promise<BuyRequest>{
+	if(order.sale_asset_contract != undefined){
+		const ft_type_res = await get_ft_type(config, order.sale_asset_contract)
+		if(ft_type_res != undefined){
+			order.sale_type = ft_type_res
+			order.sale_asset_token_id = process_token_id(order.sale_type, order.sale_asset_token_id)
+		}
+	}
+	return order
+}
+
 export async function get_rarible_v2_buy_transaction(
 	provider: Provider,
 	sale: BuyRequest,
@@ -44,6 +63,9 @@ export async function get_rarible_v2_buy_transaction(
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const seller = await provider.tezos.address();
+
+	sale = await process_buy_request(provider.config, sale)
+
 	const processed_amount = await absolute_amount(provider.config,
 		sale.sale_amount,
 		sale.sale_type,
