@@ -3,13 +3,13 @@ import {
 	approve_v2,
 	AssetTypeV2,
 	await_order,
-	BundleItem,
+	BundleItem, Config, get_ft_type,
 	getAsset,
 	mkPackedBundle,
 	optional_date_arg, OrderStatus,
 	Part,
 	parts_to_micheline,
-	Platform,
+	Platform, process_token_id,
 	Provider,
 	send_batch,
 	TransactionArg
@@ -58,12 +58,26 @@ export declare type RaribleSaleDataV2 = {
 	sale_data?: string;
 }
 
+async function process_order(config: Config, order: OrderFormV2): Promise<OrderFormV2>{
+	if(order.s_sale_asset_contract != undefined){
+		const ft_type_res = await get_ft_type(config, order.s_sale_asset_contract)
+		if(ft_type_res != undefined){
+			order.s_sale_type = ft_type_res
+			order.s_sale_asset_token_id = process_token_id(order.s_sale_type, order.s_sale_asset_token_id)
+		}
+	}
+	return order
+}
+
 export async function sellV2(
 	provider: Provider,
 	order: OrderFormV2,
 ): Promise<string> {
 	let args: TransactionArg[] = [];
 	const seller = await provider.tezos.address();
+
+	order = await process_order(provider.config, order)
+
 	const processed_amount = await absolute_amount(provider.config,
 		order.s_sale.sale_amount,
 		order.s_sale_type,

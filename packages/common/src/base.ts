@@ -577,6 +577,14 @@ export async function get_decimals(config: Config, contract: string, token_id = 
 	}
 }
 
+export function process_token_id(sale_type: AssetTypeV2, token_id: BigNumber | undefined){
+	if(sale_type != AssetTypeV2.FA2){
+		return undefined
+	} else {
+		return token_id
+	}
+}
+
 export interface Part {
 	account: string;
 	value: BigNumber;
