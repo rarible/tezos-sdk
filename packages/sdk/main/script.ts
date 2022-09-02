@@ -100,6 +100,8 @@ import {versum_cancel_swap} from "../marketplaces/versum/versum_cancel";
 import {fxhash_v1_offer, FXHashV1OfferForm} from "../marketplaces/fxhash/v1/fxhash_v1_offer";
 import {fxhash_v1_collect} from "../marketplaces/fxhash/v1/fxhash_v1_collect";
 import {fxhash_v1_cancel_offer} from "../marketplaces/fxhash/v1/fxhash_v1_cancel";
+import {fxhash_v2_listing, FXHashV2ListingForm} from "../marketplaces/fxhash/v2/fxhash_v2_listing";
+import {fxhash_v2_listing_accept} from "../marketplaces/fxhash/v2/fxhash_v2_listing_accept";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -771,6 +773,30 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'fxhash_v2_listing': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: FXHashV2ListingForm = {
+				token_id: new BigNumber(tokenId),
+				price_per_item: new BigNumber(argv.amount),
+				version: 1
+			}
+
+			const order = await fxhash_v2_listing(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case "fill": {
 			try {
 				console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
@@ -1082,6 +1108,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'fxhash_v1_collect': {
 			console.log("buy item", argv.item_id)
 			const order = await fxhash_v1_collect(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fxhash_v2_listing_accept': {
+			console.log("buy item", argv.item_id)
+			const order = await fxhash_v2_listing_accept(provider, argv.item_id)
 			console.log('order=', order)
 			return order
 		}
