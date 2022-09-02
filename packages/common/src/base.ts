@@ -43,7 +43,9 @@ export enum Platform {
 	OBJKT_V2 = "OBJKT_V2",
 	HEN = "HEN",
 	TEIA_V1 = "TEIA_V1",
-	VERSUM_V1 = "VERSUM_V1"
+	VERSUM_V1 = "VERSUM_V1",
+	FXHASH_V1 = "FXHASH_V1",
+	FXHASH_V2 = "FXHASH_V2"
 }
 
 export enum OrderStatus {
@@ -149,7 +151,11 @@ export interface Config {
 	teia_marketplace: string,
 	versum_marketplace: string,
 	versum_nfts: string,
-	royalties_provider: string
+	royalties_provider: string,
+	fxhash_sales_v1: string,
+	fxhash_sales_v2: string,
+	fxhash_nfts_v1: string,
+	fxhash_nfts_v2: string
 }
 
 export interface Provider {
