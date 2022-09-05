@@ -11,14 +11,15 @@ module.exports = {
         29,
         33,
         37,
-        38,
-        43,
+        41,
+        42,
         47,
         51,
-        52,
-        54,
         55,
-        57
+        56,
+        58,
+        59,
+        61
     ],
     "types": {
         "Boolean": {},
@@ -155,7 +156,7 @@ module.exports = {
                 4
             ],
             "created_at": [
-                55
+                59
             ],
             "name": [
                 4
@@ -164,7 +165,7 @@ module.exports = {
                 4
             ],
             "updated_at": [
-                55
+                59
             ],
             "__typename": [
                 4
@@ -184,7 +185,7 @@ module.exports = {
                 5
             ],
             "created_at": [
-                56
+                60
             ],
             "name": [
                 5
@@ -193,7 +194,7 @@ module.exports = {
                 5
             ],
             "updated_at": [
-                56
+                60
             ],
             "__typename": [
                 4
@@ -204,13 +205,13 @@ module.exports = {
                 4
             ],
             "created_at": [
-                55
+                59
             ],
             "id": [
                 2
             ],
             "metadata": [
-                38,
+                42,
                 {
                     "path": [
                         4
@@ -224,7 +225,7 @@ module.exports = {
                 2
             ],
             "updated_at": [
-                55
+                59
             ],
             "__typename": [
                 4
@@ -244,13 +245,13 @@ module.exports = {
                 5
             ],
             "created_at": [
-                56
+                60
             ],
             "id": [
                 3
             ],
             "metadata": [
-                39
+                43
             ],
             "network": [
                 5
@@ -259,7 +260,7 @@ module.exports = {
                 3
             ],
             "updated_at": [
-                56
+                60
             ],
             "__typename": [
                 4
@@ -267,25 +268,25 @@ module.exports = {
         },
         "dipdup_contract_metadata_order_by": {
             "contract": [
-                54
+                58
             ],
             "created_at": [
-                54
+                58
             ],
             "id": [
-                54
+                58
             ],
             "metadata": [
-                54
+                58
             ],
             "network": [
-                54
+                58
             ],
             "update_id": [
-                54
+                58
             ],
             "updated_at": [
-                54
+                58
             ],
             "__typename": [
                 4
@@ -294,19 +295,19 @@ module.exports = {
         "dipdup_contract_metadata_select_column": {},
         "dipdup_contract_order_by": {
             "address": [
-                54
+                58
             ],
             "created_at": [
-                54
+                58
             ],
             "name": [
-                54
+                58
             ],
             "typename": [
-                54
+                58
             ],
             "updated_at": [
-                54
+                58
             ],
             "__typename": [
                 4
@@ -315,7 +316,7 @@ module.exports = {
         "dipdup_contract_select_column": {},
         "dipdup_head": {
             "created_at": [
-                55
+                59
             ],
             "hash": [
                 4
@@ -327,10 +328,10 @@ module.exports = {
                 4
             ],
             "timestamp": [
-                55
+                59
             ],
             "updated_at": [
-                55
+                59
             ],
             "__typename": [
                 4
@@ -347,7 +348,7 @@ module.exports = {
                 15
             ],
             "created_at": [
-                56
+                60
             ],
             "hash": [
                 5
@@ -359,10 +360,10 @@ module.exports = {
                 5
             ],
             "timestamp": [
-                56
+                60
             ],
             "updated_at": [
-                56
+                60
             ],
             "__typename": [
                 4
@@ -370,22 +371,22 @@ module.exports = {
         },
         "dipdup_head_order_by": {
             "created_at": [
-                54
+                58
             ],
             "hash": [
-                54
+                58
             ],
             "level": [
-                54
+                58
             ],
             "name": [
-                54
+                58
             ],
             "timestamp": [
-                54
+                58
             ],
             "updated_at": [
-                54
+                58
             ],
             "__typename": [
                 4
@@ -425,10 +426,10 @@ module.exports = {
         },
         "dipdup_head_status_order_by": {
             "name": [
-                54
+                58
             ],
             "status": [
-                54
+                58
             ],
             "__typename": [
                 4
@@ -440,7 +441,7 @@ module.exports = {
                 4
             ],
             "created_at": [
-                55
+                59
             ],
             "level": [
                 2
@@ -455,7 +456,7 @@ module.exports = {
                 4
             ],
             "template_values": [
-                38,
+                42,
                 {
                     "path": [
                         4
@@ -466,7 +467,7 @@ module.exports = {
                 4
             ],
             "updated_at": [
-                55
+                59
             ],
             "__typename": [
                 4
@@ -486,7 +487,7 @@ module.exports = {
                 5
             ],
             "created_at": [
-                56
+                60
             ],
             "level": [
                 3
@@ -501,13 +502,13 @@ module.exports = {
                 5
             ],
             "template_values": [
-                39
+                43
             ],
             "type": [
                 5
             ],
             "updated_at": [
-                56
+                60
             ],
             "__typename": [
                 4
@@ -515,58 +516,75 @@ module.exports = {
         },
         "dipdup_index_order_by": {
             "config_hash": [
-                54
+                58
             ],
             "created_at": [
-                54
+                58
             ],
             "level": [
-                54
+                58
             ],
             "name": [
-                54
+                58
             ],
             "status": [
-                54
+                58
             ],
             "template": [
-                54
+                58
             ],
             "template_values": [
-                54
+                58
             ],
             "type": [
-                54
+                58
             ],
             "updated_at": [
-                54
+                58
             ],
             "__typename": [
                 4
             ]
         },
         "dipdup_index_select_column": {},
-        "dipdup_schema": {
+        "dipdup_model_update": {
+            "action": [
+                4
+            ],
             "created_at": [
-                55
+                59
             ],
-            "hash": [
+            "data": [
+                42,
+                {
+                    "path": [
+                        4
+                    ]
+                }
+            ],
+            "id": [
+                2
+            ],
+            "index": [
                 4
             ],
-            "name": [
+            "level": [
+                2
+            ],
+            "model_name": [
                 4
             ],
-            "reindex": [
+            "model_pk": [
                 4
             ],
             "updated_at": [
-                55
+                59
             ],
             "__typename": [
                 4
             ]
         },
-        "dipdup_schema_bool_exp": {
+        "dipdup_model_update_bool_exp": {
             "_and": [
                 27
             ],
@@ -576,8 +594,102 @@ module.exports = {
             "_or": [
                 27
             ],
+            "action": [
+                5
+            ],
             "created_at": [
-                56
+                60
+            ],
+            "data": [
+                43
+            ],
+            "id": [
+                3
+            ],
+            "index": [
+                5
+            ],
+            "level": [
+                3
+            ],
+            "model_name": [
+                5
+            ],
+            "model_pk": [
+                5
+            ],
+            "updated_at": [
+                60
+            ],
+            "__typename": [
+                4
+            ]
+        },
+        "dipdup_model_update_order_by": {
+            "action": [
+                58
+            ],
+            "created_at": [
+                58
+            ],
+            "data": [
+                58
+            ],
+            "id": [
+                58
+            ],
+            "index": [
+                58
+            ],
+            "level": [
+                58
+            ],
+            "model_name": [
+                58
+            ],
+            "model_pk": [
+                58
+            ],
+            "updated_at": [
+                58
+            ],
+            "__typename": [
+                4
+            ]
+        },
+        "dipdup_model_update_select_column": {},
+        "dipdup_schema": {
+            "created_at": [
+                59
+            ],
+            "hash": [
+                4
+            ],
+            "name": [
+                4
+            ],
+            "reindex": [
+                4
+            ],
+            "updated_at": [
+                59
+            ],
+            "__typename": [
+                4
+            ]
+        },
+        "dipdup_schema_bool_exp": {
+            "_and": [
+                31
+            ],
+            "_not": [
+                31
+            ],
+            "_or": [
+                31
+            ],
+            "created_at": [
+                60
             ],
             "hash": [
                 5
@@ -589,7 +701,7 @@ module.exports = {
                 5
             ],
             "updated_at": [
-                56
+                60
             ],
             "__typename": [
                 4
@@ -597,19 +709,19 @@ module.exports = {
         },
         "dipdup_schema_order_by": {
             "created_at": [
-                54
+                58
             ],
             "hash": [
-                54
+                58
             ],
             "name": [
-                54
+                58
             ],
             "reindex": [
-                54
+                58
             ],
             "updated_at": [
-                54
+                58
             ],
             "__typename": [
                 4
@@ -621,13 +733,13 @@ module.exports = {
                 4
             ],
             "created_at": [
-                55
+                59
             ],
             "id": [
                 2
             ],
             "metadata": [
-                38,
+                42,
                 {
                     "path": [
                         4
@@ -644,7 +756,7 @@ module.exports = {
                 2
             ],
             "updated_at": [
-                55
+                59
             ],
             "__typename": [
                 4
@@ -652,25 +764,25 @@ module.exports = {
         },
         "dipdup_token_metadata_bool_exp": {
             "_and": [
-                31
+                35
             ],
             "_not": [
-                31
+                35
             ],
             "_or": [
-                31
+                35
             ],
             "contract": [
                 5
             ],
             "created_at": [
-                56
+                60
             ],
             "id": [
                 3
             ],
             "metadata": [
-                39
+                43
             ],
             "network": [
                 5
@@ -682,7 +794,7 @@ module.exports = {
                 3
             ],
             "updated_at": [
-                56
+                60
             ],
             "__typename": [
                 4
@@ -690,28 +802,28 @@ module.exports = {
         },
         "dipdup_token_metadata_order_by": {
             "contract": [
-                54
+                58
             ],
             "created_at": [
-                54
+                58
             ],
             "id": [
-                54
+                58
             ],
             "metadata": [
-                54
+                58
             ],
             "network": [
-                54
+                58
             ],
             "token_id": [
-                54
+                58
             ],
             "update_id": [
-                54
+                58
             ],
             "updated_at": [
-                54
+                58
             ],
             "__typename": [
                 4
@@ -731,13 +843,13 @@ module.exports = {
         },
         "indexing_status_bool_exp": {
             "_and": [
-                35
+                39
             ],
             "_not": [
-                35
+                39
             ],
             "_or": [
-                35
+                39
             ],
             "index": [
                 5
@@ -751,10 +863,10 @@ module.exports = {
         },
         "indexing_status_order_by": {
             "index": [
-                54
+                58
             ],
             "last_level": [
-                54
+                58
             ],
             "__typename": [
                 4
@@ -764,19 +876,19 @@ module.exports = {
         "jsonb": {},
         "jsonb_comparison_exp": {
             "_contained_in": [
-                38
+                42
             ],
             "_contains": [
-                38
+                42
             ],
             "_eq": [
-                38
+                42
             ],
             "_gt": [
-                38
+                42
             ],
             "_gte": [
-                38
+                42
             ],
             "_has_key": [
                 4
@@ -788,22 +900,22 @@ module.exports = {
                 4
             ],
             "_in": [
-                38
+                42
             ],
             "_is_null": [
                 0
             ],
             "_lt": [
-                38
+                42
             ],
             "_lte": [
-                38
+                42
             ],
             "_neq": [
-                38
+                42
             ],
             "_nin": [
-                38
+                42
             ],
             "__typename": [
                 4
@@ -811,7 +923,7 @@ module.exports = {
         },
         "legacy_orders": {
             "data": [
-                38,
+                42,
                 {
                     "path": [
                         4
@@ -822,7 +934,7 @@ module.exports = {
                 4
             ],
             "id": [
-                57
+                61
             ],
             "__typename": [
                 4
@@ -830,19 +942,33 @@ module.exports = {
         },
         "legacy_orders_bool_exp": {
             "_and": [
-                41
+                45
             ],
             "_not": [
-                41
+                45
             ],
             "_or": [
-                41
+                45
             ],
             "data": [
-                39
+                43
             ],
             "hash": [
                 5
+            ],
+            "id": [
+                62
+            ],
+            "__typename": [
+                4
+            ]
+        },
+        "legacy_orders_order_by": {
+            "data": [
+                58
+            ],
+            "hash": [
+                58
             ],
             "id": [
                 58
@@ -851,24 +977,10 @@ module.exports = {
                 4
             ]
         },
-        "legacy_orders_order_by": {
-            "data": [
-                54
-            ],
-            "hash": [
-                54
-            ],
-            "id": [
-                54
-            ],
-            "__typename": [
-                4
-            ]
-        },
         "legacy_orders_select_column": {},
         "marketplace_activity": {
             "id": [
-                57
+                61
             ],
             "internal_order_id": [
                 4
@@ -883,7 +995,7 @@ module.exports = {
                 4
             ],
             "make_value": [
-                52
+                56
             ],
             "maker": [
                 4
@@ -904,10 +1016,10 @@ module.exports = {
                 2
             ],
             "operation_timestamp": [
-                55
+                59
             ],
             "order_id": [
-                57
+                61
             ],
             "platform": [
                 4
@@ -922,7 +1034,7 @@ module.exports = {
                 4
             ],
             "take_value": [
-                52
+                56
             ],
             "taker": [
                 4
@@ -936,16 +1048,16 @@ module.exports = {
         },
         "marketplace_activity_bool_exp": {
             "_and": [
-                45
+                49
             ],
             "_not": [
-                45
+                49
             ],
             "_or": [
-                45
+                49
             ],
             "id": [
-                58
+                62
             ],
             "internal_order_id": [
                 5
@@ -960,7 +1072,7 @@ module.exports = {
                 5
             ],
             "make_value": [
-                53
+                57
             ],
             "maker": [
                 5
@@ -981,10 +1093,10 @@ module.exports = {
                 3
             ],
             "operation_timestamp": [
-                56
+                60
             ],
             "order_id": [
-                58
+                62
             ],
             "platform": [
                 5
@@ -999,7 +1111,7 @@ module.exports = {
                 5
             ],
             "take_value": [
-                53
+                57
             ],
             "taker": [
                 5
@@ -1013,67 +1125,67 @@ module.exports = {
         },
         "marketplace_activity_order_by": {
             "id": [
-                54
+                58
             ],
             "internal_order_id": [
-                54
+                58
             ],
             "make_asset_class": [
-                54
+                58
             ],
             "make_contract": [
-                54
+                58
             ],
             "make_token_id": [
-                54
+                58
             ],
             "make_value": [
-                54
+                58
             ],
             "maker": [
-                54
+                58
             ],
             "network": [
-                54
+                58
             ],
             "operation_counter": [
-                54
+                58
             ],
             "operation_hash": [
-                54
+                58
             ],
             "operation_level": [
-                54
+                58
             ],
             "operation_nonce": [
-                54
+                58
             ],
             "operation_timestamp": [
-                54
+                58
             ],
             "order_id": [
-                54
+                58
             ],
             "platform": [
-                54
+                58
             ],
             "take_asset_class": [
-                54
+                58
             ],
             "take_contract": [
-                54
+                58
             ],
             "take_token_id": [
-                54
+                58
             ],
             "take_value": [
-                54
+                58
             ],
             "taker": [
-                54
+                58
             ],
             "type": [
-                54
+                58
             ],
             "__typename": [
                 4
@@ -1085,25 +1197,25 @@ module.exports = {
                 0
             ],
             "created_at": [
-                55
+                59
             ],
             "end_at": [
-                55
+                59
             ],
             "ended_at": [
-                55
+                59
             ],
             "fill": [
-                52
+                56
             ],
             "id": [
-                57
+                61
             ],
             "internal_order_id": [
                 4
             ],
             "last_updated_at": [
-                55
+                59
             ],
             "make_asset_class": [
                 4
@@ -1112,13 +1224,13 @@ module.exports = {
                 4
             ],
             "make_price": [
-                52
+                56
             ],
             "make_token_id": [
                 4
             ],
             "make_value": [
-                52
+                56
             ],
             "maker": [
                 4
@@ -1127,7 +1239,7 @@ module.exports = {
                 4
             ],
             "origin_fees": [
-                38,
+                42,
                 {
                     "path": [
                         4
@@ -1135,7 +1247,7 @@ module.exports = {
                 }
             ],
             "payouts": [
-                38,
+                42,
                 {
                     "path": [
                         4
@@ -1149,7 +1261,7 @@ module.exports = {
                 4
             ],
             "start_at": [
-                55
+                59
             ],
             "status": [
                 4
@@ -1161,13 +1273,13 @@ module.exports = {
                 4
             ],
             "take_price": [
-                52
+                56
             ],
             "take_token_id": [
                 4
             ],
             "take_value": [
-                52
+                56
             ],
             "taker": [
                 4
@@ -1178,37 +1290,37 @@ module.exports = {
         },
         "marketplace_order_bool_exp": {
             "_and": [
-                49
+                53
             ],
             "_not": [
-                49
+                53
             ],
             "_or": [
-                49
+                53
             ],
             "cancelled": [
                 1
             ],
             "created_at": [
-                56
+                60
             ],
             "end_at": [
-                56
+                60
             ],
             "ended_at": [
-                56
+                60
             ],
             "fill": [
-                53
+                57
             ],
             "id": [
-                58
+                62
             ],
             "internal_order_id": [
                 5
             ],
             "last_updated_at": [
-                56
+                60
             ],
             "make_asset_class": [
                 5
@@ -1217,13 +1329,13 @@ module.exports = {
                 5
             ],
             "make_price": [
-                53
+                57
             ],
             "make_token_id": [
                 5
             ],
             "make_value": [
-                53
+                57
             ],
             "maker": [
                 5
@@ -1232,10 +1344,10 @@ module.exports = {
                 5
             ],
             "origin_fees": [
-                39
+                43
             ],
             "payouts": [
-                39
+                43
             ],
             "platform": [
                 5
@@ -1244,7 +1356,7 @@ module.exports = {
                 5
             ],
             "start_at": [
-                56
+                60
             ],
             "status": [
                 5
@@ -1256,13 +1368,13 @@ module.exports = {
                 5
             ],
             "take_price": [
-                53
+                57
             ],
             "take_token_id": [
                 5
             ],
             "take_value": [
-                53
+                57
             ],
             "taker": [
                 5
@@ -1273,85 +1385,85 @@ module.exports = {
         },
         "marketplace_order_order_by": {
             "cancelled": [
-                54
+                58
             ],
             "created_at": [
-                54
+                58
             ],
             "end_at": [
-                54
+                58
             ],
             "ended_at": [
-                54
+                58
             ],
             "fill": [
-                54
+                58
             ],
             "id": [
-                54
+                58
             ],
             "internal_order_id": [
-                54
+                58
             ],
             "last_updated_at": [
-                54
+                58
             ],
             "make_asset_class": [
-                54
+                58
             ],
             "make_contract": [
-                54
+                58
             ],
             "make_price": [
-                54
+                58
             ],
             "make_token_id": [
-                54
+                58
             ],
             "make_value": [
-                54
+                58
             ],
             "maker": [
-                54
+                58
             ],
             "network": [
-                54
+                58
             ],
             "origin_fees": [
-                54
+                58
             ],
             "payouts": [
-                54
+                58
             ],
             "platform": [
-                54
+                58
             ],
             "salt": [
-                54
+                58
             ],
             "start_at": [
-                54
+                58
             ],
             "status": [
-                54
+                58
             ],
             "take_asset_class": [
-                54
+                58
             ],
             "take_contract": [
-                54
+                58
             ],
             "take_price": [
-                54
+                58
             ],
             "take_token_id": [
-                54
+                58
             ],
             "take_value": [
-                54
+                58
             ],
             "taker": [
-                54
+                58
             ],
             "__typename": [
                 4
@@ -1361,31 +1473,31 @@ module.exports = {
         "numeric": {},
         "numeric_comparison_exp": {
             "_eq": [
-                52
+                56
             ],
             "_gt": [
-                52
+                56
             ],
             "_gte": [
-                52
+                56
             ],
             "_in": [
-                52
+                56
             ],
             "_is_null": [
                 0
             ],
             "_lt": [
-                52
+                56
             ],
             "_lte": [
-                52
+                56
             ],
             "_neq": [
-                52
+                56
             ],
             "_nin": [
-                52
+                56
             ],
             "__typename": [
                 4
@@ -1395,31 +1507,31 @@ module.exports = {
         "timestamptz": {},
         "timestamptz_comparison_exp": {
             "_eq": [
-                55
+                59
             ],
             "_gt": [
-                55
+                59
             ],
             "_gte": [
-                55
+                59
             ],
             "_in": [
-                55
+                59
             ],
             "_is_null": [
                 0
             ],
             "_lt": [
-                55
+                59
             ],
             "_lte": [
-                55
+                59
             ],
             "_neq": [
-                55
+                59
             ],
             "_nin": [
-                55
+                59
             ],
             "__typename": [
                 4
@@ -1428,31 +1540,31 @@ module.exports = {
         "uuid": {},
         "uuid_comparison_exp": {
             "_eq": [
-                57
+                61
             ],
             "_gt": [
-                57
+                61
             ],
             "_gte": [
-                57
+                61
             ],
             "_in": [
-                57
+                61
             ],
             "_is_null": [
                 0
             ],
             "_lt": [
-                57
+                61
             ],
             "_lte": [
-                57
+                61
             ],
             "_neq": [
-                57
+                61
             ],
             "_nin": [
-                57
+                61
             ],
             "__typename": [
                 4
@@ -1605,12 +1717,12 @@ module.exports = {
                     ]
                 }
             ],
-            "dipdup_schema": [
+            "dipdup_model_update": [
                 26,
                 {
                     "distinct_on": [
                         29,
-                        "[dipdup_schema_select_column!]"
+                        "[dipdup_model_update_select_column!]"
                     ],
                     "limit": [
                         2
@@ -1620,28 +1732,28 @@ module.exports = {
                     ],
                     "order_by": [
                         28,
-                        "[dipdup_schema_order_by!]"
+                        "[dipdup_model_update_order_by!]"
                     ],
                     "where": [
                         27
                     ]
                 }
             ],
-            "dipdup_schema_by_pk": [
+            "dipdup_model_update_by_pk": [
                 26,
                 {
-                    "name": [
-                        4,
-                        "String!"
+                    "id": [
+                        2,
+                        "Int!"
                     ]
                 }
             ],
-            "dipdup_token_metadata": [
+            "dipdup_schema": [
                 30,
                 {
                     "distinct_on": [
                         33,
-                        "[dipdup_token_metadata_select_column!]"
+                        "[dipdup_schema_select_column!]"
                     ],
                     "limit": [
                         2
@@ -1651,28 +1763,28 @@ module.exports = {
                     ],
                     "order_by": [
                         32,
-                        "[dipdup_token_metadata_order_by!]"
+                        "[dipdup_schema_order_by!]"
                     ],
                     "where": [
                         31
                     ]
                 }
             ],
-            "dipdup_token_metadata_by_pk": [
+            "dipdup_schema_by_pk": [
                 30,
                 {
-                    "id": [
-                        2,
-                        "Int!"
+                    "name": [
+                        4,
+                        "String!"
                     ]
                 }
             ],
-            "indexing_status": [
+            "dipdup_token_metadata": [
                 34,
                 {
                     "distinct_on": [
                         37,
-                        "[indexing_status_select_column!]"
+                        "[dipdup_token_metadata_select_column!]"
                     ],
                     "limit": [
                         2
@@ -1682,15 +1794,46 @@ module.exports = {
                     ],
                     "order_by": [
                         36,
-                        "[indexing_status_order_by!]"
+                        "[dipdup_token_metadata_order_by!]"
                     ],
                     "where": [
                         35
                     ]
                 }
             ],
-            "indexing_status_by_pk": [
+            "dipdup_token_metadata_by_pk": [
                 34,
+                {
+                    "id": [
+                        2,
+                        "Int!"
+                    ]
+                }
+            ],
+            "indexing_status": [
+                38,
+                {
+                    "distinct_on": [
+                        41,
+                        "[indexing_status_select_column!]"
+                    ],
+                    "limit": [
+                        2
+                    ],
+                    "offset": [
+                        2
+                    ],
+                    "order_by": [
+                        40,
+                        "[indexing_status_order_by!]"
+                    ],
+                    "where": [
+                        39
+                    ]
+                }
+            ],
+            "indexing_status_by_pk": [
+                38,
                 {
                     "index": [
                         4,
@@ -1699,10 +1842,10 @@ module.exports = {
                 }
             ],
             "legacy_orders": [
-                40,
+                44,
                 {
                     "distinct_on": [
-                        43,
+                        47,
                         "[legacy_orders_select_column!]"
                     ],
                     "limit": [
@@ -1712,16 +1855,16 @@ module.exports = {
                         2
                     ],
                     "order_by": [
-                        42,
+                        46,
                         "[legacy_orders_order_by!]"
                     ],
                     "where": [
-                        41
+                        45
                     ]
                 }
             ],
             "legacy_orders_by_pk": [
-                40,
+                44,
                 {
                     "hash": [
                         4,
@@ -1730,10 +1873,10 @@ module.exports = {
                 }
             ],
             "marketplace_activity": [
-                44,
+                48,
                 {
                     "distinct_on": [
-                        47,
+                        51,
                         "[marketplace_activity_select_column!]"
                     ],
                     "limit": [
@@ -1743,28 +1886,28 @@ module.exports = {
                         2
                     ],
                     "order_by": [
-                        46,
+                        50,
                         "[marketplace_activity_order_by!]"
                     ],
                     "where": [
-                        45
+                        49
                     ]
                 }
             ],
             "marketplace_activity_by_pk": [
-                44,
+                48,
                 {
                     "id": [
-                        57,
+                        61,
                         "uuid!"
                     ]
                 }
             ],
             "marketplace_order": [
-                48,
+                52,
                 {
                     "distinct_on": [
-                        51,
+                        55,
                         "[marketplace_order_select_column!]"
                     ],
                     "limit": [
@@ -1774,19 +1917,19 @@ module.exports = {
                         2
                     ],
                     "order_by": [
-                        50,
+                        54,
                         "[marketplace_order_order_by!]"
                     ],
                     "where": [
-                        49
+                        53
                     ]
                 }
             ],
             "marketplace_order_by_pk": [
-                48,
+                52,
                 {
                     "id": [
-                        57,
+                        61,
                         "uuid!"
                     ]
                 }
@@ -1942,12 +2085,12 @@ module.exports = {
                     ]
                 }
             ],
-            "dipdup_schema": [
+            "dipdup_model_update": [
                 26,
                 {
                     "distinct_on": [
                         29,
-                        "[dipdup_schema_select_column!]"
+                        "[dipdup_model_update_select_column!]"
                     ],
                     "limit": [
                         2
@@ -1957,28 +2100,28 @@ module.exports = {
                     ],
                     "order_by": [
                         28,
-                        "[dipdup_schema_order_by!]"
+                        "[dipdup_model_update_order_by!]"
                     ],
                     "where": [
                         27
                     ]
                 }
             ],
-            "dipdup_schema_by_pk": [
+            "dipdup_model_update_by_pk": [
                 26,
                 {
-                    "name": [
-                        4,
-                        "String!"
+                    "id": [
+                        2,
+                        "Int!"
                     ]
                 }
             ],
-            "dipdup_token_metadata": [
+            "dipdup_schema": [
                 30,
                 {
                     "distinct_on": [
                         33,
-                        "[dipdup_token_metadata_select_column!]"
+                        "[dipdup_schema_select_column!]"
                     ],
                     "limit": [
                         2
@@ -1988,28 +2131,28 @@ module.exports = {
                     ],
                     "order_by": [
                         32,
-                        "[dipdup_token_metadata_order_by!]"
+                        "[dipdup_schema_order_by!]"
                     ],
                     "where": [
                         31
                     ]
                 }
             ],
-            "dipdup_token_metadata_by_pk": [
+            "dipdup_schema_by_pk": [
                 30,
                 {
-                    "id": [
-                        2,
-                        "Int!"
+                    "name": [
+                        4,
+                        "String!"
                     ]
                 }
             ],
-            "indexing_status": [
+            "dipdup_token_metadata": [
                 34,
                 {
                     "distinct_on": [
                         37,
-                        "[indexing_status_select_column!]"
+                        "[dipdup_token_metadata_select_column!]"
                     ],
                     "limit": [
                         2
@@ -2019,15 +2162,46 @@ module.exports = {
                     ],
                     "order_by": [
                         36,
-                        "[indexing_status_order_by!]"
+                        "[dipdup_token_metadata_order_by!]"
                     ],
                     "where": [
                         35
                     ]
                 }
             ],
-            "indexing_status_by_pk": [
+            "dipdup_token_metadata_by_pk": [
                 34,
+                {
+                    "id": [
+                        2,
+                        "Int!"
+                    ]
+                }
+            ],
+            "indexing_status": [
+                38,
+                {
+                    "distinct_on": [
+                        41,
+                        "[indexing_status_select_column!]"
+                    ],
+                    "limit": [
+                        2
+                    ],
+                    "offset": [
+                        2
+                    ],
+                    "order_by": [
+                        40,
+                        "[indexing_status_order_by!]"
+                    ],
+                    "where": [
+                        39
+                    ]
+                }
+            ],
+            "indexing_status_by_pk": [
+                38,
                 {
                     "index": [
                         4,
@@ -2036,10 +2210,10 @@ module.exports = {
                 }
             ],
             "legacy_orders": [
-                40,
+                44,
                 {
                     "distinct_on": [
-                        43,
+                        47,
                         "[legacy_orders_select_column!]"
                     ],
                     "limit": [
@@ -2049,16 +2223,16 @@ module.exports = {
                         2
                     ],
                     "order_by": [
-                        42,
+                        46,
                         "[legacy_orders_order_by!]"
                     ],
                     "where": [
-                        41
+                        45
                     ]
                 }
             ],
             "legacy_orders_by_pk": [
-                40,
+                44,
                 {
                     "hash": [
                         4,
@@ -2067,10 +2241,10 @@ module.exports = {
                 }
             ],
             "marketplace_activity": [
-                44,
+                48,
                 {
                     "distinct_on": [
-                        47,
+                        51,
                         "[marketplace_activity_select_column!]"
                     ],
                     "limit": [
@@ -2080,28 +2254,28 @@ module.exports = {
                         2
                     ],
                     "order_by": [
-                        46,
+                        50,
                         "[marketplace_activity_order_by!]"
                     ],
                     "where": [
-                        45
+                        49
                     ]
                 }
             ],
             "marketplace_activity_by_pk": [
-                44,
+                48,
                 {
                     "id": [
-                        57,
+                        61,
                         "uuid!"
                     ]
                 }
             ],
             "marketplace_order": [
-                48,
+                52,
                 {
                     "distinct_on": [
-                        51,
+                        55,
                         "[marketplace_order_select_column!]"
                     ],
                     "limit": [
@@ -2111,19 +2285,19 @@ module.exports = {
                         2
                     ],
                     "order_by": [
-                        50,
+                        54,
                         "[marketplace_order_order_by!]"
                     ],
                     "where": [
-                        49
+                        53
                     ]
                 }
             ],
             "marketplace_order_by_pk": [
-                48,
+                52,
                 {
                     "id": [
-                        57,
+                        61,
                         "uuid!"
                     ]
                 }

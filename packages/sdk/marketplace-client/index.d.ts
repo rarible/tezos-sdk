@@ -96,6 +96,18 @@ export declare const enumdipdupIndexSelectColumn: {
   readonly updated_at: 'updated_at'
 }
 
+export declare const enumdipdupModelUpdateSelectColumn: {
+  readonly action: 'action'
+  readonly created_at: 'created_at'
+  readonly data: 'data'
+  readonly id: 'id'
+  readonly index: 'index'
+  readonly level: 'level'
+  readonly model_name: 'model_name'
+  readonly model_pk: 'model_pk'
+  readonly updated_at: 'updated_at'
+}
+
 export declare const enumdipdupSchemaSelectColumn: {
   readonly created_at: 'created_at'
   readonly hash: 'hash'
