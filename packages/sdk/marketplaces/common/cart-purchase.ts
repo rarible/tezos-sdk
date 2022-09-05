@@ -16,6 +16,8 @@ import {get_hen_collect_transaction} from "../hen/hen_collect";
 import {marketplace_order} from "../../marketplace-client";
 import {get_teia_collect_transaction} from "../teia/teia_collect";
 import {get_versum_collect_transaction} from "../versum/versum_collect";
+import {get_fxhash_v1_collect_transaction} from "../fxhash/v1/fxhash_v1_collect";
+import {get_fxhash_v2_listing_accept_transaction} from "../fxhash/v2/fxhash_v2_listing_accept";
 
 export interface CartOrder {
 	order_id: string,
@@ -123,6 +125,16 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 				const versum_txs = await get_versum_collect_transaction(provider,
 					cart_order.order_id, cart_order.amount)
 				transactions = transactions.concat(versum_txs)
+				break;
+			case "FXHASH_V1":
+				const fxhash_v1_txs = await get_fxhash_v1_collect_transaction(provider,
+					cart_order.order_id)
+				transactions = transactions.concat(fxhash_v1_txs)
+				break;
+			case "FXHASH_V2":
+				const fxhash_v2_txs = await get_fxhash_v2_listing_accept_transaction(provider,
+					cart_order.order_id)
+				transactions = transactions.concat(fxhash_v2_txs)
 				break;
 		}
 	}
