@@ -217,10 +217,18 @@ export async function testScript(operation?: string, options: any = {}) {
 	// 	tzkt: "https://api.tzkt.io",
 	// 	dipdup: "https://tezos-indexer.rarible.org/v1/graphql",
 	// 	union_api: "https://api.rarible.org/v0.1",
+	// 	objkt_sales_v1: "KT1FvqJwEDWb1Gwc55Jd1jjTHRVWbYKUUpyq",
 	// 	objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV",
 	// 	royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
 	// 	hen_marketplace: "KT1SakgxbHuJmkMLSsTb37DNtHLz6LzyaMhx",
-	// 	hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn"
+	// 	hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn",
+	// 	teia_marketplace: "KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w",
+	// 	versum_marketplace: "KT1GyRAJNdizF1nojQz62uGYkx8WFRUJm9X5",
+	// 	versum_nfts: "KT1LjmAdYQCLBjwv4S2oFkEzyHVkomAf5MrW",
+	// 	fxhash_sales_v1: "KT1Xo5B7PNBAeynZPmca4bRh6LQow4og1Zb9",
+	// 	fxhash_sales_v2: "KT1GbyoDi7H1sfXmimXpptZJuCdHMh66WS9u",
+	// 	fxhash_nfts_v1: "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE",
+	// 	fxhash_nfts_v2: "KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi"
 	// }
 
 	const devConfig = {
