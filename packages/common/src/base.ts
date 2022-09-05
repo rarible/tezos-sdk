@@ -128,10 +128,6 @@ export interface Config {
 	fees: BigNumber;
 	nft_public: string;
 	mt_public: string;
-	permit_whitelist: string[];
-	api: string;
-	api_permit: string;
-	wrapper: string;
 	auction: string;
 	auction_storage: string;
 	node_url: string;

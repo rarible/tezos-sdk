@@ -25,8 +25,6 @@ import {
 	Platform,
 	put_auction_bid,
 	put_bundle_auction_bid,
-	sell,
-	SellRequest,
 	set_token_metadata,
 	start_auction,
 	start_bundle_auction,
@@ -109,7 +107,7 @@ export async function testScript(operation?: string, options: any = {}) {
 			type: 'string',
 			default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'
 		},
-		endpoint: {type: 'string', default: 'https://rpc.tzkt.io/ithacanet'},
+		endpoint: {type: 'string', default: 'https://rpc.tzkt.io/ghostnet'},
 		exchange: {type: 'string', default: 'KT1S6H2FWxrpaD7aPRSW1cTTE1xPucXBSTL5'},
 		// contract: {type: 'string', default: 'KT1VnhPmUJnEH5dfeD8WW87LCoxdhGUUVfMV'},
 		contract: {type: 'string', default: 'KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA'},
@@ -163,8 +161,7 @@ export async function testScript(operation?: string, options: any = {}) {
 	const amount = (argv.amount) ? new BigNumber(argv.amount as number) : undefined
 	const metadata = JSON.parse(argv.metadata) as { [_: string]: string }
 
-	const devNode = "http://tezos-node.dev.rarible.int"
-	const tezos = in_memory_provider(argv.edsk, argv.is_dev ? devNode : argv.endpoint)
+	const tezos = in_memory_provider(argv.edsk, argv.endpoint)
 
 	const config = {
 		chain_id: "NetXnHfVqm9iesp",
@@ -173,10 +170,6 @@ export async function testScript(operation?: string, options: any = {}) {
 		fees: new BigNumber(argv.protocol_fee),
 		nft_public: "",
 		mt_public: "",
-		api: "https://test-tezos-api.rarible.org/v0.1",
-		api_permit: "https://test-tezos-api.rarible.org/v0.1",
-		permit_whitelist: [],
-		wrapper: argv.wrapper,
 		auction: "KT1CB5JBSC7kTxRV3ir2xsooMA1FLieiD4Mt",
 		auction_storage: "KT1KWAPPjuDq4ZeX67rzZWsf6eAeqwtuAfSP",
 		node_url: argv.endpoint,
@@ -187,7 +180,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ghostnet.tzkt.io",
-		dipdup: "http://localhost:49180/v1/graphql",
+		dipdup: "https://testnet-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://testnet-api.rarible.org/v0.1",
 		objkt_sales_v1: "KT1Ax5fm2UNxjXGmrMDytREfqvYoCXoBB4Jo",
 		objkt_sales_v2: "KT1GiZuR6TdkgxZGQGZSdbC3Jox9JTSbqTB6",
@@ -211,10 +204,6 @@ export async function testScript(operation?: string, options: any = {}) {
 	// 	fees: new BigNumber(argv.protocol_fee),
 	// 	nft_public: "",
 	// 	mt_public: "",
-	// 	api: "https://tezos-api.rarible.org/v0.1",
-	// 	api_permit: "https://tezos-api.rarible.org/v0.1",
-	// 	permit_whitelist: [],
-	// 	wrapper: argv.wrapper,
 	// 	auction: "",
 	// 	auction_storage: "",
 	// 	node_url: argv.endpoint,
@@ -234,36 +223,32 @@ export async function testScript(operation?: string, options: any = {}) {
 	// }
 
 	const devConfig = {
-		chain_id: "NetXfHjxW3qBoxi",
-		exchange: "KT18isH58SBp7UaRWB652UwLMPxCe1bsjMMe",
-		transfer_proxy: "KT1LmiHVNjfbZvPx9qvASVk8mzFcaJNtfj8q",
+		chain_id: "NetXnHfVqm9iesp",
+		exchange: argv.exchange,
+		transfer_proxy: argv.transfer_proxy,
 		fees: new BigNumber(argv.protocol_fee),
 		nft_public: "",
 		mt_public: "",
-		api: "https://dev-tezos-api.rarible.org/v0.1",
-		api_permit: "https://dev-tezos-api.rarible.org/v0.1",
-		permit_whitelist: [],
-		wrapper: "",
-		auction: "KT1L8u1GMiKSARujxwQHfMtJTkMBSonQ7FSv",
-		auction_storage: "KT1RtFbGfSbgNVuN9cfvrzhoHcq9CSUH3uMf",
-		node_url: devNode,
-		sales: "KT1PFCwtC28QJZtsMDi8Gu9ezJydZ812y8Yi",
-		sales_storage: "KT1KJav7CC8ieoLfdpeeDpo7pQbKCJDNP2a6",
-		transfer_manager: "KT1RAjXqJm4MPf1MQr4NdinupYc3NxNaykaz",
-		bid: "KT1Wt3C7M7nJuuA83Ukr572vFc5uk6QJwePZ",
-		bid_storage: "KT1KJRo2tiFBXZnzTJAVxrPnn2jW3LVCZSii",
-		sig_checker: "KT1EiyFnYEGUtfMLKBcWnYzJ95d1hakR5qaX",
-		tzkt: "http://tezos-tzkt.dev.rarible.int",
+		auction: "KT1CB5JBSC7kTxRV3ir2xsooMA1FLieiD4Mt",
+		auction_storage: "KT1KWAPPjuDq4ZeX67rzZWsf6eAeqwtuAfSP",
+		node_url: argv.endpoint,
+		sales: "KT1NcKyhPnomH9PKGeDfvMiGH2PDgKCd5YuM",
+		sales_storage: "KT1GDUG3AQpaKmFjFHVn6PYT4Tprf7ccwPa3",
+		transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
+		bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
+		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
+		tzkt: "https://api.ghostnet.tzkt.io",
 		dipdup: "https://dev-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://dev-api.rarible.org/v0.1",
-		objkt_sales_v1: "KT1Qa7sQdZrsuPMA7NFg5hMF9iadtoYSF8m9",
-		objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L",
-		royalties_provider: "KT1ABvSRv27WymHYAyuEVnYktdhiPy3kThjk",
-		hen_marketplace: "KT1MoWbKvxhsuckLUnQUPjrnGRugiret3pSQ",
-		hen_objkts: "KT1E59fZ5vxx67h8spyQqT8nC3k9scmBBkkd",
-		teia_marketplace: "KT1SMn9NzXNvdMvtaK8gE5GHgYj8ZxCuSyWN",
-		versum_marketplace: "KT1FQQttioJYMHYzJo97A2cxfdAqnUHoVjiG",
-		versum_nfts: "KT1DtDzPUe7Do3QQQ739RG3Z4fWgwbuy2srB",
+		objkt_sales_v1: "KT1Ax5fm2UNxjXGmrMDytREfqvYoCXoBB4Jo",
+		objkt_sales_v2: "KT1GiZuR6TdkgxZGQGZSdbC3Jox9JTSbqTB6",
+		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
+		hen_marketplace: "KT1XYgjgFQutFfgEiD7RuppSKZsawZbkpKxL",
+		hen_objkts: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw",
+		teia_marketplace: "KT1Anx515N2PK8A2ZX5uGNn7Gckh4WytLJmK",
+		versum_marketplace: "KT1B1Wz7jPH23EqKUpDwFDkw3A1yLxGZ4uJy",
+		versum_nfts: "KT1UH5RSbomuV1o6UuDB9yeACbqRMup3utGu",
 		fxhash_sales_v1: "KT1BEc3m6yxN856Y4zfArpDqQ1uZZ1HkDTRh",
 		fxhash_sales_v2: "KT1GCLoBSwUaNjaGXq5RtiP8CXTL3cEeMNDs",
 		fxhash_nfts_v1: "KT1VEXkw6rw6pJDP9APGsMneFafArijmM96j",
@@ -381,122 +366,6 @@ export async function testScript(operation?: string, options: any = {}) {
 			await op_deploy_fill.confirmation()
 			console.log(op_deploy_fill.contract)
 			break
-
-		case 'sell': {
-			console.log("sell item", argv.item_id)
-			const publicKey = await get_public_key(provider)
-			if (!publicKey) {
-				throw new Error("publicKey is undefined")
-			}
-			const maker = pk_to_pkh(publicKey)
-			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
-				throw new Error(
-					"item_id was not set or set incorrectly")
-			}
-
-			const [contract, tokenId] = argv.item_id.split(":")
-			const asset: UnknownTokenAssetType = {
-				contract: contract,
-				token_id: new BigNumber(tokenId),
-			}
-			const request: SellRequest = {
-				maker,
-				maker_edpk: publicKey,
-				make_asset_type: await check_asset_type(provider, asset),
-				take_asset_type: {
-					asset_class: "XTZ"
-				},
-				amount: new BigNumber("1"),
-				price: new BigNumber("0.1"),
-				payouts: [{
-					account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
-					value: new BigNumber(10000)
-				}],
-				origin_fees: [{
-					account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
-					value: new BigNumber(252)
-				},
-					{
-						account: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
-						value: new BigNumber(253)
-					}]
-			}
-			const order = await sell(provider, request)
-			console.log('order=', order)
-			return order
-		}
-
-		case 'sell_with_ft_fa12': {
-			console.log("sell item", argv.item_id)
-			const publicKey = await get_public_key(provider)
-			if (!publicKey) {
-				throw new Error("publicKey is undefined")
-			}
-			const maker = pk_to_pkh(publicKey)
-			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
-				throw new Error(
-					"item_id was not set or set incorrectly")
-			}
-
-			const [contract, tokenId] = argv.item_id.split(":")
-			const asset: UnknownTokenAssetType = {
-				contract: contract,
-				token_id: new BigNumber(tokenId),
-			}
-			const request: SellRequest = {
-				maker,
-				maker_edpk: publicKey,
-				make_asset_type: await check_asset_type(provider, asset),
-				take_asset_type: {
-					asset_class: "FT",
-					contract: argv.ft_contract!,
-					token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id) : undefined,
-				},
-				amount: new BigNumber("1"),
-				price: new BigNumber("2"),
-				payouts: [],
-				origin_fees: []
-			}
-			const order = await sell(provider, request)
-			console.log('order=', order)
-			return order
-		}
-
-		case 'sell_with_ft_fa2': {
-			console.log("sell item", argv.item_id)
-			const publicKey = await get_public_key(provider)
-			if (!publicKey) {
-				throw new Error("publicKey is undefined")
-			}
-			const maker = pk_to_pkh(publicKey)
-			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
-				throw new Error(
-					"item_id was not set or set incorrectly")
-			}
-
-			const [contract, tokenId] = argv.item_id.split(":")
-			const asset: UnknownTokenAssetType = {
-				contract: contract,
-				token_id: new BigNumber(tokenId),
-			}
-			const request: SellRequest = {
-				maker,
-				maker_edpk: publicKey,
-				make_asset_type: await check_asset_type(provider, asset),
-				take_asset_type: {
-					asset_class: "FT",
-					contract: argv.ft_contract!,
-					token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id) : undefined,
-				},
-				amount: new BigNumber("1"),
-				price: new BigNumber("2"),
-				payouts: [],
-				origin_fees: []
-			}
-			const order = await sell(provider, request)
-			console.log('order=', order)
-			return order
-		}
 
 		case 'sell_v2': {
 			console.log("sell item", argv.item_id)
