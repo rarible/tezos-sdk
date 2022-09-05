@@ -16,9 +16,6 @@ import {bundle_sale_fa12} from "./testnet/rarible/bundle_sale_fa12";
 import {floor_bid} from "./testnet/rarible/floor_bid";
 import {floor_bid_fa2} from "./testnet/rarible/floor_bid_fa2";
 import {floor_bid_fa12} from "./testnet/rarible/floor_bid_fa12";
-import {sale} from "./testnet/rarible/sale";
-import {sale_fa12} from "./testnet/rarible/sale_fa12";
-import {sale_fa2} from "./testnet/rarible/sale_fa2";
 import {v2_sale} from "./testnet/rarible/v2_sale";
 import {v2_sale_fa2} from "./testnet/rarible/v2_sale_fa2";
 import {v2_sale_fa12} from "./testnet/rarible/v2_sale_fa12";
@@ -77,11 +74,6 @@ async function run_tests(){
     await floor_bid()
     await floor_bid_fa2()
     await floor_bid_fa12()
-
-    //Sales
-    await sale()
-    await sale_fa2()
-    await sale_fa12()
 
     //V2 Sales
     await v2_sale()

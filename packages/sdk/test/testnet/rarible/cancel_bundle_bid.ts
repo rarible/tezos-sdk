@@ -18,7 +18,7 @@ export async function cancel_bundle_bid() {
   })
   console.log('mintedItemId_0', mintedItemId_0)
 
-  await awaitItem(mintedItemId_0)
+  await awaitItem(mintedItemId_0 as string)
 
   const mintedItemId_1 = await testScript('mint', {
     edsk: sellerEdsk,
@@ -29,7 +29,7 @@ export async function cancel_bundle_bid() {
   })
   console.log('mintedItemId_1', mintedItemId_1)
 
-  await awaitItem(mintedItemId_1)
+  await awaitItem(mintedItemId_1 as string)
 
   // const mintedItemId = ""
   const bid = await testScript('put_bundle_bid', {

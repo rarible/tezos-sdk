@@ -18,7 +18,7 @@ export async function cancel() {
     // })
     // console.log('mintedItemId', mintedItemId)
     //
-    // await awaitItem(mintedItemId)
+    // await awaitItem(mintedItemId as string)
     // // const mintedItemId = ""
     // const sellOrder = await testScript('sell_v2', {
     //     edsk: sellerEdsk,

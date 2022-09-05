@@ -19,7 +19,7 @@ export async function cart_purchase() {
 	})
 	console.log('mintedItemId_v1', mintedItemId_v1)
 
-	await awaitItem(mintedItemId_v1)
+	await awaitItem(mintedItemId_v1 as string)
 
 	const mintedItemId_v2 = await testScript('mint', {
 		edsk: sellerEdsk,
@@ -30,7 +30,7 @@ export async function cart_purchase() {
 	})
 	console.log('mintedItemId_v2', mintedItemId_v2)
 
-	await awaitItem(mintedItemId_v1)
+	await awaitItem(mintedItemId_v1 as string)
 
 	const objkt_v1_order = await testScript('ask_v1_objkt', {
 		edsk: sellerEdsk,
