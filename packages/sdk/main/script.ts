@@ -100,6 +100,7 @@ import {fxhash_v1_collect} from "../marketplaces/fxhash/v1/fxhash_v1_collect";
 import {fxhash_v1_cancel_offer} from "../marketplaces/fxhash/v1/fxhash_v1_cancel";
 import {fxhash_v2_listing, FXHashV2ListingForm} from "../marketplaces/fxhash/v2/fxhash_v2_listing";
 import {fxhash_v2_listing_accept} from "../marketplaces/fxhash/v2/fxhash_v2_listing_accept";
+import {fxhash_v2_cancel_listing} from "../marketplaces/fxhash/v2/fxhash_v2_cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -1009,6 +1010,12 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'fxhash_v1_cancel_offer': {
 			console.log("cancel swap", argv.item_id)
 			const order = await fxhash_v1_cancel_offer(provider, argv.item_id)
+			return order
+		}
+
+		case 'fxhash_v2_cancel_listing': {
+			console.log("cancel swap", argv.item_id)
+			const order = await fxhash_v2_cancel_listing(provider, argv.item_id)
 			return order
 		}
 

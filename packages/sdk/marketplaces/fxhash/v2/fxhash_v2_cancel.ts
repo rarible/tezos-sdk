@@ -7,7 +7,7 @@ import {
 } from "@rarible/tezos-common";
 import {MichelsonData} from "@taquito/michel-codec";
 
-export async function fxhash_v2_cancel_offer(
+export async function fxhash_v2_cancel_listing(
 	provider: Provider,
 	sale: string,
 ): Promise<OperationResult | undefined> {

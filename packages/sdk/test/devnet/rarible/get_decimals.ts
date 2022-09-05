@@ -9,5 +9,5 @@ export async function get_decimals() {
     ft_token_id: "0",
     is_dev: true
   })
-  console.log(decimals.toString())
+  console.log(decimals)
 }
