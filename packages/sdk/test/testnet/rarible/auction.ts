@@ -20,7 +20,7 @@ export async function auction() {
   })
   console.log('mintedItemId', mintedItemId)
 
-  await awaitItem(mintedItemId)
+  await awaitItem(mintedItemId as string)
   const auctionOrder = await testScript('auction', {
     edsk: sellerEdsk,
     item_id: mintedItemId,

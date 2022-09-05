@@ -1,8 +1,8 @@
 import {testScript} from "../../../main/script";
 
-export async function dev_versum_swap() {
+export async function versum_swap() {
   console.log("--------------------")
-  console.log("Running dev_versum_swap test")
+  console.log("Running versum_swap test")
   console.log("--------------------")
 
   const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
@@ -10,17 +10,16 @@ export async function dev_versum_swap() {
 
   const sellOrder = await testScript('versum_swap', {
     edsk: sellerEdsk,
-    item_id: "KT1DtDzPUe7Do3QQQ739RG3Z4fWgwbuy2srB:0",
+    item_id: "KT1UH5RSbomuV1o6UuDB9yeACbqRMup3utGu:0",
     qty: 1,
     amount: 100,
-    is_dev: true
   })
   console.log('sellOrder', sellOrder)
 
   const buyOrder = await testScript('versum_collect', {
     edsk: buyerEdsk,
     item_id: sellOrder,
-    is_dev: true
+    qty: 1
   })
   console.log('buyOrder', buyOrder)
 

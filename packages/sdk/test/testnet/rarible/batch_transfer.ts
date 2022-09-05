@@ -1,5 +1,6 @@
 import {testScript} from "../../../main/script";
 import {awaitItem} from "../../common/utils";
+import {BatchMintResult} from "@rarible/tezos-common";
 
 export async function batch_transfer() {
   console.log("--------------------")
@@ -15,7 +16,7 @@ export async function batch_transfer() {
     metadata: `{"": "ipfs://QmQ4x5BR7ecGVjyhZ7o87m2rPgzp8sBzxFbM4gtHiQQ6ay"}`,
     royalties: `{"tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC": 1000}`,
     qty: 5,
-  })
+  }) as BatchMintResult
 
   let item_ids = ""
   for(let id of mintedItemId.token_ids){

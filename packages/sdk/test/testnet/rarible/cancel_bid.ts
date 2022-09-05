@@ -18,7 +18,7 @@ export async function cancel_bid() {
   })
   console.log('mintedItemId', mintedItemId)
 
-  await awaitItem(mintedItemId)
+  await awaitItem(mintedItemId as string)
   // const mintedItemId = ""
   const bid = await testScript('put_bid', {
     edsk: buyerEdsk,

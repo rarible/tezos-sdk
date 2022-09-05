@@ -39,6 +39,14 @@ module.exports.isdipdup_index = function(obj) {
 
 
 
+var dipdup_model_update_possibleTypes = ['dipdup_model_update']
+module.exports.isdipdup_model_update = function(obj) {
+  if (!obj || !obj.__typename) throw new Error('__typename is missing in "isdipdup_model_update"')
+  return dipdup_model_update_possibleTypes.includes(obj.__typename)
+}
+
+
+
 var dipdup_schema_possibleTypes = ['dipdup_schema']
 module.exports.isdipdup_schema = function(obj) {
   if (!obj || !obj.__typename) throw new Error('__typename is missing in "isdipdup_schema"')

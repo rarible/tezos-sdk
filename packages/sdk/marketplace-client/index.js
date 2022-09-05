@@ -69,6 +69,18 @@ module.exports.enumdipdupIndexSelectColumn = {
   updated_at: 'updated_at',
 }
 
+module.exports.enumdipdupModelUpdateSelectColumn = {
+  action: 'action',
+  created_at: 'created_at',
+  data: 'data',
+  id: 'id',
+  index: 'index',
+  level: 'level',
+  model_name: 'model_name',
+  model_pk: 'model_pk',
+  updated_at: 'updated_at',
+}
+
 module.exports.enumdipdupSchemaSelectColumn = {
   created_at: 'created_at',
   hash: 'hash',

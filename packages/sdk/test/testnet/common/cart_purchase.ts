@@ -19,7 +19,7 @@ export async function cart_purchase() {
 	})
 	console.log('mintedItemId_v1', mintedItemId_v1)
 
-	await awaitItem(mintedItemId_v1)
+	await awaitItem(mintedItemId_v1 as string)
 
 	const mintedItemId_v2 = await testScript('mint', {
 		edsk: sellerEdsk,
@@ -30,7 +30,7 @@ export async function cart_purchase() {
 	})
 	console.log('mintedItemId_v2', mintedItemId_v2)
 
-	await awaitItem(mintedItemId_v1)
+	await awaitItem(mintedItemId_v1 as string)
 
 	const objkt_v1_order = await testScript('ask_v1_objkt', {
 		edsk: sellerEdsk,
@@ -72,11 +72,27 @@ export async function cart_purchase() {
 	})
 	console.log('versum_order', versum_order)
 
-	const rarible_v1_order = await testScript('sell', {
+	const fxhash_v1_order = await testScript('fxhash_v1_offer', {
 		edsk: sellerEdsk,
-		item_id: mintedItemId_v1
+		item_id: "KT1VEXkw6rw6pJDP9APGsMneFafArijmM96j:1",
+		qty: 1,
+		amount: 1,
 	})
-	console.log('rarible_v1_order', rarible_v1_order)
+	console.log('fxhash_v1_order', fxhash_v1_order)
+
+	const fxhash_v2_order = await testScript('fxhash_v2_listing', {
+		edsk: sellerEdsk,
+		item_id: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ:0",
+		qty: 1,
+		amount: 1,
+	})
+	console.log('fxhash_v2_order', fxhash_v2_order)
+
+	// const rarible_v1_order = await testScript('sell', {
+	// 	edsk: sellerEdsk,
+	// 	item_id: mintedItemId_v1
+	// })
+	// console.log('rarible_v1_order', rarible_v1_order)
 
 	const rarible_v2_order = await testScript('sell_v2', {
 		edsk: sellerEdsk,
@@ -91,7 +107,7 @@ export async function cart_purchase() {
 
 	const cart_purchase = await testScript('cart_purchase', {
 		edsk: buyerEdsk,
-		item_id: `${objkt_v1_order},${objkt_v2_order},${hen_order},${rarible_v2_order},${teia_order},${versum_order}`
+		item_id: `${objkt_v1_order},${objkt_v2_order},${hen_order},${rarible_v2_order},${teia_order},${versum_order},${fxhash_v1_order},${fxhash_v2_order}`
 	})
 	console.log('cart_purchase', cart_purchase)
 

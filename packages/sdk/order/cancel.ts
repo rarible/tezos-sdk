@@ -1,7 +1,6 @@
 import { Provider, send_batch, TransactionArg, OperationResult } from "@rarible/tezos-common"
 import { OrderForm } from "./utils"
 import { order_to_struct } from "./sign-order"
-import { unwrap_arg } from "./wrapper"
 import BigNumber from "bignumber.js"
 
 export async function cancel_arg(
@@ -17,13 +16,8 @@ export async function cancel_arg(
 
 export async function cancel(
   provider: Provider,
-  order: OrderForm,
-  unwrap = false,
-  unwrap_amount?: BigNumber,
+  order: OrderForm
 ): Promise<OperationResult> {
   let arg = [ await cancel_arg(provider, order) ]
-  if (unwrap && order.make.asset_type.asset_class == "FT" && order.make.asset_type.contract == provider.config.wrapper && order.make.asset_type.token_id != undefined && order.make.asset_type.token_id.isZero()) {
-    arg = arg.concat(await unwrap_arg(provider, unwrap_amount || order.make.value))
-  }
   return send_batch(provider, arg)
 }

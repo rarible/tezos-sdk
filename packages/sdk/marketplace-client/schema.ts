@@ -92,6 +92,32 @@ export interface dipdup_index {
 export type dipdup_index_select_column = 'config_hash' | 'created_at' | 'level' | 'name' | 'status' | 'template' | 'template_values' | 'type' | 'updated_at'
 
 
+/**
+ * Model update created within versioned transactions
+ * 
+ * 
+ * columns and relationships of "dipdup_model_update"
+ * 
+ */
+export interface dipdup_model_update {
+    /** INSERT: INSERT\nUPDATE: UPDATE\nDELETE: DELETE */
+    action: Scalars['String']
+    created_at: Scalars['timestamptz']
+    data?: Scalars['jsonb']
+    id: Scalars['Int']
+    index: Scalars['String']
+    level: Scalars['Int']
+    model_name: Scalars['String']
+    model_pk: Scalars['String']
+    updated_at: Scalars['timestamptz']
+    __typename: 'dipdup_model_update'
+}
+
+
+/** select columns of table "dipdup_model_update" */
+export type dipdup_model_update_select_column = 'action' | 'created_at' | 'data' | 'id' | 'index' | 'level' | 'model_name' | 'model_pk' | 'updated_at'
+
+
 /** columns and relationships of "dipdup_schema" */
 export interface dipdup_schema {
     created_at: Scalars['timestamptz']
@@ -128,7 +154,7 @@ export type dipdup_token_metadata_select_column = 'contract' | 'created_at' | 'i
 
 /** columns and relationships of "indexing_status" */
 export interface indexing_status {
-    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
     index: Scalars['String']
     last_level: Scalars['String']
     __typename: 'indexing_status'
@@ -169,7 +195,7 @@ export interface marketplace_activity {
     operation_nonce?: Scalars['Int']
     operation_timestamp: Scalars['timestamptz']
     order_id: Scalars['uuid']
-    /** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
+    /** HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2 */
     platform: Scalars['String']
     /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
     take_asset_class?: Scalars['String']
@@ -207,7 +233,7 @@ export interface marketplace_order {
     network: Scalars['String']
     origin_fees: Scalars['jsonb']
     payouts: Scalars['jsonb']
-    /** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
+    /** HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2 */
     platform: Scalars['String']
     salt: Scalars['String']
     start_at: Scalars['timestamptz']
@@ -250,6 +276,10 @@ export interface query_root {
     dipdup_index: dipdup_index[]
     /** fetch data from the table: "dipdup_index" using primary key columns */
     dipdup_index_by_pk?: dipdup_index
+    /** fetch data from the table: "dipdup_model_update" */
+    dipdup_model_update: dipdup_model_update[]
+    /** fetch data from the table: "dipdup_model_update" using primary key columns */
+    dipdup_model_update_by_pk?: dipdup_model_update
     /** fetch data from the table: "dipdup_schema" */
     dipdup_schema: dipdup_schema[]
     /** fetch data from the table: "dipdup_schema" using primary key columns */
@@ -296,6 +326,10 @@ export interface subscription_root {
     dipdup_index: dipdup_index[]
     /** fetch data from the table: "dipdup_index" using primary key columns */
     dipdup_index_by_pk?: dipdup_index
+    /** fetch data from the table: "dipdup_model_update" */
+    dipdup_model_update: dipdup_model_update[]
+    /** fetch data from the table: "dipdup_model_update" using primary key columns */
+    dipdup_model_update_by_pk?: dipdup_model_update
     /** fetch data from the table: "dipdup_schema" */
     dipdup_schema: dipdup_schema[]
     /** fetch data from the table: "dipdup_schema" using primary key columns */
@@ -469,6 +503,39 @@ export interface dipdup_index_bool_exp {_and?: (dipdup_index_bool_exp[] | null),
 export interface dipdup_index_order_by {config_hash?: (order_by | null),created_at?: (order_by | null),level?: (order_by | null),name?: (order_by | null),status?: (order_by | null),template?: (order_by | null),template_values?: (order_by | null),type?: (order_by | null),updated_at?: (order_by | null)}
 
 
+/**
+ * Model update created within versioned transactions
+ * 
+ * 
+ * columns and relationships of "dipdup_model_update"
+ * 
+ */
+export interface dipdup_model_updateRequest{
+    /** INSERT: INSERT\nUPDATE: UPDATE\nDELETE: DELETE */
+    action?: boolean | number
+    created_at?: boolean | number
+    data?: [{
+    /** JSON select path */
+    path?: (Scalars['String'] | null)}] | boolean | number
+    id?: boolean | number
+    index?: boolean | number
+    level?: boolean | number
+    model_name?: boolean | number
+    model_pk?: boolean | number
+    updated_at?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+
+/** Boolean expression to filter rows from the table "dipdup_model_update". All fields are combined with a logical 'AND'. */
+export interface dipdup_model_update_bool_exp {_and?: (dipdup_model_update_bool_exp[] | null),_not?: (dipdup_model_update_bool_exp | null),_or?: (dipdup_model_update_bool_exp[] | null),action?: (String_comparison_exp | null),created_at?: (timestamptz_comparison_exp | null),data?: (jsonb_comparison_exp | null),id?: (Int_comparison_exp | null),index?: (String_comparison_exp | null),level?: (Int_comparison_exp | null),model_name?: (String_comparison_exp | null),model_pk?: (String_comparison_exp | null),updated_at?: (timestamptz_comparison_exp | null)}
+
+
+/** Ordering options when selecting data from "dipdup_model_update". */
+export interface dipdup_model_update_order_by {action?: (order_by | null),created_at?: (order_by | null),data?: (order_by | null),id?: (order_by | null),index?: (order_by | null),level?: (order_by | null),model_name?: (order_by | null),model_pk?: (order_by | null),updated_at?: (order_by | null)}
+
+
 /** columns and relationships of "dipdup_schema" */
 export interface dipdup_schemaRequest{
     created_at?: boolean | number
@@ -517,7 +584,7 @@ export interface dipdup_token_metadata_order_by {contract?: (order_by | null),cr
 
 /** columns and relationships of "indexing_status" */
 export interface indexing_statusRequest{
-    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
     index?: boolean | number
     last_level?: boolean | number
     __typename?: boolean | number
@@ -584,7 +651,7 @@ export interface marketplace_activityRequest{
     operation_nonce?: boolean | number
     operation_timestamp?: boolean | number
     order_id?: boolean | number
-    /** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
+    /** HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2 */
     platform?: boolean | number
     /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
     take_asset_class?: boolean | number
@@ -631,7 +698,7 @@ export interface marketplace_orderRequest{
     payouts?: [{
     /** JSON select path */
     path?: (Scalars['String'] | null)}] | boolean | number
-    /** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
+    /** HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2 */
     platform?: boolean | number
     salt?: boolean | number
     start_at?: boolean | number
@@ -729,6 +796,20 @@ export interface query_rootRequest{
     where?: (dipdup_index_bool_exp | null)},dipdup_indexRequest] | dipdup_indexRequest
     /** fetch data from the table: "dipdup_index" using primary key columns */
     dipdup_index_by_pk?: [{name: Scalars['String']},dipdup_indexRequest]
+    /** fetch data from the table: "dipdup_model_update" */
+    dipdup_model_update?: [{
+    /** distinct select on columns */
+    distinct_on?: (dipdup_model_update_select_column[] | null),
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null),
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null),
+    /** sort the rows by one or more columns */
+    order_by?: (dipdup_model_update_order_by[] | null),
+    /** filter the rows returned */
+    where?: (dipdup_model_update_bool_exp | null)},dipdup_model_updateRequest] | dipdup_model_updateRequest
+    /** fetch data from the table: "dipdup_model_update" using primary key columns */
+    dipdup_model_update_by_pk?: [{id: Scalars['Int']},dipdup_model_updateRequest]
     /** fetch data from the table: "dipdup_schema" */
     dipdup_schema?: [{
     /** distinct select on columns */
@@ -771,7 +852,7 @@ export interface query_rootRequest{
     where?: (indexing_status_bool_exp | null)},indexing_statusRequest] | indexing_statusRequest
     /** fetch data from the table: "indexing_status" using primary key columns */
     indexing_status_by_pk?: [{
-    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
     index: Scalars['String']},indexing_statusRequest]
     /** fetch data from the table: "legacy_orders" */
     legacy_orders?: [{
@@ -888,6 +969,20 @@ export interface subscription_rootRequest{
     where?: (dipdup_index_bool_exp | null)},dipdup_indexRequest] | dipdup_indexRequest
     /** fetch data from the table: "dipdup_index" using primary key columns */
     dipdup_index_by_pk?: [{name: Scalars['String']},dipdup_indexRequest]
+    /** fetch data from the table: "dipdup_model_update" */
+    dipdup_model_update?: [{
+    /** distinct select on columns */
+    distinct_on?: (dipdup_model_update_select_column[] | null),
+    /** limit the number of rows returned */
+    limit?: (Scalars['Int'] | null),
+    /** skip the first n rows. Use only with order_by */
+    offset?: (Scalars['Int'] | null),
+    /** sort the rows by one or more columns */
+    order_by?: (dipdup_model_update_order_by[] | null),
+    /** filter the rows returned */
+    where?: (dipdup_model_update_bool_exp | null)},dipdup_model_updateRequest] | dipdup_model_updateRequest
+    /** fetch data from the table: "dipdup_model_update" using primary key columns */
+    dipdup_model_update_by_pk?: [{id: Scalars['Int']},dipdup_model_updateRequest]
     /** fetch data from the table: "dipdup_schema" */
     dipdup_schema?: [{
     /** distinct select on columns */
@@ -930,7 +1025,7 @@ export interface subscription_rootRequest{
     where?: (indexing_status_bool_exp | null)},indexing_statusRequest] | indexing_statusRequest
     /** fetch data from the table: "indexing_status" using primary key columns */
     indexing_status_by_pk?: [{
-    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+    /** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
     index: Scalars['String']},indexing_statusRequest]
     /** fetch data from the table: "legacy_orders" */
     legacy_orders?: [{
@@ -1026,6 +1121,14 @@ const dipdup_index_possibleTypes: string[] = ['dipdup_index']
 export const isdipdup_index = (obj?: { __typename?: any } | null): obj is dipdup_index => {
   if (!obj?.__typename) throw new Error('__typename is missing in "isdipdup_index"')
   return dipdup_index_possibleTypes.includes(obj.__typename)
+}
+
+
+
+const dipdup_model_update_possibleTypes: string[] = ['dipdup_model_update']
+export const isdipdup_model_update = (obj?: { __typename?: any } | null): obj is dipdup_model_update => {
+  if (!obj?.__typename) throw new Error('__typename is missing in "isdipdup_model_update"')
+  return dipdup_model_update_possibleTypes.includes(obj.__typename)
 }
 
 
@@ -1218,6 +1321,54 @@ type: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Obs
 }
 
 
+/**
+ * Model update created within versioned transactions
+ * 
+ * 
+ * columns and relationships of "dipdup_model_update"
+ * 
+ */
+export interface dipdup_model_updatePromiseChain{
+    
+/** INSERT: INSERT\nUPDATE: UPDATE\nDELETE: DELETE */
+action: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
+    created_at: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Promise<Scalars['timestamptz']>}),
+    data: ((args?: {
+/** JSON select path */
+path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultValue?: (Scalars['jsonb'] | undefined)) => Promise<(Scalars['jsonb'] | undefined)>})&({get: (request?: boolean|number, defaultValue?: (Scalars['jsonb'] | undefined)) => Promise<(Scalars['jsonb'] | undefined)>}),
+    id: ({get: (request?: boolean|number, defaultValue?: Scalars['Int']) => Promise<Scalars['Int']>}),
+    index: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
+    level: ({get: (request?: boolean|number, defaultValue?: Scalars['Int']) => Promise<Scalars['Int']>}),
+    model_name: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
+    model_pk: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
+    updated_at: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Promise<Scalars['timestamptz']>})
+}
+
+
+/**
+ * Model update created within versioned transactions
+ * 
+ * 
+ * columns and relationships of "dipdup_model_update"
+ * 
+ */
+export interface dipdup_model_updateObservableChain{
+    
+/** INSERT: INSERT\nUPDATE: UPDATE\nDELETE: DELETE */
+action: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
+    created_at: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Observable<Scalars['timestamptz']>}),
+    data: ((args?: {
+/** JSON select path */
+path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultValue?: (Scalars['jsonb'] | undefined)) => Observable<(Scalars['jsonb'] | undefined)>})&({get: (request?: boolean|number, defaultValue?: (Scalars['jsonb'] | undefined)) => Observable<(Scalars['jsonb'] | undefined)>}),
+    id: ({get: (request?: boolean|number, defaultValue?: Scalars['Int']) => Observable<Scalars['Int']>}),
+    index: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
+    level: ({get: (request?: boolean|number, defaultValue?: Scalars['Int']) => Observable<Scalars['Int']>}),
+    model_name: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
+    model_pk: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
+    updated_at: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Observable<Scalars['timestamptz']>})
+}
+
+
 /** columns and relationships of "dipdup_schema" */
 export interface dipdup_schemaPromiseChain{
     created_at: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Promise<Scalars['timestamptz']>}),
@@ -1275,7 +1426,7 @@ path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultV
 /** columns and relationships of "indexing_status" */
 export interface indexing_statusPromiseChain{
     
-/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
 index: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
     last_level: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>})
 }
@@ -1284,7 +1435,7 @@ index: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Pr
 /** columns and relationships of "indexing_status" */
 export interface indexing_statusObservableChain{
     
-/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
 index: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
     last_level: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>})
 }
@@ -1329,7 +1480,7 @@ make_asset_class: ({get: (request?: boolean|number, defaultValue?: Scalars['Stri
     operation_timestamp: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Promise<Scalars['timestamptz']>}),
     order_id: ({get: (request?: boolean|number, defaultValue?: Scalars['uuid']) => Promise<Scalars['uuid']>}),
     
-/** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
+/** HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2 */
 platform: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
     
 /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
@@ -1363,7 +1514,7 @@ make_asset_class: ({get: (request?: boolean|number, defaultValue?: Scalars['Stri
     operation_timestamp: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Observable<Scalars['timestamptz']>}),
     order_id: ({get: (request?: boolean|number, defaultValue?: Scalars['uuid']) => Observable<Scalars['uuid']>}),
     
-/** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
+/** HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2 */
 platform: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
     
 /** ETH: ETH\nXTZ: XTZ\nFUNGIBLE_TOKEN: TEZOS_FT\nNON_FUNGIBLE_TOKEN: TEZOS_NFT\nMULTI_TOKEN: TEZOS_MT\nERC20: ERC20\nERC721: ERC721\nERC1155: ERC1155\nERC721_LAZY: ERC721_LAZY\nERC1155_LAZY: ERC1155_LAZY\nCOLLECTION: COLLECTION\nGEN_ART: GEN_ART */
@@ -1404,7 +1555,7 @@ path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultV
 /** JSON select path */
 path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultValue?: Scalars['jsonb']) => Promise<Scalars['jsonb']>})&({get: (request?: boolean|number, defaultValue?: Scalars['jsonb']) => Promise<Scalars['jsonb']>}),
     
-/** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
+/** HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2 */
 platform: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
     salt: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Promise<Scalars['String']>}),
     start_at: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Promise<Scalars['timestamptz']>}),
@@ -1448,7 +1599,7 @@ path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultV
 /** JSON select path */
 path?: (Scalars['String'] | null)}) => {get: (request?: boolean|number, defaultValue?: Scalars['jsonb']) => Observable<Scalars['jsonb']>})&({get: (request?: boolean|number, defaultValue?: Scalars['jsonb']) => Observable<Scalars['jsonb']>}),
     
-/** HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2 */
+/** HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2 */
 platform: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
     salt: ({get: (request?: boolean|number, defaultValue?: Scalars['String']) => Observable<Scalars['String']>}),
     start_at: ({get: (request?: boolean|number, defaultValue?: Scalars['timestamptz']) => Observable<Scalars['timestamptz']>}),
@@ -1544,6 +1695,22 @@ where?: (dipdup_index_bool_exp | null)}) => {get: <R extends dipdup_indexRequest
 /** fetch data from the table: "dipdup_index" using primary key columns */
 dipdup_index_by_pk: ((args: {name: Scalars['String']}) => dipdup_indexPromiseChain & {get: <R extends dipdup_indexRequest>(request: R, defaultValue?: (FieldsSelection<dipdup_index, R> | undefined)) => Promise<(FieldsSelection<dipdup_index, R> | undefined)>}),
     
+/** fetch data from the table: "dipdup_model_update" */
+dipdup_model_update: ((args?: {
+/** distinct select on columns */
+distinct_on?: (dipdup_model_update_select_column[] | null),
+/** limit the number of rows returned */
+limit?: (Scalars['Int'] | null),
+/** skip the first n rows. Use only with order_by */
+offset?: (Scalars['Int'] | null),
+/** sort the rows by one or more columns */
+order_by?: (dipdup_model_update_order_by[] | null),
+/** filter the rows returned */
+where?: (dipdup_model_update_bool_exp | null)}) => {get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: FieldsSelection<dipdup_model_update, R>[]) => Promise<FieldsSelection<dipdup_model_update, R>[]>})&({get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: FieldsSelection<dipdup_model_update, R>[]) => Promise<FieldsSelection<dipdup_model_update, R>[]>}),
+    
+/** fetch data from the table: "dipdup_model_update" using primary key columns */
+dipdup_model_update_by_pk: ((args: {id: Scalars['Int']}) => dipdup_model_updatePromiseChain & {get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: (FieldsSelection<dipdup_model_update, R> | undefined)) => Promise<(FieldsSelection<dipdup_model_update, R> | undefined)>}),
+    
 /** fetch data from the table: "dipdup_schema" */
 dipdup_schema: ((args?: {
 /** distinct select on columns */
@@ -1591,7 +1758,7 @@ where?: (indexing_status_bool_exp | null)}) => {get: <R extends indexing_statusR
     
 /** fetch data from the table: "indexing_status" using primary key columns */
 indexing_status_by_pk: ((args: {
-/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
 index: Scalars['String']}) => indexing_statusPromiseChain & {get: <R extends indexing_statusRequest>(request: R, defaultValue?: (FieldsSelection<indexing_status, R> | undefined)) => Promise<(FieldsSelection<indexing_status, R> | undefined)>}),
     
 /** fetch data from the table: "legacy_orders" */
@@ -1722,6 +1889,22 @@ where?: (dipdup_index_bool_exp | null)}) => {get: <R extends dipdup_indexRequest
 /** fetch data from the table: "dipdup_index" using primary key columns */
 dipdup_index_by_pk: ((args: {name: Scalars['String']}) => dipdup_indexObservableChain & {get: <R extends dipdup_indexRequest>(request: R, defaultValue?: (FieldsSelection<dipdup_index, R> | undefined)) => Observable<(FieldsSelection<dipdup_index, R> | undefined)>}),
     
+/** fetch data from the table: "dipdup_model_update" */
+dipdup_model_update: ((args?: {
+/** distinct select on columns */
+distinct_on?: (dipdup_model_update_select_column[] | null),
+/** limit the number of rows returned */
+limit?: (Scalars['Int'] | null),
+/** skip the first n rows. Use only with order_by */
+offset?: (Scalars['Int'] | null),
+/** sort the rows by one or more columns */
+order_by?: (dipdup_model_update_order_by[] | null),
+/** filter the rows returned */
+where?: (dipdup_model_update_bool_exp | null)}) => {get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: FieldsSelection<dipdup_model_update, R>[]) => Observable<FieldsSelection<dipdup_model_update, R>[]>})&({get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: FieldsSelection<dipdup_model_update, R>[]) => Observable<FieldsSelection<dipdup_model_update, R>[]>}),
+    
+/** fetch data from the table: "dipdup_model_update" using primary key columns */
+dipdup_model_update_by_pk: ((args: {id: Scalars['Int']}) => dipdup_model_updateObservableChain & {get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: (FieldsSelection<dipdup_model_update, R> | undefined)) => Observable<(FieldsSelection<dipdup_model_update, R> | undefined)>}),
+    
 /** fetch data from the table: "dipdup_schema" */
 dipdup_schema: ((args?: {
 /** distinct select on columns */
@@ -1769,7 +1952,7 @@ where?: (indexing_status_bool_exp | null)}) => {get: <R extends indexing_statusR
     
 /** fetch data from the table: "indexing_status" using primary key columns */
 indexing_status_by_pk: ((args: {
-/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
 index: Scalars['String']}) => indexing_statusObservableChain & {get: <R extends indexing_statusRequest>(request: R, defaultValue?: (FieldsSelection<indexing_status, R> | undefined)) => Observable<(FieldsSelection<indexing_status, R> | undefined)>}),
     
 /** fetch data from the table: "legacy_orders" */
@@ -1900,6 +2083,22 @@ where?: (dipdup_index_bool_exp | null)}) => {get: <R extends dipdup_indexRequest
 /** fetch data from the table: "dipdup_index" using primary key columns */
 dipdup_index_by_pk: ((args: {name: Scalars['String']}) => dipdup_indexPromiseChain & {get: <R extends dipdup_indexRequest>(request: R, defaultValue?: (FieldsSelection<dipdup_index, R> | undefined)) => Promise<(FieldsSelection<dipdup_index, R> | undefined)>}),
     
+/** fetch data from the table: "dipdup_model_update" */
+dipdup_model_update: ((args?: {
+/** distinct select on columns */
+distinct_on?: (dipdup_model_update_select_column[] | null),
+/** limit the number of rows returned */
+limit?: (Scalars['Int'] | null),
+/** skip the first n rows. Use only with order_by */
+offset?: (Scalars['Int'] | null),
+/** sort the rows by one or more columns */
+order_by?: (dipdup_model_update_order_by[] | null),
+/** filter the rows returned */
+where?: (dipdup_model_update_bool_exp | null)}) => {get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: FieldsSelection<dipdup_model_update, R>[]) => Promise<FieldsSelection<dipdup_model_update, R>[]>})&({get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: FieldsSelection<dipdup_model_update, R>[]) => Promise<FieldsSelection<dipdup_model_update, R>[]>}),
+    
+/** fetch data from the table: "dipdup_model_update" using primary key columns */
+dipdup_model_update_by_pk: ((args: {id: Scalars['Int']}) => dipdup_model_updatePromiseChain & {get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: (FieldsSelection<dipdup_model_update, R> | undefined)) => Promise<(FieldsSelection<dipdup_model_update, R> | undefined)>}),
+    
 /** fetch data from the table: "dipdup_schema" */
 dipdup_schema: ((args?: {
 /** distinct select on columns */
@@ -1947,7 +2146,7 @@ where?: (indexing_status_bool_exp | null)}) => {get: <R extends indexing_statusR
     
 /** fetch data from the table: "indexing_status" using primary key columns */
 indexing_status_by_pk: ((args: {
-/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
 index: Scalars['String']}) => indexing_statusPromiseChain & {get: <R extends indexing_statusRequest>(request: R, defaultValue?: (FieldsSelection<indexing_status, R> | undefined)) => Promise<(FieldsSelection<indexing_status, R> | undefined)>}),
     
 /** fetch data from the table: "legacy_orders" */
@@ -2078,6 +2277,22 @@ where?: (dipdup_index_bool_exp | null)}) => {get: <R extends dipdup_indexRequest
 /** fetch data from the table: "dipdup_index" using primary key columns */
 dipdup_index_by_pk: ((args: {name: Scalars['String']}) => dipdup_indexObservableChain & {get: <R extends dipdup_indexRequest>(request: R, defaultValue?: (FieldsSelection<dipdup_index, R> | undefined)) => Observable<(FieldsSelection<dipdup_index, R> | undefined)>}),
     
+/** fetch data from the table: "dipdup_model_update" */
+dipdup_model_update: ((args?: {
+/** distinct select on columns */
+distinct_on?: (dipdup_model_update_select_column[] | null),
+/** limit the number of rows returned */
+limit?: (Scalars['Int'] | null),
+/** skip the first n rows. Use only with order_by */
+offset?: (Scalars['Int'] | null),
+/** sort the rows by one or more columns */
+order_by?: (dipdup_model_update_order_by[] | null),
+/** filter the rows returned */
+where?: (dipdup_model_update_bool_exp | null)}) => {get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: FieldsSelection<dipdup_model_update, R>[]) => Observable<FieldsSelection<dipdup_model_update, R>[]>})&({get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: FieldsSelection<dipdup_model_update, R>[]) => Observable<FieldsSelection<dipdup_model_update, R>[]>}),
+    
+/** fetch data from the table: "dipdup_model_update" using primary key columns */
+dipdup_model_update_by_pk: ((args: {id: Scalars['Int']}) => dipdup_model_updateObservableChain & {get: <R extends dipdup_model_updateRequest>(request: R, defaultValue?: (FieldsSelection<dipdup_model_update, R> | undefined)) => Observable<(FieldsSelection<dipdup_model_update, R> | undefined)>}),
+    
 /** fetch data from the table: "dipdup_schema" */
 dipdup_schema: ((args?: {
 /** distinct select on columns */
@@ -2125,7 +2340,7 @@ where?: (indexing_status_bool_exp | null)}) => {get: <R extends indexing_statusR
     
 /** fetch data from the table: "indexing_status" using primary key columns */
 indexing_status_by_pk: ((args: {
-/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS */
+/** COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX */
 index: Scalars['String']}) => indexing_statusObservableChain & {get: <R extends indexing_statusRequest>(request: R, defaultValue?: (FieldsSelection<indexing_status, R> | undefined)) => Observable<(FieldsSelection<indexing_status, R> | undefined)>}),
     
 /** fetch data from the table: "legacy_orders" */

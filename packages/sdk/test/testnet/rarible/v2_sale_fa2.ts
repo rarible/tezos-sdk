@@ -18,7 +18,7 @@ export async function v2_sale_fa2() {
   })
   console.log('mintedItemId', mintedItemId)
 
-  await awaitItem(mintedItemId)
+  await awaitItem(mintedItemId as string)
   //const mintedItemId = "KT1EreNsT2gXRvuTUrpx6Ju4WMug5xcEpr43:216"
   const sellOrder = await testScript('sell_v2', {
     edsk: sellerEdsk,

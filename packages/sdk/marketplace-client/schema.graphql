@@ -403,6 +403,86 @@ enum dipdup_index_select_column {
   updated_at
 }
 
+"Model update created within versioned transactions\n\n\ncolumns and relationships of \"dipdup_model_update\"\n"
+type dipdup_model_update {
+  """INSERT: INSERT\nUPDATE: UPDATE\nDELETE: DELETE"""
+  action: String!
+  created_at: timestamptz!
+  data(
+    """JSON select path"""
+    path: String
+  ): jsonb
+  id: Int!
+  index: String!
+  level: Int!
+  model_name: String!
+  model_pk: String!
+  updated_at: timestamptz!
+}
+
+"""
+Boolean expression to filter rows from the table "dipdup_model_update". All fields are combined with a logical 'AND'.
+"""
+input dipdup_model_update_bool_exp {
+  _and: [dipdup_model_update_bool_exp!]
+  _not: dipdup_model_update_bool_exp
+  _or: [dipdup_model_update_bool_exp!]
+  action: String_comparison_exp
+  created_at: timestamptz_comparison_exp
+  data: jsonb_comparison_exp
+  id: Int_comparison_exp
+  index: String_comparison_exp
+  level: Int_comparison_exp
+  model_name: String_comparison_exp
+  model_pk: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+"""Ordering options when selecting data from "dipdup_model_update"."""
+input dipdup_model_update_order_by {
+  action: order_by
+  created_at: order_by
+  data: order_by
+  id: order_by
+  index: order_by
+  level: order_by
+  model_name: order_by
+  model_pk: order_by
+  updated_at: order_by
+}
+
+"""
+select columns of table "dipdup_model_update"
+"""
+enum dipdup_model_update_select_column {
+  """column name"""
+  action
+
+  """column name"""
+  created_at
+
+  """column name"""
+  data
+
+  """column name"""
+  id
+
+  """column name"""
+  index
+
+  """column name"""
+  level
+
+  """column name"""
+  model_name
+
+  """column name"""
+  model_pk
+
+  """column name"""
+  updated_at
+}
+
 """
 columns and relationships of "dipdup_schema"
 """
@@ -540,7 +620,9 @@ enum dipdup_token_metadata_select_column {
 columns and relationships of "indexing_status"
 """
 type indexing_status {
-  """COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS"""
+  """
+  COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX
+  """
   index: String!
   last_level: String!
 }
@@ -673,7 +755,7 @@ type marketplace_activity {
   order_id: uuid!
 
   """
-  HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2
+  HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2
   """
   platform: String!
 
@@ -848,7 +930,7 @@ type marketplace_order {
   ): jsonb!
 
   """
-  HEN: HEN\nOBJKT: OBJKT\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2
+  HEN: HEN\nTEIA_V1: TEIA_V1\nVERSUM_V1: VERSUM_V1\nOBJKT_V1: OBJKT_V1\nOBJKT_V2: OBJKT_V2\nRARIBLE_V1: RARIBLE_V1\nRARIBLE_V2: RARIBLE_V2\nFXHASH_V1: FXHASH_V1\nFXHASH_V2: FXHASH_V2
   """
   platform: String!
   salt: String!
@@ -1177,6 +1259,31 @@ type query_root {
   dipdup_index_by_pk(name: String!): dipdup_index
 
   """
+  fetch data from the table: "dipdup_model_update"
+  """
+  dipdup_model_update(
+    """distinct select on columns"""
+    distinct_on: [dipdup_model_update_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [dipdup_model_update_order_by!]
+
+    """filter the rows returned"""
+    where: dipdup_model_update_bool_exp
+  ): [dipdup_model_update!]!
+
+  """
+  fetch data from the table: "dipdup_model_update" using primary key columns
+  """
+  dipdup_model_update_by_pk(id: Int!): dipdup_model_update
+
+  """
   fetch data from the table: "dipdup_schema"
   """
   dipdup_schema(
@@ -1246,7 +1353,9 @@ type query_root {
 
   """fetch data from the table: "indexing_status" using primary key columns"""
   indexing_status_by_pk(
-    """COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS"""
+    """
+    COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX
+    """
     index: String!
   ): indexing_status
 
@@ -1440,6 +1549,31 @@ type subscription_root {
   dipdup_index_by_pk(name: String!): dipdup_index
 
   """
+  fetch data from the table: "dipdup_model_update"
+  """
+  dipdup_model_update(
+    """distinct select on columns"""
+    distinct_on: [dipdup_model_update_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [dipdup_model_update_order_by!]
+
+    """filter the rows returned"""
+    where: dipdup_model_update_bool_exp
+  ): [dipdup_model_update!]!
+
+  """
+  fetch data from the table: "dipdup_model_update" using primary key columns
+  """
+  dipdup_model_update_by_pk(id: Int!): dipdup_model_update
+
+  """
   fetch data from the table: "dipdup_schema"
   """
   dipdup_schema(
@@ -1509,7 +1643,9 @@ type subscription_root {
 
   """fetch data from the table: "indexing_status" using primary key columns"""
   indexing_status_by_pk(
-    """COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS"""
+    """
+    COLLECTION: COLLECTION\nLEGACY_ORDERS: LEGACY_ORDERS\nV1_CLEANING: V1_CLEANING\nV1_FILL_FIX: V1_FILL_FIX
+    """
     index: String!
   ): indexing_status
 

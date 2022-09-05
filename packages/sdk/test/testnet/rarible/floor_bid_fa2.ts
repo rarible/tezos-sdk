@@ -18,7 +18,7 @@ export async function floor_bid_fa2() {
   })
   console.log('mintedItemId', mintedItemId)
 
-  await awaitItem(mintedItemId)
+  await awaitItem(mintedItemId as string)
   // const mintedItemId = ""
   const bid = await testScript('put_floor_bid', {
     edsk: buyerEdsk,

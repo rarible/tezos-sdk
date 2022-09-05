@@ -11,14 +11,12 @@ import {
 	Part,
 	approve_arg, TransactionArg
 } from "@rarible/tezos-common"
-import {OrderForm, order_to_json, salt, fill_offchain_royalties} from "./utils"
+import {OrderForm, fill_offchain_royalties} from "./utils"
 import {invert_order} from "./invert-order"
 import {get_make_fee} from "./get-make-fee"
 import {add_fee} from "./add-fee"
-import {order_to_struct, some_struct, none_struct, sign_order} from "./sign-order"
-import {unwrap_arg} from "./wrapper"
+import {order_to_struct, some_struct, none_struct} from "./sign-order"
 import BigNumber from "bignumber.js"
-import fetch from "node-fetch"
 
 export interface FillOrderRequest {
 	amount: BigNumber;
@@ -65,57 +63,7 @@ export async function match_order_to_struct(
 	}
 }
 
-async function use_permit(
-	provider: Provider,
-	asset: Asset
-): Promise<undefined | { contract: string, token_id: BigNumber, amount: BigNumber }> {
-	switch (asset.asset_type.asset_class) {
-		case "XTZ":
-			return undefined
-		case "MT":
-			const mt_contract = asset.asset_type.contract || provider.config.mt_public
-			if (provider.config.permit_whitelist.includes(mt_contract)) {
-				return {contract: mt_contract, token_id: asset.asset_type.token_id, amount: asset.value}
-			} else {
-				return undefined
-			}
-		case "NFT":
-			const nft_contract = asset.asset_type.contract || provider.config.nft_public
-			if (provider.config.permit_whitelist.includes(nft_contract)) {
-				return {contract: nft_contract, token_id: asset.asset_type.token_id, amount: asset.value}
-			} else {
-				return undefined
-			}
-		case "FT":
-			if (provider.config.permit_whitelist.includes(asset.asset_type.contract) && asset.asset_type.token_id != undefined) {
-				let decimals = await get_decimals(provider.config, asset.asset_type.contract, asset.asset_type.token_id)
-				return {
-					contract: asset.asset_type.contract, token_id: asset.asset_type.token_id,
-					amount: asset.value.times((new BigNumber(10).pow(decimals)))
-				}
-			} else {
-				return undefined
-			}
-	}
-}
 
-async function fill_order_unwrap_amount(
-	provider: Provider,
-	right: OrderForm,
-	asset_type: FTAssetType
-): Promise<BigNumber> {
-	const payout_part = right.data.payouts.find((p) => p.account == right.taker)
-	if (payout_part == undefined) {
-		return new BigNumber(0)
-	} else {
-		const fees = get_make_fee(provider.config.fees, right)
-		let value = (await add_fee(provider, right.take, fees, true)).value
-		value = value.times(payout_part.value).div(10000)
-		const decimals = await get_decimals(provider.config, asset_type.contract, asset_type.token_id)
-		const decimal_factor = new BigNumber(10).pow(decimals)
-		return value.times(decimal_factor).integerValue().div(decimal_factor)
-	}
-}
 
 export async function get_rarible_legacy_buy_transaction(
 	provider: Provider,

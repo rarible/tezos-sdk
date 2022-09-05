@@ -25,8 +25,6 @@ import {
 	Platform,
 	put_auction_bid,
 	put_bundle_auction_bid,
-	sell,
-	SellRequest,
 	set_token_metadata,
 	start_auction,
 	start_bundle_auction,
@@ -97,6 +95,12 @@ import {teia_cancel_swap} from "../marketplaces/teia/cancel";
 import {versum_swap, VersumSwapForm} from "../marketplaces/versum/versum_swap";
 import {versum_collect} from "../marketplaces/versum/versum_collect";
 import {versum_cancel_swap} from "../marketplaces/versum/versum_cancel";
+import {fxhash_v1_offer, FXHashV1OfferForm} from "../marketplaces/fxhash/v1/fxhash_v1_offer";
+import {fxhash_v1_collect} from "../marketplaces/fxhash/v1/fxhash_v1_collect";
+import {fxhash_v1_cancel_offer} from "../marketplaces/fxhash/v1/fxhash_v1_cancel";
+import {fxhash_v2_listing, FXHashV2ListingForm} from "../marketplaces/fxhash/v2/fxhash_v2_listing";
+import {fxhash_v2_listing_accept} from "../marketplaces/fxhash/v2/fxhash_v2_listing_accept";
+import {fxhash_v2_cancel_listing} from "../marketplaces/fxhash/v2/fxhash_v2_cancel";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -104,7 +108,7 @@ export async function testScript(operation?: string, options: any = {}) {
 			type: 'string',
 			default: 'edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj'
 		},
-		endpoint: {type: 'string', default: 'https://rpc.tzkt.io/ithacanet'},
+		endpoint: {type: 'string', default: 'https://rpc.tzkt.io/ghostnet'},
 		exchange: {type: 'string', default: 'KT1S6H2FWxrpaD7aPRSW1cTTE1xPucXBSTL5'},
 		// contract: {type: 'string', default: 'KT1VnhPmUJnEH5dfeD8WW87LCoxdhGUUVfMV'},
 		contract: {type: 'string', default: 'KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA'},
@@ -158,8 +162,7 @@ export async function testScript(operation?: string, options: any = {}) {
 	const amount = (argv.amount) ? new BigNumber(argv.amount as number) : undefined
 	const metadata = JSON.parse(argv.metadata) as { [_: string]: string }
 
-	const devNode = "http://tezos-node.dev.rarible.int"
-	const tezos = in_memory_provider(argv.edsk, argv.is_dev ? devNode : argv.endpoint)
+	const tezos = in_memory_provider(argv.edsk, argv.endpoint)
 
 	const config = {
 		chain_id: "NetXnHfVqm9iesp",
@@ -168,10 +171,6 @@ export async function testScript(operation?: string, options: any = {}) {
 		fees: new BigNumber(argv.protocol_fee),
 		nft_public: "",
 		mt_public: "",
-		api: "https://test-tezos-api.rarible.org/v0.1",
-		api_permit: "https://test-tezos-api.rarible.org/v0.1",
-		permit_whitelist: [],
-		wrapper: argv.wrapper,
 		auction: "KT1CB5JBSC7kTxRV3ir2xsooMA1FLieiD4Mt",
 		auction_storage: "KT1KWAPPjuDq4ZeX67rzZWsf6eAeqwtuAfSP",
 		node_url: argv.endpoint,
@@ -191,7 +190,11 @@ export async function testScript(operation?: string, options: any = {}) {
 		hen_objkts: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw",
 		teia_marketplace: "KT1Anx515N2PK8A2ZX5uGNn7Gckh4WytLJmK",
 		versum_marketplace: "KT1B1Wz7jPH23EqKUpDwFDkw3A1yLxGZ4uJy",
-		versum_nfts: "KT1UH5RSbomuV1o6UuDB9yeACbqRMup3utGu"
+		versum_nfts: "KT1UH5RSbomuV1o6UuDB9yeACbqRMup3utGu",
+		fxhash_sales_v1: "KT1BEc3m6yxN856Y4zfArpDqQ1uZZ1HkDTRh",
+		fxhash_sales_v2: "KT1GCLoBSwUaNjaGXq5RtiP8CXTL3cEeMNDs",
+		fxhash_nfts_v1: "KT1VEXkw6rw6pJDP9APGsMneFafArijmM96j",
+		fxhash_nfts_v2: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ"
 	}
 
 	//For prod debug
@@ -202,10 +205,6 @@ export async function testScript(operation?: string, options: any = {}) {
 	// 	fees: new BigNumber(argv.protocol_fee),
 	// 	nft_public: "",
 	// 	mt_public: "",
-	// 	api: "https://tezos-api.rarible.org/v0.1",
-	// 	api_permit: "https://tezos-api.rarible.org/v0.1",
-	// 	permit_whitelist: [],
-	// 	wrapper: argv.wrapper,
 	// 	auction: "",
 	// 	auction_storage: "",
 	// 	node_url: argv.endpoint,
@@ -218,43 +217,51 @@ export async function testScript(operation?: string, options: any = {}) {
 	// 	tzkt: "https://api.tzkt.io",
 	// 	dipdup: "https://tezos-indexer.rarible.org/v1/graphql",
 	// 	union_api: "https://api.rarible.org/v0.1",
+	// 	objkt_sales_v1: "KT1FvqJwEDWb1Gwc55Jd1jjTHRVWbYKUUpyq",
 	// 	objkt_sales_v2: "KT1T1JMFGipL6EdCmeL8tDfLiTi1BFZ1yAKV",
 	// 	royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
 	// 	hen_marketplace: "KT1SakgxbHuJmkMLSsTb37DNtHLz6LzyaMhx",
-	// 	hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn"
+	// 	hen_objkts: "KT18pXXDDLMtXYxf6MpMGVKjmeSd6MuWnmjn",
+	// 	teia_marketplace: "KT1PHubm9HtyQEJ4BBpMTVomq6mhbfNZ9z5w",
+	// 	versum_marketplace: "KT1GyRAJNdizF1nojQz62uGYkx8WFRUJm9X5",
+	// 	versum_nfts: "KT1LjmAdYQCLBjwv4S2oFkEzyHVkomAf5MrW",
+	// 	fxhash_sales_v1: "KT1Xo5B7PNBAeynZPmca4bRh6LQow4og1Zb9",
+	// 	fxhash_sales_v2: "KT1GbyoDi7H1sfXmimXpptZJuCdHMh66WS9u",
+	// 	fxhash_nfts_v1: "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE",
+	// 	fxhash_nfts_v2: "KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi"
 	// }
 
 	const devConfig = {
-		chain_id: "NetXfHjxW3qBoxi",
-		exchange: "KT18isH58SBp7UaRWB652UwLMPxCe1bsjMMe",
-		transfer_proxy: "KT1LmiHVNjfbZvPx9qvASVk8mzFcaJNtfj8q",
+		chain_id: "NetXnHfVqm9iesp",
+		exchange: argv.exchange,
+		transfer_proxy: argv.transfer_proxy,
 		fees: new BigNumber(argv.protocol_fee),
 		nft_public: "",
 		mt_public: "",
-		api: "https://dev-tezos-api.rarible.org/v0.1",
-		api_permit: "https://dev-tezos-api.rarible.org/v0.1",
-		permit_whitelist: [],
-		wrapper: "",
-		auction: "KT1L8u1GMiKSARujxwQHfMtJTkMBSonQ7FSv",
-		auction_storage: "KT1RtFbGfSbgNVuN9cfvrzhoHcq9CSUH3uMf",
-		node_url: devNode,
-		sales: "KT1PFCwtC28QJZtsMDi8Gu9ezJydZ812y8Yi",
-		sales_storage: "KT1KJav7CC8ieoLfdpeeDpo7pQbKCJDNP2a6",
-		transfer_manager: "KT1RAjXqJm4MPf1MQr4NdinupYc3NxNaykaz",
-		bid: "KT1Wt3C7M7nJuuA83Ukr572vFc5uk6QJwePZ",
-		bid_storage: "KT1KJRo2tiFBXZnzTJAVxrPnn2jW3LVCZSii",
-		sig_checker: "KT1EiyFnYEGUtfMLKBcWnYzJ95d1hakR5qaX",
-		tzkt: "http://tezos-tzkt.dev.rarible.int",
+		auction: "KT1CB5JBSC7kTxRV3ir2xsooMA1FLieiD4Mt",
+		auction_storage: "KT1KWAPPjuDq4ZeX67rzZWsf6eAeqwtuAfSP",
+		node_url: argv.endpoint,
+		sales: "KT1NcKyhPnomH9PKGeDfvMiGH2PDgKCd5YuM",
+		sales_storage: "KT1GDUG3AQpaKmFjFHVn6PYT4Tprf7ccwPa3",
+		transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
+		bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
+		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
+		tzkt: "https://api.ghostnet.tzkt.io",
 		dipdup: "https://dev-tezos-indexer.rarible.org/v1/graphql",
 		union_api: "https://dev-api.rarible.org/v0.1",
-		objkt_sales_v1: "KT1Qa7sQdZrsuPMA7NFg5hMF9iadtoYSF8m9",
-		objkt_sales_v2: "KT1X1sxF2kqNKMKcNatbrx3d5M11LhSthQ3L",
-		royalties_provider: "KT1ABvSRv27WymHYAyuEVnYktdhiPy3kThjk",
-		hen_marketplace: "KT1MoWbKvxhsuckLUnQUPjrnGRugiret3pSQ",
-		hen_objkts: "KT1E59fZ5vxx67h8spyQqT8nC3k9scmBBkkd",
-		teia_marketplace: "KT1SMn9NzXNvdMvtaK8gE5GHgYj8ZxCuSyWN",
-		versum_marketplace: "KT1FQQttioJYMHYzJo97A2cxfdAqnUHoVjiG",
-		versum_nfts: "KT1DtDzPUe7Do3QQQ739RG3Z4fWgwbuy2srB"
+		objkt_sales_v1: "KT1Ax5fm2UNxjXGmrMDytREfqvYoCXoBB4Jo",
+		objkt_sales_v2: "KT1GiZuR6TdkgxZGQGZSdbC3Jox9JTSbqTB6",
+		royalties_provider: "KT1AZfqFGFLMUrscNFyawDYAyqXYydz714ya",
+		hen_marketplace: "KT1XYgjgFQutFfgEiD7RuppSKZsawZbkpKxL",
+		hen_objkts: "KT1P2VyFd61A3ukizJoX37nFF9fqZnihv7Lw",
+		teia_marketplace: "KT1Anx515N2PK8A2ZX5uGNn7Gckh4WytLJmK",
+		versum_marketplace: "KT1B1Wz7jPH23EqKUpDwFDkw3A1yLxGZ4uJy",
+		versum_nfts: "KT1UH5RSbomuV1o6UuDB9yeACbqRMup3utGu",
+		fxhash_sales_v1: "KT1BEc3m6yxN856Y4zfArpDqQ1uZZ1HkDTRh",
+		fxhash_sales_v2: "KT1GCLoBSwUaNjaGXq5RtiP8CXTL3cEeMNDs",
+		fxhash_nfts_v1: "KT1VEXkw6rw6pJDP9APGsMneFafArijmM96j",
+		fxhash_nfts_v2: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ"
 	}
 
 	const provider = {
@@ -368,122 +375,6 @@ export async function testScript(operation?: string, options: any = {}) {
 			await op_deploy_fill.confirmation()
 			console.log(op_deploy_fill.contract)
 			break
-
-		case 'sell': {
-			console.log("sell item", argv.item_id)
-			const publicKey = await get_public_key(provider)
-			if (!publicKey) {
-				throw new Error("publicKey is undefined")
-			}
-			const maker = pk_to_pkh(publicKey)
-			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
-				throw new Error(
-					"item_id was not set or set incorrectly")
-			}
-
-			const [contract, tokenId] = argv.item_id.split(":")
-			const asset: UnknownTokenAssetType = {
-				contract: contract,
-				token_id: new BigNumber(tokenId),
-			}
-			const request: SellRequest = {
-				maker,
-				maker_edpk: publicKey,
-				make_asset_type: await check_asset_type(provider, asset),
-				take_asset_type: {
-					asset_class: "XTZ"
-				},
-				amount: new BigNumber("1"),
-				price: new BigNumber("0.1"),
-				payouts: [{
-					account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
-					value: new BigNumber(10000)
-				}],
-				origin_fees: [{
-					account: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
-					value: new BigNumber(252)
-				},
-					{
-						account: "tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb",
-						value: new BigNumber(253)
-					}]
-			}
-			const order = await sell(provider, request)
-			console.log('order=', order)
-			return order
-		}
-
-		case 'sell_with_ft_fa12': {
-			console.log("sell item", argv.item_id)
-			const publicKey = await get_public_key(provider)
-			if (!publicKey) {
-				throw new Error("publicKey is undefined")
-			}
-			const maker = pk_to_pkh(publicKey)
-			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
-				throw new Error(
-					"item_id was not set or set incorrectly")
-			}
-
-			const [contract, tokenId] = argv.item_id.split(":")
-			const asset: UnknownTokenAssetType = {
-				contract: contract,
-				token_id: new BigNumber(tokenId),
-			}
-			const request: SellRequest = {
-				maker,
-				maker_edpk: publicKey,
-				make_asset_type: await check_asset_type(provider, asset),
-				take_asset_type: {
-					asset_class: "FT",
-					contract: argv.ft_contract!,
-					token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id) : undefined,
-				},
-				amount: new BigNumber("1"),
-				price: new BigNumber("2"),
-				payouts: [],
-				origin_fees: []
-			}
-			const order = await sell(provider, request)
-			console.log('order=', order)
-			return order
-		}
-
-		case 'sell_with_ft_fa2': {
-			console.log("sell item", argv.item_id)
-			const publicKey = await get_public_key(provider)
-			if (!publicKey) {
-				throw new Error("publicKey is undefined")
-			}
-			const maker = pk_to_pkh(publicKey)
-			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
-				throw new Error(
-					"item_id was not set or set incorrectly")
-			}
-
-			const [contract, tokenId] = argv.item_id.split(":")
-			const asset: UnknownTokenAssetType = {
-				contract: contract,
-				token_id: new BigNumber(tokenId),
-			}
-			const request: SellRequest = {
-				maker,
-				maker_edpk: publicKey,
-				make_asset_type: await check_asset_type(provider, asset),
-				take_asset_type: {
-					asset_class: "FT",
-					contract: argv.ft_contract!,
-					token_id: argv.ft_token_id != undefined ? new BigNumber(argv.ft_token_id) : undefined,
-				},
-				amount: new BigNumber("1"),
-				price: new BigNumber("2"),
-				payouts: [],
-				origin_fees: []
-			}
-			const order = await sell(provider, request)
-			console.log('order=', order)
-			return order
-		}
 
 		case 'sell_v2': {
 			console.log("sell item", argv.item_id)
@@ -733,6 +624,53 @@ export async function testScript(operation?: string, options: any = {}) {
 			}
 
 			const order = await versum_swap(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fxhash_v1_offer': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: FXHashV1OfferForm = {
+				token_id: new BigNumber(tokenId),
+				price_per_item: new BigNumber(argv.amount)
+			}
+
+			const order = await fxhash_v1_offer(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fxhash_v2_listing': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: FXHashV2ListingForm = {
+				token_id: new BigNumber(tokenId),
+				price_per_item: new BigNumber(argv.amount),
+				version: 1
+			}
+
+			const order = await fxhash_v2_listing(provider, sell_request)
 			console.log('order=', order)
 			return order
 		}
@@ -1045,6 +983,20 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'fxhash_v1_collect': {
+			console.log("buy item", argv.item_id)
+			const order = await fxhash_v1_collect(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fxhash_v2_listing_accept': {
+			console.log("buy item", argv.item_id)
+			const order = await fxhash_v2_listing_accept(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
 		case 'hen_cancel_swap': {
 			console.log("cancel swap", argv.item_id)
 			const order = await hen_cancel_swap(provider, argv.item_id)
@@ -1060,6 +1012,18 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'versum_cancel_swap': {
 			console.log("cancel swap", argv.item_id)
 			const order = await versum_cancel_swap(provider, argv.item_id)
+			return order
+		}
+
+		case 'fxhash_v1_cancel_offer': {
+			console.log("cancel swap", argv.item_id)
+			const order = await fxhash_v1_cancel_offer(provider, argv.item_id)
+			return order
+		}
+
+		case 'fxhash_v2_cancel_listing': {
+			console.log("cancel swap", argv.item_id)
+			const order = await fxhash_v2_cancel_listing(provider, argv.item_id)
 			return order
 		}
 
