@@ -139,6 +139,5 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 		}
 	}
 	const op = await send_batch(provider, transactions);
-	await op.confirmation();
-	return op.hash
+	return op
 }
