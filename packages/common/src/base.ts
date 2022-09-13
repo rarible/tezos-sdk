@@ -1,7 +1,8 @@
-import {BigMapAbstraction, TransferParams, OriginateParams, TezosToolkit} from "@taquito/taquito"
+import {BigMapAbstraction, OriginateParams, TezosToolkit, TransferParams} from "@taquito/taquito"
 import {MichelsonData, packDataBytes, unpackDataBytes} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
+import {fetchWrapper, NetworkErrorCode} from "./fetch-wrapper";
 
 const {TextEncoder, TextDecoder} = require("text-encoder")
 const bs58check = require("bs58check")
@@ -293,17 +294,13 @@ export async function get_royalties(
 	token_contract: string,
 	tokenId: BigNumber
 ): Promise<Array<Part>> {
-	const r = await fetch(provider.config.union_api + `/items/TEZOS:${token_contract}:${tokenId}/royalties`)
-	if (r.ok) {
-		const result = await r.json()
-		const royalties: Array<Part> = result.royalties
-		for (let share of royalties) {
-			share.account = share.account.replace("TEZOS:", "")
-		}
-		return royalties
-	} else {
-		throw new Error(`/items/TEZOS:${token_contract}:${tokenId}/royalties failed: ${JSON.stringify(r.statusText)}`)
-	}
+	const r = await fetchWrapper(provider.config.union_api + `/items/TEZOS:${token_contract}:${tokenId}/royalties`)
+  const result = await r.json()
+  const royalties: Array<Part> = result.royalties
+  for (let share of royalties) {
+    share.account = share.account.replace("TEZOS:", "")
+  }
+  return royalties
 }
 
 export async function are_royalties_on_chain(
@@ -545,38 +542,38 @@ export function getAsset(sale_type: AssetTypeV2, assetContract?: string, assetId
 }
 
 export async function get_ft_type(config: Config, assetContract: string): Promise<AssetTypeV2 | undefined> {
-	const result = await fetch(config.tzkt + '/v1/contracts/' + assetContract)
+	const result = await fetchWrapper(config.tzkt + '/v1/contracts/' + assetContract, {
+    defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
+  })
 	let assetType = undefined
-	if (result.ok) {
-		try {
-			const data = await result.json()
-			const tzips = data.tzips as Array<string>
-			if (tzips.includes("fa2")) {
-				assetType = AssetTypeV2.FA2
-			} else if (tzips.includes("fa12")) {
-				assetType = AssetTypeV2.FA12
-			}
-		} catch (e) {
-			console.error(e)
-		}
-		return assetType
-	} else {
-		throw new Error("Could not identifiy type for " + assetContract + ": " + JSON.stringify(result))
-	}
+  try {
+    const data = await result.json()
+    const tzips = data.tzips as Array<string>
+    if (tzips.includes("fa2")) {
+      assetType = AssetTypeV2.FA2
+    } else if (tzips.includes("fa12")) {
+      assetType = AssetTypeV2.FA12
+    }
+  } catch (e) {
+    console.error(e)
+  }
+  return assetType
 }
 
 export async function get_decimals(config: Config, contract: string, token_id = new BigNumber(0)): Promise<BigNumber> {
-	const result = await fetch(`${config.tzkt}/v1/tokens?contract=${contract}&tokenId=${token_id}`)
-	const token = await result.json()
-	if (token.length == 1 && token[0].metadata != undefined) {
-		if (token[0].metadata.decimals != undefined) {
-			return new BigNumber(token[0].metadata.decimals)
-		} else {
-			return new BigNumber(0)
-		}
-	} else {
-		return new BigNumber(0)
-	}
+  const result = await fetchWrapper(`${config.tzkt}/v1/tokens?contract=${contract}&tokenId=${token_id}`, {
+    defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
+  })
+  const token = await result.json()
+  if (token.length == 1 && token[0].metadata != undefined) {
+    if (token[0].metadata.decimals != undefined) {
+      return new BigNumber(token[0].metadata.decimals)
+    } else {
+      return new BigNumber(0)
+    }
+  } else {
+    return new BigNumber(0)
+  }
 }
 
 export function process_token_id(sale_type: AssetTypeV2, token_id: BigNumber | undefined){

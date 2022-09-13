@@ -10,7 +10,7 @@ import {
   send_batch, BatchMintResult
 } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
-import fetch from "node-fetch"
+import {fetchWrapper} from "@rarible/tezos-common/build/fetch-wrapper";
 
 export declare type MintingForm = {
   contract: string;
@@ -50,13 +50,9 @@ function metadata_param(
 export async function get_next_token_id(
   provider: Provider,
   contract: string) : Promise<BigNumber> {
-  const r = await fetch(provider.config.union_api + '/collections/TEZOS:' + contract + '/generate_token_id')
-  if (r.ok) {
-    const json = await r.json()
-    return new BigNumber(json.tokenId)
-  } else {
-    throw new Error(r.statusText)
-  }
+  const r = await fetchWrapper(provider.config.union_api + '/collections/TEZOS:' + contract + '/generate_token_id')
+  const json = await r.json()
+  return new BigNumber(json.tokenId)
 }
 
 export function metadata_arg(
