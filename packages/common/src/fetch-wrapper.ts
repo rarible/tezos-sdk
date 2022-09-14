@@ -7,12 +7,11 @@ export async function fetchWrapper(
 ): Promise<Response> {
   const response = await Fetch(url, init)
   if (!response.ok) {
-    const clonedResponse = response.clone()
     let value
     try {
-      value = await clonedResponse.json()
+      value = await response.clone().json()
     } catch (e) {
-      value = await clonedResponse.text()
+      value = await response.clone().text()
     }
 
     throw new NetworkError({
