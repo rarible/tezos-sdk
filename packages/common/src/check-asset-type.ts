@@ -1,6 +1,6 @@
 import { Provider, TokenAssetType } from "./base"
 import BigNumber from "bignumber.js"
-import fetch from "node-fetch"
+import {fetchWrapper} from "./fetch-wrapper";
 
 export interface UnknownTokenAssetType {
   contract: string;
@@ -12,14 +12,11 @@ export type ExtendedAssetType = TokenAssetType | UnknownTokenAssetType
 export async function get_asset_type(
   provider: Provider,
   asset: UnknownTokenAssetType) : Promise<TokenAssetType> {
-  const r = await fetch(provider.config.union_api + '/collections/TEZOS:' + asset.contract)
-  if (r.ok) {
-    let json = await r.json()
-    if (json.type == "TEZOS_NFT") return { ...asset, asset_class:"NFT" }
-    else if (json.type == "TEZOS_MT") return { ...asset, asset_class:"MT" }
-    else throw new Error("Contract " + asset.contract + " is not a collection")
-  }
-  else throw new Error("Cannot get asset type of contract " + asset.contract)
+  const r = await fetchWrapper(provider.config.union_api + '/collections/TEZOS:' + asset.contract)
+  let json = await r.json()
+  if (json.type == "TEZOS_NFT") return { ...asset, asset_class:"NFT" }
+  else if (json.type == "TEZOS_MT") return { ...asset, asset_class:"MT" }
+  else throw new Error("Contract " + asset.contract + " is not a collection")
 }
 
 export async function check_asset_type(

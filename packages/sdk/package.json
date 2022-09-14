@@ -36,6 +36,7 @@
     "@genql/runtime": "2.10.0",
     "@rarible/tezos-common": "^0.1.34",
     "@rarible/tezos-contracts": "^0.1.34",
+    "@rarible/logger": "^0.9.7",
     "@taquito/beacon-wallet": "12.0.3",
     "@taquito/signer": "^12.0.0",
     "@taquito/taquito": "^12.0.0",

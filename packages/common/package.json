@@ -16,11 +16,13 @@
     "clean": "rimraf ./dist"
   },
   "dependencies": {
+    "@genql/runtime": "2.10.0",
     "@taquito/taquito": "^12.0.0",
     "bignumber.js": "^9.0.1",
     "bs58check": "^2.1.2",
     "node-fetch": "2.6.7",
-    "text-encoder": "^0.0.4"
+    "text-encoder": "^0.0.4",
+    "@rarible/logger": "^0.9.7"
   },
   "devDependencies": {
     "typescript": "^4.4.4"

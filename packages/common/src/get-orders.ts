@@ -1,12 +1,17 @@
 import {Config, OrderType, Platform, retry} from "./base"
 import BigNumber from "bignumber.js"
 import {
-	createClient, legacy_orders, legacy_ordersRequest,
-	marketplace_activity,
-	marketplace_activityRequest,
-	marketplace_order,
-	marketplace_orderRequest
+  createClient,
+  legacy_orders,
+  legacy_ordersRequest,
+  marketplace_activity,
+  marketplace_activityRequest,
+  marketplace_order,
+  marketplace_orderRequest
 } from "@rarible/tezos-sdk/marketplace-client";
+import {fetchWrapper, NetworkErrorCode} from "./fetch-wrapper";
+import {GraphqlOperation} from "@genql/runtime/dist/client/generateGraphqlOperation";
+import {ExecutionResult} from "@genql/runtime/src/types";
 
 export interface OrderDataRequest {
 	order_id?: string[],
@@ -77,7 +82,8 @@ export async function get_orders(
 	request_params: OrderDataRequest
 ): Promise<Array<marketplace_order>> {
 	const client = createClient({
-		url: config.dipdup
+		url: config.dipdup,
+    fetcher: createFetcher(config.dipdup),
 	})
 	const orders = await client.chain.query.marketplace_order({
 		where: process_query(request_params, false)
@@ -92,8 +98,9 @@ export async function get_legacy_orders(
 	request_params: OrderDataRequest
 ): Promise<Array<legacy_orders>> {
 	const client = createClient({
-		url: config.dipdup
-	})
+		url: config.dipdup,
+    fetcher: createFetcher(config.dipdup),
+  })
 	const orders = await client.chain.query.legacy_orders({
 		where: process_query(request_params, false)
 	}).get(request)
@@ -106,8 +113,9 @@ export async function get_order_activities(
 	request_params: OrderDataRequest
 ): Promise<Array<marketplace_activity>> {
 	const client = createClient({
-		url: config.dipdup
-	})
+		url: config.dipdup,
+    fetcher: createFetcher(config.dipdup),
+  })
 	const activities = await client.chain.query.marketplace_activity({
 		where: process_query(request_params, true)
 	}).get(request)
@@ -161,4 +169,18 @@ function process_query(request_params: OrderDataRequest, is_activity: boolean): 
 	}
 
 	return where
+}
+
+function createFetcher(url: string): (body: GraphqlOperation | GraphqlOperation[]) => Promise<ExecutionResult> {
+  return async (body: GraphqlOperation | GraphqlOperation[]): Promise<ExecutionResult> => {
+    const res = await fetchWrapper(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(body),
+      defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
+    })
+    return res.json()
+  }
 }

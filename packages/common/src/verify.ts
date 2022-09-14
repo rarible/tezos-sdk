@@ -1,5 +1,5 @@
 import {pk_to_pkh, Provider} from "./base"
-import fetch from "node-fetch"
+import {fetchWrapper} from "./fetch-wrapper";
 
 export async function check_signature(
     message: string,
@@ -31,21 +31,16 @@ export async function check_signature(
         "unparsing_mode": "Readable"
     }
     let result = false
-    try {
-        const response = await fetch(provider.config.node_url + "/chains/main/blocks/head/helpers/scripts/run_view", {
-            method: 'post',
-            body: JSON.stringify(payload),
-            headers: {'Content-Type': 'application/json'}
-        });
+    const response = await fetchWrapper(provider.config.node_url + "/chains/main/blocks/head/helpers/scripts/run_view", {
+        method: 'post',
+        body: JSON.stringify(payload),
+        headers: {'Content-Type': 'application/json'}
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (data.data.prim == "True") {
-            result = true
-        }
-    } catch (e) {
-        console.log(JSON.stringify(e))
-        throw new Error(JSON.stringify(e))
+    if (data.data.prim == "True") {
+        result = true
     }
     return result
 }
