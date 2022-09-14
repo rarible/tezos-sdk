@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.37](https://github.com/rarible/tezos-sdk/compare/v0.1.36...v0.1.37) (2022-09-14)
+
+
+### Bug Fixes
+
+* fetch wrapper ([46268bc](https://github.com/rarible/tezos-sdk/commit/46268bc1550b1375628493852aedcb7806b0cf2c))
+
+
+
+
+
 ## [0.1.36](https://github.com/rarible/tezos-sdk/compare/v0.1.35...v0.1.36) (2022-09-14)
 
 
