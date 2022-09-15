@@ -1,6 +1,6 @@
 {
   "name": "@rarible/tezos-common",
-  "version": "0.1.38",
+  "version": "0.1.39",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "author": "",

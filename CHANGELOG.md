@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.39](https://github.com/rarible/tezos-sdk/compare/v0.1.38...v0.1.39) (2022-09-15)
+
+
+### Features
+
+* logger helpers ([6d7b6dd](https://github.com/rarible/tezos-sdk/commit/6d7b6ddd95fd8cf2ce2ad348277eef82c8d85a70))
+
+
+
+
+
 ## [0.1.38](https://github.com/rarible/tezos-sdk/compare/v0.1.37...v0.1.38) (2022-09-15)
 
 
