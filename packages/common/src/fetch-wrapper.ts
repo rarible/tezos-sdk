@@ -1,30 +1,31 @@
 import Fetch, {RequestInfo, RequestInit, Response} from "node-fetch";
-import {NetworkError} from "@rarible/logger/build";
+import {handleFetchErrorResponse, NetworkError} from "@rarible/logger/build";
 
 export async function fetchWrapper(
-  url: RequestInfo,
+  url: string,
   init?: RequestInit & { defaultErrorCode?: NetworkErrorCode }
 ): Promise<Response> {
-  const response = await Fetch(url, init)
-  if (!response.ok) {
-    let value
-    try {
-      value = await response.clone().json()
-    } catch (e) {
-      value = await response.clone().text()
+  let response
+  try {
+    response = await Fetch(url, init)
+    await handleFetchErrorResponse(response, {
+      code: init?.defaultErrorCode,
+      requestInit: init
+    })
+  } catch (e) {
+    if (e instanceof NetworkError) {
+      throw e
     }
-
     throw new NetworkError({
-      status: response.status,
-      url: response.url,
-      value,
-      code: init?.defaultErrorCode
+      url,
+      data: (e as Error).message,
+      code: init?.defaultErrorCode,
     })
   }
   return response
 }
 
 export enum NetworkErrorCode {
-  TEZOS_NETWORK_ERROR = "TEZOS_NETWORK_ERROR",
+  TEZOS_NETWORK_ERR = "TEZOS_NETWORK_ERR",
   TEZOS_EXTERNAL_ERR = "TEZOS_EXTERNAL_ERR"
 }
