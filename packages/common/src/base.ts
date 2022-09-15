@@ -3,6 +3,7 @@ import {MichelsonData, packDataBytes, unpackDataBytes} from "@taquito/michel-cod
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
 import {fetchWrapper, NetworkErrorCode} from "./fetch-wrapper";
+import {NetworkError} from "@rarible/logger/build";
 
 const {TextEncoder, TextDecoder} = require("text-encoder")
 const bs58check = require("bs58check")
@@ -309,23 +310,34 @@ export async function are_royalties_on_chain(
 	token_id: BigNumber
 ): Promise<boolean> {
 	let is_on_chain = false
-	const r = await fetch(provider.config.tzkt + `/v1/contracts/${token_contract}/bigmaps/royalties/keys/${token_id}`)
-	if (r.status == 200) {
-		is_on_chain = true
-	} else {
-		const key = `{"address":"${token_contract}","nat":"${token_id}"}`
-		const r_provider = await fetch(provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`)
-		if(r_provider.status == 200){
-			is_on_chain = true
-		} else {
-			const key = `{"address":"${token_contract}","nat":null}`
-			const r_provider = await fetch(provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`)
-			if(r_provider.status == 200){
-				is_on_chain = true
-			}
-		}
-	}
-	return is_on_chain
+  let fetchUrl = provider.config.tzkt + `/v1/contracts/${token_contract}/bigmaps/royalties/keys/${token_id}`
+  try {
+    const r = await fetch(fetchUrl)
+    if (r.status == 200) {
+      is_on_chain = true
+    } else {
+      const key = `{"address":"${token_contract}","nat":"${token_id}"}`
+      fetchUrl = provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`
+      const r_provider = await fetch(fetchUrl)
+      if(r_provider.status == 200){
+        is_on_chain = true
+      } else {
+        const key = `{"address":"${token_contract}","nat":null}`
+        fetchUrl = provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`
+        const r_provider = await fetch(fetchUrl)
+        if(r_provider.status == 200){
+          is_on_chain = true
+        }
+      }
+    }
+    return is_on_chain
+  } catch (e) {
+    throw new NetworkError({
+      url: fetchUrl,
+      data: (e as Error).message,
+      code: NetworkErrorCode.TEZOS_EXTERNAL_ERR,
+    })
+  }
 }
 
 export function uint8array_to_hex(a: Uint8Array): string {
