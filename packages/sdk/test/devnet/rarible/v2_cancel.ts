@@ -1,6 +1,6 @@
 import {AssetTypeV2} from "@rarible/tezos-common";
 import {testScript} from "../../../main/script";
-import {awaitItem} from "../../common/utils";
+import {awaitDevItem} from "../../common/utils";
 
 export async function v2_cancel() {
     console.log("--------------------")
@@ -19,7 +19,7 @@ export async function v2_cancel() {
     })
     console.log('mintedItemId', mintedItemId)
 
-    await awaitItem(mintedItemId as string)
+    await awaitDevItem(mintedItemId as string)
     // const mintedItemId = ""
     const sellOrder = await testScript('sell_v2', {
         edsk: sellerEdsk,

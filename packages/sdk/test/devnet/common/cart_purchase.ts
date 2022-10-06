@@ -1,6 +1,6 @@
 import {testScript} from "../../../main/script";
 import {AssetTypeV2} from "@rarible/tezos-common";
-import {awaitItem} from "../../common/utils";
+import {awaitDevItem} from "../../common/utils";
 
 export async function cart_purchase() {
 	console.log("--------------------")
@@ -20,7 +20,7 @@ export async function cart_purchase() {
 	})
 	console.log('mintedItemId_v1', mintedItemId_v1)
 
-	await awaitItem(mintedItemId_v1 as string)
+	await awaitDevItem(mintedItemId_v1 as string)
 
 	const mintedItemId_v2 = await testScript('mint', {
 		edsk: sellerEdsk,
@@ -32,7 +32,7 @@ export async function cart_purchase() {
 	})
 	console.log('mintedItemId_v2', mintedItemId_v2)
 
-	await awaitItem(mintedItemId_v1 as string)
+	await awaitDevItem(mintedItemId_v1 as string)
 
 	const objkt_v1_order = await testScript('ask_v1_objkt', {
 		edsk: sellerEdsk,

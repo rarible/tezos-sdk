@@ -1,6 +1,6 @@
 import {AssetTypeV2} from "@rarible/tezos-common";
 import {testScript} from "../../../main/script";
-import {awaitItem} from "../../common/utils";
+import {awaitDevItem} from "../../common/utils";
 
 export async function get_order_type() {
     console.log("--------------------")

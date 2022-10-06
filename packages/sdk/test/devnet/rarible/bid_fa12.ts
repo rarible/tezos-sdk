@@ -1,6 +1,6 @@
 import { AssetTypeV2 } from "@rarible/tezos-common";
 import {testScript} from "../../../main/script";
-import {awaitItem} from "../../common/utils";
+import {awaitDevItem} from "../../common/utils";
 
 export async function bid_fa12() {
   console.log("--------------------")
@@ -19,7 +19,7 @@ export async function bid_fa12() {
   })
   console.log('mintedItemId', mintedItemId)
 
-  await awaitItem(mintedItemId as string)
+  await awaitDevItem(mintedItemId as string)
   // const mintedItemId = ""
   const bid = await testScript('put_bid', {
     edsk: buyerEdsk,

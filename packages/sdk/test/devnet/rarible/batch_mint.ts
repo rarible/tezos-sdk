@@ -1,5 +1,5 @@
 import {testScript} from "../../../main/script";
-import {awaitItem} from "../../common/utils";
+import {awaitDevItem} from "../../common/utils";
 import {BatchMintResult} from "@rarible/tezos-common";
 
 export async function batch_mint() {
@@ -21,7 +21,7 @@ export async function batch_mint() {
 
   for(let id of mintedItemId.token_ids){
     console.log(`Waiting for item KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA:${id}`)
-    await awaitItem(`KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA:${id}`)
+    await awaitDevItem(`KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA:${id}`)
     console.log(`KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA:${id} found`)
   }
 }

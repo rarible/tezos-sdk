@@ -1,5 +1,5 @@
 import {testScript} from "../../../main/script";
-import {awaitItem} from "../../common/utils";
+import {awaitDevItem} from "../../common/utils";
 import {AssetTypeV2, BatchMintResult} from "@rarible/tezos-common";
 
 export async function batch_v2_sale() {
@@ -23,7 +23,7 @@ export async function batch_v2_sale() {
   let item_ids = ""
   for(let id of mintedItemId.token_ids){
     console.log(`Waiting for item KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA:${id}`)
-    await awaitItem(`KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA:${id}`)
+    await awaitDevItem(`KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA:${id}`)
     console.log(`KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA:${id} found`)
     if(item_ids == ""){
       item_ids = item_ids + `KT1Uke8qc4YTfP41dGuoGC8UsgRyCtyvKPLA:${id}`

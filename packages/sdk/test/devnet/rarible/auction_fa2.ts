@@ -1,5 +1,5 @@
 import {testScript} from "../../../main/script";
-import {awaitItem} from "../../common/utils";
+import {awaitDevItem} from "../../common/utils";
 import {AssetTypeV2} from "@rarible/tezos-common";
 
 export async function auction_fa2() {
@@ -21,7 +21,7 @@ export async function auction_fa2() {
   })
   console.log('mintedItemId', mintedItemId)
 
-  await awaitItem(mintedItemId as string)
+  await awaitDevItem(mintedItemId as string)
 
   const auctionOrder = await testScript('auction', {
     edsk: sellerEdsk,

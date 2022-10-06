@@ -1,5 +1,5 @@
 import {testScript} from "../../../main/script";
-import {awaitItem} from "../../common/utils";
+import {awaitDevItem} from "../../common/utils";
 
 export async function deploy_nft() {
   console.log("--------------------")
