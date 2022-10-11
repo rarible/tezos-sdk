@@ -1,4 +1,5 @@
 import {
+	approve_v2, AssetTypeV2,
 	get_orders,
 	OperationResult, OrderStatus,
 	Provider,
@@ -14,12 +15,22 @@ export async function get_objkt_fulfill_bid_v2_transaction(
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const ask = await get_orders(provider.config,
-		{internal_order_id: true, take_token_id: true},
+		{internal_order_id: true, take_contract: true, take_token_id: true},
 		{order_id: [sale], status: OrderStatus.ACTIVE})
 	if (ask != undefined && ask.length == 1) {
+		const seller = await provider.tezos.address();
+		const approve_a = await approve_v2(
+			provider,
+			seller,
+			AssetTypeV2.FA2,
+			provider.config.objkt_sales_v2,
+			ask[0].take_contract,
+			new BigNumber(ask[0].take_token_id!)
+		);
+		if (approve_a) args = args.concat(approve_a);
 		args = args.concat(objkt_fulfill_bid_v2_arg(provider,
 			ask[0].internal_order_id,
-			ask[0].take_token_id));
+			ask[0].take_token_id!));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}
@@ -66,5 +77,5 @@ export function objkt_fulfill_bid_v2_arg(
 			]
 		}
 
-	return {destination: provider.config.objkt_sales_v2, entrypoint: "fulfill_bid", parameter};
+	return {destination: provider.config.objkt_sales_v2, entrypoint: "fulfill_offer", parameter};
 }

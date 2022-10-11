@@ -67,7 +67,7 @@ export function objkt_bid_v2_arg(
                         prim: "Pair",
                         args: [
                             {
-                                int: `${bid.amount}`
+                                int: `${processed_amount}`
                             },
                             {
                                 prim: "Pair",
@@ -112,7 +112,7 @@ export function objkt_bid_v2_arg(
             }
         ]
     };
-    return {destination: provider.config.objkt_sales_v2, entrypoint: "offer", parameter, amount: processed_amount};
+    return {destination: provider.config.objkt_sales_v2, entrypoint: "offer", parameter, amount: bid.amount};
 }
 
 export async function objkt_bid_v2(
@@ -123,15 +123,6 @@ export async function objkt_bid_v2(
     const seller = await provider.tezos.address();
     const processed_amount = await absolute_amount(provider.config, order.amount, AssetTypeV2.XTZ, undefined, undefined)
 
-    const approve_a = await approve_v2(
-        provider,
-        seller,
-        AssetTypeV2.FA2,
-        provider.config.objkt_sales_v2,
-        order.token_contract,
-        order.token_id
-    );
-    if (approve_a) args = args.concat(approve_a);
     order.shares = await get_royalties(provider, order.token_contract, order.token_id)
     for(let share of order.shares){
         share.value = new BigNumber(share.value).div(10)
