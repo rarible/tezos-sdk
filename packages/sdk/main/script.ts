@@ -101,6 +101,8 @@ import {fxhash_v1_cancel_offer} from "../marketplaces/fxhash/v1/fxhash_v1_cancel
 import {fxhash_v2_listing, FXHashV2ListingForm} from "../marketplaces/fxhash/v2/fxhash_v2_listing";
 import {fxhash_v2_listing_accept} from "../marketplaces/fxhash/v2/fxhash_v2_listing_accept";
 import {fxhash_v2_cancel_listing} from "../marketplaces/fxhash/v2/fxhash_v2_cancel";
+import {objkt_bid_v1, ObjktBidV1Form} from "../marketplaces/objkt/v1/bid";
+import {objkt_fulfill_bid_v1} from "../marketplaces/objkt/v1/fullfil_bid";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -248,7 +250,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ghostnet.tzkt.io",
-		dipdup: "https://dev-tezos-indexer.rarible.org/v1/graphql",
+		dipdup: "http://localhost:49180/v1/graphql",
 		union_api: "https://dev-api.rarible.org/v0.1",
 		objkt_sales_v1: "KT1Ax5fm2UNxjXGmrMDytREfqvYoCXoBB4Jo",
 		objkt_sales_v2: "KT1GiZuR6TdkgxZGQGZSdbC3Jox9JTSbqTB6",
@@ -552,6 +554,32 @@ export async function testScript(operation?: string, options: any = {}) {
 			}
 
 			const order = await ask_v1(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'bid_v1_objkt': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: ObjktBidV1Form = {
+				token_contract: contract,
+				token_id: new BigNumber(tokenId),
+				amount: new BigNumber(argv.amount),
+				artist: "",
+				shares: []
+			}
+
+			const order = await objkt_bid_v1(provider, sell_request)
 			console.log('order=', order)
 			return order
 		}
@@ -944,6 +972,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'fulfill_ask_v1_objkt': {
 			console.log("buy item", argv.item_id)
 			const order = await objkt_fulfill_ask_v1(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fulfill_bid_v1_objkt': {
+			console.log("buy item", argv.item_id)
+			const order = await objkt_fulfill_bid_v1(provider, argv.item_id)
 			console.log('order=', order)
 			return order
 		}

@@ -24,7 +24,6 @@ export function objkt_bid_v1_arg(
 	provider: Provider,
 	bid: ObjktBidV1Form,
 	royalties: BigNumber,
-	processed_amount: BigNumber
 ): TransactionArg {
 	const parameter: MichelsonData = {
 		prim: "Pair",
@@ -53,7 +52,7 @@ export function objkt_bid_v1_arg(
 			}
 		]
 	};
-	return {destination: provider.config.objkt_sales_v1, entrypoint: "bid", parameter, amount: processed_amount};
+	return {destination: provider.config.objkt_sales_v1, entrypoint: "bid", parameter, amount: bid.amount};
 }
 
 export async function objkt_bid_v1(
@@ -62,22 +61,13 @@ export async function objkt_bid_v1(
 ): Promise<string> {
 	let args: TransactionArg[] = [];
 	const seller = await provider.tezos.address();
-	const processed_amount = await absolute_amount(provider.config, bid.amount, AssetTypeV2.XTZ, undefined, undefined)
 
-	const approve_a = await approve_v2(
-		provider,
-		seller,
-		AssetTypeV2.FA2,
-		provider.config.objkt_sales_v1,
-		bid.token_contract,
-		bid.token_id
-	);
-	if (approve_a) args = args.concat(approve_a);
 	bid.shares = await get_royalties(provider, bid.token_contract, bid.token_id)
 	for(let share of bid.shares){
 		share.value = new BigNumber(share.value).div(10)
 	}
-	args = args.concat(objkt_bid_v1_arg(provider, bid, bid.shares[0].value, processed_amount));
+	bid.artist = bid.shares[0].account
+	args = args.concat(objkt_bid_v1_arg(provider, bid, bid.shares[0].value));
 	if (args.length === 0) {
 		throw new Error("Empty array of sell args")
 	}
