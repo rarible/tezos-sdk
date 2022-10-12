@@ -46,15 +46,6 @@ export async function fxhash_v2_bid(
     let args: TransactionArg[] = [];
     const seller = await provider.tezos.address();
     const nft_contract = order.version == 1? provider.config.fxhash_nfts_v2: provider.config.fxhash_nfts_v1
-    const approve_a = await approve_v2(
-        provider,
-        seller,
-        AssetTypeV2.FA2,
-        provider.config.fxhash_sales_v2,
-        nft_contract,
-        order.token_id
-    );
-    if (approve_a) args = args.concat(approve_a);
     args = args.concat(fxhash_v2_bid_arg(provider, order));
     if (args.length === 0) {
         throw new Error("Empty array of sell args")

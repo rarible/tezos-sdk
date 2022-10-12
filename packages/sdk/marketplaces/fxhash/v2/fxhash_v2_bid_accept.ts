@@ -1,4 +1,5 @@
 import {
+	approve_v2, AssetTypeV2,
 	get_orders,
 	OperationResult, OrderStatus,
 	Provider,
@@ -14,10 +15,19 @@ export async function get_fxhash_v2_bid_accept_transaction(
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const ask = await get_orders(provider.config,
-		{internal_order_id: true, make_price: true},
+		{internal_order_id: true, take_price: true, take_contract: true, take_token_id: true},
 		{order_id: [sale], status: OrderStatus.ACTIVE})
 	if (ask != undefined && ask.length == 1) {
-		args = args.concat(fxhash_v2_bid_accept_arg(provider, ask[0].internal_order_id, new BigNumber(ask[0].make_price)));
+		const approve_a = await approve_v2(
+			provider,
+			await provider.tezos.address(),
+			AssetTypeV2.FA2,
+			provider.config.fxhash_sales_v2,
+			ask[0].take_contract,
+			new BigNumber(ask[0].take_token_id!)
+		);
+		if (approve_a) args = args.concat(approve_a);
+		args = args.concat(fxhash_v2_bid_accept_arg(provider, ask[0].internal_order_id, new BigNumber(ask[0].take_price)));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}

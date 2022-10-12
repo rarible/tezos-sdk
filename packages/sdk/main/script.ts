@@ -107,6 +107,8 @@ import {objkt_bid_v2, ObjktBidV2Form} from "../marketplaces/objkt/v2/offer";
 import {objkt_fulfill_bid_v2} from "../marketplaces/objkt/v2/fulfill_offer";
 import {versum_bid, VersumBidForm} from "../marketplaces/versum/versum_bid";
 import {versum_accept_bid} from "../marketplaces/versum/versum_accept_bid";
+import {fxhash_v2_bid, FXHashV2BidForm} from "../marketplaces/fxhash/v2/fxhash_v2_bid";
+import {fxhash_v2_bid_accept} from "../marketplaces/fxhash/v2/fxhash_v2_bid_accept";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -758,6 +760,30 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'fxhash_v2_bid': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: FXHashV2BidForm = {
+				token_id: new BigNumber(tokenId),
+				price_per_item: new BigNumber(argv.amount),
+				version: 1
+			}
+
+			const order = await fxhash_v2_bid(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case "fill": {
 			try {
 				console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
@@ -1097,6 +1123,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'fxhash_v2_listing_accept': {
 			console.log("buy item", argv.item_id)
 			const order = await fxhash_v2_listing_accept(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fxhash_v2_bid_accept': {
+			console.log("buy item", argv.item_id)
+			const order = await fxhash_v2_bid_accept(provider, argv.item_id)
 			console.log('order=', order)
 			return order
 		}
