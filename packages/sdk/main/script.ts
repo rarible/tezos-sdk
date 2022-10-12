@@ -105,6 +105,8 @@ import {objkt_bid_v1, ObjktBidV1Form} from "../marketplaces/objkt/v1/bid";
 import {objkt_fulfill_bid_v1} from "../marketplaces/objkt/v1/fullfil_bid";
 import {objkt_bid_v2, ObjktBidV2Form} from "../marketplaces/objkt/v2/offer";
 import {objkt_fulfill_bid_v2} from "../marketplaces/objkt/v2/fulfill_offer";
+import {versum_bid, VersumBidForm} from "../marketplaces/versum/versum_bid";
+import {versum_accept_bid} from "../marketplaces/versum/versum_accept_bid";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -684,6 +686,31 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'versum_bid': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: VersumBidForm = {
+				contract: contract,
+				token_id: new BigNumber(tokenId),
+				editions: new BigNumber(argv.qty),
+				price_per_item: new BigNumber(argv.amount)
+			}
+
+			const order = await versum_bid(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case 'fxhash_v1_offer': {
 			console.log("sell item", argv.item_id)
 			const publicKey = await get_public_key(provider)
@@ -1049,6 +1076,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'versum_collect': {
 			console.log("buy item", argv.item_id)
 			const order = await versum_collect(provider, argv.item_id, new BigNumber(argv.qty))
+			console.log('order=', order)
+			return order
+		}
+
+		case 'versum_accept_bid': {
+			console.log("buy item", argv.item_id)
+			const order = await versum_accept_bid(provider, argv.item_id)
 			console.log('order=', order)
 			return order
 		}

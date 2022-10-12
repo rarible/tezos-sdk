@@ -1,6 +1,5 @@
 import {
-	approve_v2,
-	AssetTypeV2, await_order, OrderStatus, Platform,
+	await_order, OrderStatus, Platform,
 	Provider, send_batch,
 	TransactionArg
 } from "@rarible/tezos-common";
@@ -61,7 +60,7 @@ export function versum_bid_arg(
 			}
 		]
 	}
-	return {destination: provider.config.versum_marketplace, entrypoint: "maker_offer", parameter, amount: bid.price_per_item};
+	return {destination: provider.config.versum_marketplace, entrypoint: "make_offer", parameter, amount: bid.price_per_item};
 }
 
 export async function versum_bid(
@@ -69,17 +68,8 @@ export async function versum_bid(
 	bid: VersumBidForm,
 ): Promise<string> {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const bidder = await provider.tezos.address();
 
-	const approve_a = await approve_v2(
-		provider,
-		seller,
-		AssetTypeV2.FA2,
-		provider.config.versum_marketplace,
-		bid.contract,
-		bid.token_id
-	);
-	if (approve_a) args = args.concat(approve_a);
 	args = args.concat(versum_bid_arg(provider, bid));
 	if (args.length === 0) {
 		throw new Error("Empty array of sell args")
@@ -91,7 +81,7 @@ export async function versum_bid(
 		const order_id = await await_order(provider.config,
 			{
 				take_contract: bid.contract,
-				maker: seller,
+				maker: bidder,
 				platform: Platform.VERSUM_V1,
 				op_hash: op.hash,
 				take_token_id: bid.token_id,

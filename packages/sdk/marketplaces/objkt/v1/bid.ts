@@ -60,7 +60,7 @@ export async function objkt_bid_v1(
 	bid: ObjktBidV1Form,
 ): Promise<string> {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const bidder = await provider.tezos.address();
 
 	bid.shares = await get_royalties(provider, bid.token_contract, bid.token_id)
 	for(let share of bid.shares){
@@ -78,7 +78,7 @@ export async function objkt_bid_v1(
 		const order_id = await await_order(provider.config,
 			{
 				take_contract: bid.token_contract,
-				maker: seller,
+				maker: bidder,
 				platform: Platform.OBJKT_V1,
 				op_hash: op.hash,
 				take_token_id: bid.token_id,

@@ -120,7 +120,7 @@ export async function objkt_bid_v2(
     order: ObjktBidV2Form,
 ): Promise<string> {
     let args: TransactionArg[] = [];
-    const seller = await provider.tezos.address();
+    const bidder = await provider.tezos.address();
     const processed_amount = await absolute_amount(provider.config, order.amount, AssetTypeV2.XTZ, undefined, undefined)
 
     order.shares = await get_royalties(provider, order.token_contract, order.token_id)
@@ -138,7 +138,7 @@ export async function objkt_bid_v2(
         const order_id = await await_order(provider.config,
             {
                 take_contract: order.token_contract,
-                maker: seller,
+                maker: bidder,
                 platform: Platform.OBJKT_V2,
                 op_hash: op.hash,
                 take_token_id: order.token_id,
