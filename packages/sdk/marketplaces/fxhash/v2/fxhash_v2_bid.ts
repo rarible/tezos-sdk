@@ -1,4 +1,5 @@
 import {
+    absolute_amount,
     approve_v2,
     AssetTypeV2, await_order, get_royalties, OrderStatus, Platform,
     Provider, send_batch,
@@ -16,6 +17,7 @@ export declare type FXHashV2BidForm = {
 export function fxhash_v2_bid_arg(
     provider: Provider,
     listing: FXHashV2BidForm,
+    processed_amount: BigNumber
 ): TransactionArg {
     const parameter: MichelsonData = {
         prim: "Pair",
@@ -32,7 +34,7 @@ export function fxhash_v2_bid_arg(
                 ]
             },
             {
-                int: `${listing.price_per_item}`
+                int: `${processed_amount.toFixed()}`
             }
         ]
     }
@@ -45,8 +47,10 @@ export async function fxhash_v2_bid(
 ): Promise<string> {
     let args: TransactionArg[] = [];
     const seller = await provider.tezos.address();
+    const processed_amount = await absolute_amount(provider.config, order.price_per_item, AssetTypeV2.XTZ, undefined, undefined)
+
     const nft_contract = order.version == 1? provider.config.fxhash_nfts_v2: provider.config.fxhash_nfts_v1
-    args = args.concat(fxhash_v2_bid_arg(provider, order));
+    args = args.concat(fxhash_v2_bid_arg(provider, order, processed_amount));
     if (args.length === 0) {
         throw new Error("Empty array of sell args")
     }

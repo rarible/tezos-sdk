@@ -109,6 +109,7 @@ import {versum_bid, VersumBidForm} from "../marketplaces/versum/versum_bid";
 import {versum_accept_bid} from "../marketplaces/versum/versum_accept_bid";
 import {fxhash_v2_bid, FXHashV2BidForm} from "../marketplaces/fxhash/v2/fxhash_v2_bid";
 import {fxhash_v2_bid_accept} from "../marketplaces/fxhash/v2/fxhash_v2_bid_accept";
+import {bid_purchase, CartBid} from "../marketplaces/common/bids";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -895,6 +896,21 @@ export async function testScript(operation?: string, options: any = {}) {
 				})
 			}
 			const op = await cart_purchase(provider, cart_orders)
+			return op
+		}
+
+		case "bid_purchase": {
+			const orders = argv.item_id.split(",")
+			const cart_orders: CartBid[] = []
+			for (let order of orders){
+				cart_orders.push({
+					order_id: order,
+					amount: new BigNumber(1),
+					payouts: [],
+					origin_fees: []
+				})
+			}
+			const op = await bid_purchase(provider, cart_orders)
 			return op
 		}
 
