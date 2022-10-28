@@ -25,6 +25,7 @@
     "test-versum-testnet": "ts-node test/versum-testnet-tests.ts",
     "test-rarible-devnet": "ts-node test/rarible-devnet-tests.ts",
     "test-rarible-testnet": "ts-node test/rarible-testnet-tests.ts",
+    "test-common-devnet": "ts-node test/common-devnet-tests.ts",
     "test-common-testnet": "ts-node test/common-testnet-tests.ts",
     "build-webpack": "webpack --config webpack.config.js",
     "build-gql-client": "genql --endpoint http://localhost:49180/v1/graphql --output ./marketplace-client",

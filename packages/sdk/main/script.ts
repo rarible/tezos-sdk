@@ -101,6 +101,15 @@ import {fxhash_v1_cancel_offer} from "../marketplaces/fxhash/v1/fxhash_v1_cancel
 import {fxhash_v2_listing, FXHashV2ListingForm} from "../marketplaces/fxhash/v2/fxhash_v2_listing";
 import {fxhash_v2_listing_accept} from "../marketplaces/fxhash/v2/fxhash_v2_listing_accept";
 import {fxhash_v2_cancel_listing} from "../marketplaces/fxhash/v2/fxhash_v2_cancel";
+import {objkt_bid_v1, ObjktBidV1Form} from "../marketplaces/objkt/v1/bid";
+import {objkt_fulfill_bid_v1} from "../marketplaces/objkt/v1/fullfil_bid";
+import {objkt_bid_v2, ObjktBidV2Form} from "../marketplaces/objkt/v2/offer";
+import {objkt_fulfill_bid_v2} from "../marketplaces/objkt/v2/fulfill_offer";
+import {versum_bid, VersumBidForm} from "../marketplaces/versum/versum_bid";
+import {versum_accept_bid} from "../marketplaces/versum/versum_accept_bid";
+import {fxhash_v2_bid, FXHashV2BidForm} from "../marketplaces/fxhash/v2/fxhash_v2_bid";
+import {fxhash_v2_bid_accept} from "../marketplaces/fxhash/v2/fxhash_v2_bid_accept";
+import {bid_purchase, CartBid} from "../marketplaces/common/bids";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -556,6 +565,58 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'bid_v1_objkt': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: ObjktBidV1Form = {
+				token_contract: contract,
+				token_id: new BigNumber(tokenId),
+				amount: new BigNumber(argv.amount),
+				artist: "",
+				shares: []
+			}
+
+			const order = await objkt_bid_v1(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'bid_v2_objkt': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: ObjktBidV2Form = {
+				token_contract: contract,
+				token_id: new BigNumber(tokenId),
+				amount: new BigNumber(argv.amount),
+				editions: new BigNumber(argv.qty),
+				shares: []
+			}
+
+			const order = await objkt_bid_v2(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case 'hen_swap': {
 			console.log("sell item", argv.item_id)
 			const publicKey = await get_public_key(provider)
@@ -628,6 +689,31 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'versum_bid': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: VersumBidForm = {
+				contract: contract,
+				token_id: new BigNumber(tokenId),
+				editions: new BigNumber(argv.qty),
+				price_per_item: new BigNumber(argv.amount)
+			}
+
+			const order = await versum_bid(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
 		case 'fxhash_v1_offer': {
 			console.log("sell item", argv.item_id)
 			const publicKey = await get_public_key(provider)
@@ -671,6 +757,30 @@ export async function testScript(operation?: string, options: any = {}) {
 			}
 
 			const order = await fxhash_v2_listing(provider, sell_request)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fxhash_v2_bid': {
+			console.log("sell item", argv.item_id)
+			const publicKey = await get_public_key(provider)
+			if (!publicKey) {
+				throw new Error("publicKey is undefined")
+			}
+			if (!argv.item_id || argv.item_id.split(":").length !== 2) {
+				throw new Error(
+					"item_id was not set or set incorrectly")
+			}
+
+			const [contract, tokenId] = argv.item_id.split(":")
+
+			const sell_request: FXHashV2BidForm = {
+				token_id: new BigNumber(tokenId),
+				price_per_item: new BigNumber(argv.amount),
+				version: 1
+			}
+
+			const order = await fxhash_v2_bid(provider, sell_request)
 			console.log('order=', order)
 			return order
 		}
@@ -786,6 +896,21 @@ export async function testScript(operation?: string, options: any = {}) {
 				})
 			}
 			const op = await cart_purchase(provider, cart_orders)
+			return op
+		}
+
+		case "bid_purchase": {
+			const orders = argv.item_id.split(",")
+			const cart_orders: CartBid[] = []
+			for (let order of orders){
+				cart_orders.push({
+					order_id: order,
+					amount: new BigNumber(1),
+					payouts: [],
+					origin_fees: []
+				})
+			}
+			const op = await bid_purchase(provider, cart_orders)
 			return op
 		}
 
@@ -948,6 +1073,20 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'fulfill_bid_v1_objkt': {
+			console.log("buy item", argv.item_id)
+			const order = await objkt_fulfill_bid_v1(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fulfill_bid_v2_objkt': {
+			console.log("buy item", argv.item_id)
+			const order = await objkt_fulfill_bid_v2(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
 		case 'retract_ask_v2_objkt': {
 			console.log("cancel ask", argv.item_id)
 			const order = await objkt_retract_ask_v2(provider, argv.item_id)
@@ -983,6 +1122,13 @@ export async function testScript(operation?: string, options: any = {}) {
 			return order
 		}
 
+		case 'versum_accept_bid': {
+			console.log("buy item", argv.item_id)
+			const order = await versum_accept_bid(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
 		case 'fxhash_v1_collect': {
 			console.log("buy item", argv.item_id)
 			const order = await fxhash_v1_collect(provider, argv.item_id)
@@ -993,6 +1139,13 @@ export async function testScript(operation?: string, options: any = {}) {
 		case 'fxhash_v2_listing_accept': {
 			console.log("buy item", argv.item_id)
 			const order = await fxhash_v2_listing_accept(provider, argv.item_id)
+			console.log('order=', order)
+			return order
+		}
+
+		case 'fxhash_v2_bid_accept': {
+			console.log("buy item", argv.item_id)
+			const order = await fxhash_v2_bid_accept(provider, argv.item_id)
 			console.log('order=', order)
 			return order
 		}

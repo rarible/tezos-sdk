@@ -217,7 +217,7 @@ export async function cancel_bundle_bid(provider: Provider, bid_data: CancelBund
   return op
 }
 
-function bid_arg(
+export function bid_arg(
     provider: Provider,
     bid: Bid,
     processed_amount: BigNumber
@@ -302,7 +302,7 @@ function bid_arg(
   return { destination: provider.config.bid, entrypoint: "put_bid", parameter, amount: tx_amount };
 }
 
-function floor_bid_arg(
+export function floor_bid_arg(
     provider: Provider,
     bid: FloorBid,
     processed_amount: BigNumber
@@ -379,7 +379,7 @@ function floor_bid_arg(
   return { destination: provider.config.bid, entrypoint: "put_floor_bid", parameter, amount: tx_amount };
 }
 
-function bundle_bid_arg(
+export function bundle_bid_arg(
     provider: Provider,
     bid: BundleBid,
     processed_amount: BigNumber
@@ -448,7 +448,7 @@ function bundle_bid_arg(
   return { destination: provider.config.bid, entrypoint: "put_bundle_bid", parameter, amount: tx_amount };
 }
 
-function accept_bid_arg(
+export function accept_bid_arg(
     provider: Provider,
     bid_data: AcceptBid,
     is_floor = false
@@ -508,7 +508,7 @@ function accept_bid_arg(
   return { destination: provider.config.bid, entrypoint: entrypoint, parameter };
 }
 
-function accept_bundle_bid_arg(
+export function accept_bundle_bid_arg(
     provider: Provider,
     bid_data: AcceptBundleBid
 ): TransactionArg {
@@ -554,7 +554,7 @@ function accept_bundle_bid_arg(
   return { destination: provider.config.bid, entrypoint: "accept_bundle_bid", parameter };
 }
 
-function cancel_bid_arg(
+export function cancel_bid_arg(
     provider: Provider,
     bid_data: CancelBid
 ): TransactionArg {
@@ -588,7 +588,7 @@ function cancel_bid_arg(
   return { destination: provider.config.bid, entrypoint: "cancel_bid", parameter };
 }
 
-function cancel_floor_bid_arg(
+export function cancel_floor_bid_arg(
     provider: Provider,
     bid_data: CancelFloorBid
 ): TransactionArg {
@@ -614,7 +614,7 @@ function cancel_floor_bid_arg(
   return { destination: provider.config.bid, entrypoint: "cancel_floor_bid", parameter };
 }
 
-function cancel_bundle_bid_arg(
+export function cancel_bundle_bid_arg(
     provider: Provider,
     bid_data: CancelBundleBid
 ): TransactionArg {

@@ -1,4 +1,5 @@
 import {
+	approve_v2, AssetTypeV2,
 	get_orders,
 	OperationResult, OrderStatus,
 	Provider,
@@ -8,16 +9,25 @@ import {
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
 
-export async function get_fxhash_v2_listing_accept_transaction(
+export async function get_fxhash_v2_bid_accept_transaction(
 	provider: Provider,
 	sale: string,
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const ask = await get_orders(provider.config,
-		{internal_order_id: true, make_price: true},
+		{internal_order_id: true, take_price: true, take_contract: true, take_token_id: true},
 		{order_id: [sale], status: OrderStatus.ACTIVE})
 	if (ask != undefined && ask.length == 1) {
-		args = args.concat(fxhash_v2_listing_accept_arg(provider, ask[0].internal_order_id));
+		const approve_a = await approve_v2(
+			provider,
+			await provider.tezos.address(),
+			AssetTypeV2.FA2,
+			provider.config.fxhash_sales_v2,
+			ask[0].take_contract,
+			new BigNumber(ask[0].take_token_id!)
+		);
+		if (approve_a) args = args.concat(approve_a);
+		args = args.concat(fxhash_v2_bid_accept_arg(provider, ask[0].internal_order_id, new BigNumber(ask[0].take_price)));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}
@@ -27,11 +37,11 @@ export async function get_fxhash_v2_listing_accept_transaction(
 	return args
 }
 
-export async function fxhash_v2_listing_accept(
+export async function fxhash_v2_bid_accept(
 	provider: Provider,
 	sale: string
 ): Promise<OperationResult | undefined> {
-	let args: TransactionArg[] = await get_fxhash_v2_listing_accept_transaction(provider, sale)
+	let args: TransactionArg[] = await get_fxhash_v2_bid_accept_transaction(provider, sale)
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
 	}
@@ -40,14 +50,15 @@ export async function fxhash_v2_listing_accept(
 	return op
 }
 
-export function fxhash_v2_listing_accept_arg(
+export function fxhash_v2_bid_accept_arg(
 	provider: Provider,
 	sale: string,
+	amount: BigNumber
 ): TransactionArg {
 	const parameter: MichelsonData =
 		{
 			int: `${sale}`
 		}
-	return {destination: provider.config.fxhash_sales_v2, entrypoint: "listing_accept", parameter};
+	return {destination: provider.config.fxhash_sales_v2, entrypoint: "offer_accept", parameter};
 }
 
