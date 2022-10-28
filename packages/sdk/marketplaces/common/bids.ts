@@ -9,20 +9,12 @@ import {
 	TransactionArg
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
-import {get_rarible_legacy_buy_transaction, order_of_json, OrderForm} from "../../order";
-import {BuyRequest, get_rarible_v2_buy_transaction} from "../../sales/buy";
-import {get_objkt_fulfill_ask_v2_transaction} from "../objkt/v2/fulfill_ask";
-import {get_objkt_fulfill_ask_v1_transaction} from "../objkt/v1/fulfill_ask";
-import {get_hen_collect_transaction} from "../hen/hen_collect";
 import {marketplace_order} from "../../marketplace-client";
-import {get_teia_collect_transaction} from "../teia/teia_collect";
-import {get_versum_collect_transaction} from "../versum/versum_collect";
-import {get_fxhash_v1_collect_transaction} from "../fxhash/v1/fxhash_v1_collect";
-import {get_fxhash_v2_listing_accept_transaction} from "../fxhash/v2/fxhash_v2_listing_accept";
 import {accept_bid_arg, AcceptBid} from "../../bids";
 import {get_objkt_fulfill_bid_v1_transaction} from "../objkt/v1/fullfil_bid";
 import {get_objkt_fulfill_bid_v2_transaction} from "../objkt/v2/fulfill_offer";
-import {versum_accept_bid_arg} from "../versum/versum_accept_bid";
+import {get_versum_accept_bid_transaction} from "../versum/versum_accept_bid";
+import {get_fxhash_v2_bid_accept_transaction} from "../fxhash/v2/fxhash_v2_bid_accept";
 
 export interface CartBid {
 	order_id: string,
@@ -47,7 +39,7 @@ export async function bid_purchase(provider: Provider, bids: CartBid[]) {
 		take_token_id: true,
 		take_value: true,
 		take_asset_class: true,
-		platform: true
+		platform: true,
 	}, {
 		order_id: order_ids
 	})
@@ -58,7 +50,7 @@ export async function bid_purchase(provider: Provider, bids: CartBid[]) {
 	let transactions: TransactionArg[] = []
 	for (let cart_bid of bids) {
 		const order: marketplace_order = order_map.get(cart_bid.order_id)!
-		const token_id = order.take_token_id == undefined ? cart_bid.token_id! : new BigNumber(order.take_token_id)
+		const token_id = order.take_token_id === undefined ? cart_bid.token_id! : new BigNumber(order.take_token_id)
 		const arg_approve = await approve_v2(
 			provider,
 			await provider.tezos.address(),
@@ -118,17 +110,22 @@ export async function bid_purchase(provider: Provider, bids: CartBid[]) {
 				transactions = transactions.concat(objkt_v2_txs)
 				break;
 			case "VERSUM_V1":
-				const versum_txs = await versum_accept_bid_arg(provider,
+				const versum_txs = await get_versum_accept_bid_transaction(provider,
 					cart_bid.order_id)
 				transactions = transactions.concat(versum_txs)
 				break;
 			case "FXHASH_V2":
-				const fxhash_v2_txs = await get_fxhash_v2_listing_accept_transaction(provider,
+				const fxhash_v2_txs = await get_fxhash_v2_bid_accept_transaction(provider,
 					cart_bid.order_id)
 				transactions = transactions.concat(fxhash_v2_txs)
 				break;
 		}
 	}
-	const op = await send_batch(provider, transactions);
-	return op
+	try {
+		const op = await send_batch(provider, transactions);
+		return op
+	} catch (e) {
+		console.log(e)
+	}
+
 }

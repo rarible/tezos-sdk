@@ -9,10 +9,11 @@ import {
 import {MichelsonData} from "@taquito/michel-codec";
 import BigNumber from "bignumber.js";
 
-export async function versum_accept_bid(
+
+export async function get_versum_accept_bid_transaction(
 	provider: Provider,
 	sale: string,
-): Promise<OperationResult | undefined> {
+): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const ask = await get_orders(provider.config,
 		{internal_order_id: true, take_contract: true, take_token_id: true},
@@ -30,19 +31,28 @@ export async function versum_accept_bid(
 		);
 		if (approve_a) args = args.concat(approve_a);
 		args = args.concat(versum_accept_bid_arg(provider, ask[0].internal_order_id));
-		if (args.length === 0) {
-			throw new Error("Empty array of transaction arguments")
-		}
-		try {
-			const op = await send_batch(provider, args);
-			await op.confirmation();
-			return op
-		} catch (e) {
-			console.log(JSON.stringify(e))
-			console.log((e as Error).message)
-		}
+
+		return args
 	} else {
-		return undefined
+		return []
+	}
+}
+
+export async function versum_accept_bid(
+	provider: Provider,
+	sale: string,
+): Promise<OperationResult | undefined> {
+	let args: TransactionArg[] = await get_versum_accept_bid_transaction(provider, sale);
+	if (args.length === 0) {
+		throw new Error("Empty array of transaction arguments")
+	}
+	try {
+		const op = await send_batch(provider, args);
+		await op.confirmation();
+		return op
+	} catch (e) {
+		console.log(JSON.stringify(e))
+		console.log((e as Error).message)
 	}
 }
 
