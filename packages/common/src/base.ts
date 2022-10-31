@@ -310,34 +310,34 @@ export async function are_royalties_on_chain(
 	token_id: BigNumber
 ): Promise<boolean> {
 	let is_on_chain = false
-  let fetchUrl = provider.config.tzkt + `/v1/contracts/${token_contract}/bigmaps/royalties/keys/${token_id}`
-  try {
-    const r = await fetch(fetchUrl)
-    if (r.status == 200) {
-      is_on_chain = true
-    } else {
-      const key = `{"address":"${token_contract}","nat":"${token_id}"}`
-      fetchUrl = provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`
-      const r_provider = await fetch(fetchUrl)
-      if(r_provider.status == 200){
-        is_on_chain = true
-      } else {
-        const key = `{"address":"${token_contract}","nat":null}`
-        fetchUrl = provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`
-        const r_provider = await fetch(fetchUrl)
-        if(r_provider.status == 200){
-          is_on_chain = true
-        }
-      }
-    }
-    return is_on_chain
-  } catch (e) {
-    throw new NetworkError({
-      url: fetchUrl,
-      data: (e as Error).message,
-      code: NetworkErrorCode.TEZOS_EXTERNAL_ERR,
-    })
-  }
+	let fetchUrl = provider.config.tzkt + `/v1/contracts/${token_contract}/bigmaps/royalties/keys/${token_id}`
+	try {
+		const r = await fetch(fetchUrl)
+		if (r.status == 200) {
+			is_on_chain = true
+		} else {
+			const key = `{"address":"${token_contract}","nat":"${token_id}"}`
+			fetchUrl = provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`
+			const r_provider = await fetch(fetchUrl)
+			if (r_provider.status == 200) {
+				is_on_chain = true
+			} else {
+				const key = `{"address":"${token_contract}","nat":null}`
+				fetchUrl = provider.config.tzkt + `/v1/contracts/${provider.config.royalties_provider}/bigmaps/royalties/keys/${key}`
+				const r_provider = await fetch(fetchUrl)
+				if (r_provider.status == 200) {
+					is_on_chain = true
+				}
+			}
+		}
+		return is_on_chain
+	} catch (e) {
+		throw new NetworkError({
+			url: fetchUrl,
+			data: (e as Error).message,
+			code: NetworkErrorCode.TEZOS_EXTERNAL_ERR,
+		})
+	}
 }
 
 export function uint8array_to_hex(a: Uint8Array): string {
@@ -555,41 +555,41 @@ export function getAsset(sale_type: AssetTypeV2, assetContract?: string, assetId
 
 export async function get_ft_type(config: Config, assetContract: string): Promise<AssetTypeV2 | undefined> {
 	const result = await fetchWrapper(config.tzkt + '/v1/contracts/' + assetContract, {
-    defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
-  })
+		defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
+	})
 	let assetType = undefined
-  try {
-    const data = await result.json()
-    const tzips = data.tzips as Array<string>
-    if (tzips.includes("fa2")) {
-      assetType = AssetTypeV2.FA2
-    } else if (tzips.includes("fa12")) {
-      assetType = AssetTypeV2.FA12
-    }
-  } catch (e) {
-    console.error(e)
-  }
-  return assetType
+	try {
+		const data = await result.json()
+		const tzips = data.tzips as Array<string>
+		if (tzips.includes("fa2")) {
+			assetType = AssetTypeV2.FA2
+		} else if (tzips.includes("fa12")) {
+			assetType = AssetTypeV2.FA12
+		}
+	} catch (e) {
+		console.error(e)
+	}
+	return assetType
 }
 
 export async function get_decimals(config: Config, contract: string, token_id = new BigNumber(0)): Promise<BigNumber> {
-  const result = await fetchWrapper(`${config.tzkt}/v1/tokens?contract=${contract}&tokenId=${token_id}`, {
-    defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
-  })
-  const token = await result.json()
-  if (token.length == 1 && token[0].metadata != undefined) {
-    if (token[0].metadata.decimals != undefined) {
-      return new BigNumber(token[0].metadata.decimals)
-    } else {
-      return new BigNumber(0)
-    }
-  } else {
-    return new BigNumber(0)
-  }
+	const result = await fetchWrapper(`${config.tzkt}/v1/tokens?contract=${contract}&tokenId=${token_id}`, {
+		defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
+	})
+	const token = await result.json()
+	if (token.length == 1 && token[0].metadata != undefined) {
+		if (token[0].metadata.decimals != undefined) {
+			return new BigNumber(token[0].metadata.decimals)
+		} else {
+			return new BigNumber(0)
+		}
+	} else {
+		return new BigNumber(0)
+	}
 }
 
-export function process_token_id(sale_type: AssetTypeV2, token_id: BigNumber | undefined){
-	if(sale_type != AssetTypeV2.FA2){
+export function process_token_id(sale_type: AssetTypeV2, token_id: BigNumber | undefined) {
+	if (sale_type != AssetTypeV2.FA2) {
 		return undefined
 	} else {
 		return token_id

@@ -20,13 +20,13 @@ export async function getDevItemById(itemId: string) {
 }
 
 export async function awaitItem(itemId: string) {
-  return retry(10, 2000, () => {
+  return retry(20, 2000, () => {
     return getTestItemById(itemId)
   })
 }
 
 export async function awaitDevItem(itemId: string) {
-  return retry(10, 2000, () => {
+  return retry(20, 2000, () => {
     return getDevItemById(itemId)
   })
 }

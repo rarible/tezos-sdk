@@ -17,7 +17,7 @@ export async function get_fxhash_v2_listing_accept_transaction(
 		{internal_order_id: true, make_price: true},
 		{order_id: [sale], status: OrderStatus.ACTIVE})
 	if (ask != undefined && ask.length == 1) {
-		args = args.concat(fxhash_v2_listing_accept_arg(provider, ask[0].internal_order_id));
+		args = args.concat(fxhash_v2_listing_accept_arg(provider, ask[0].internal_order_id, ask[0].make_price));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}
@@ -43,11 +43,12 @@ export async function fxhash_v2_listing_accept(
 export function fxhash_v2_listing_accept_arg(
 	provider: Provider,
 	sale: string,
+	price: BigNumber
 ): TransactionArg {
 	const parameter: MichelsonData =
 		{
 			int: `${sale}`
 		}
-	return {destination: provider.config.fxhash_sales_v2, entrypoint: "listing_accept", parameter};
+	return {destination: provider.config.fxhash_sales_v2, entrypoint: "listing_accept", parameter, amount: price};
 }
 

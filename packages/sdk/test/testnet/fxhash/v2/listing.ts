@@ -5,12 +5,12 @@ export async function fxhash_v2_listing() {
   console.log("Running fxhash_v2_listing test")
   console.log("--------------------")
 
-  const sellerEdsk = "edskRpm2mUhvoUjHjXgMoDRxMKhtKfww1ixmWiHCWhHuMEEbGzdnz8Ks4vgarKDtxok7HmrEo1JzkXkdkvyw7Rtw6BNtSd7MJ7"
+  const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
   const buyerEdsk = "edskS4QxJFDSkHaf6Ax3ByfrZj5cKvLUR813uqwE94baan31c1cPPTMvoAvUKbEv2xM9mvtwoLANNTBSdyZf3CCyN2re7qZyi3"
 
   const sellOrder = await testScript('fxhash_v2_listing', {
     edsk: sellerEdsk,
-    item_id: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ:0",
+    item_id: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ:3",
     qty: 1,
     amount: 1,
   })
