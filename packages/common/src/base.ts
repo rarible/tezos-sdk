@@ -153,7 +153,8 @@ export interface Config {
 	fxhash_sales_v1: string,
 	fxhash_sales_v2: string,
 	fxhash_nfts_v1: string,
-	fxhash_nfts_v2: string
+	fxhash_nfts_v2: string,
+	aggregator_tracker: string
 }
 
 export interface Provider {

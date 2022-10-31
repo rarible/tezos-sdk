@@ -203,7 +203,8 @@ export async function testScript(operation?: string, options: any = {}) {
 		fxhash_sales_v1: "KT1BEc3m6yxN856Y4zfArpDqQ1uZZ1HkDTRh",
 		fxhash_sales_v2: "KT1GCLoBSwUaNjaGXq5RtiP8CXTL3cEeMNDs",
 		fxhash_nfts_v1: "KT1VEXkw6rw6pJDP9APGsMneFafArijmM96j",
-		fxhash_nfts_v2: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ"
+		fxhash_nfts_v2: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ",
+		aggregator_tracker: "KT1DajvCNVScudRm3kCHPfUjsRCtmPnm375s"
 	}
 
 	//For prod debug
@@ -270,7 +271,8 @@ export async function testScript(operation?: string, options: any = {}) {
 		fxhash_sales_v1: "KT1BEc3m6yxN856Y4zfArpDqQ1uZZ1HkDTRh",
 		fxhash_sales_v2: "KT1GCLoBSwUaNjaGXq5RtiP8CXTL3cEeMNDs",
 		fxhash_nfts_v1: "KT1VEXkw6rw6pJDP9APGsMneFafArijmM96j",
-		fxhash_nfts_v2: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ"
+		fxhash_nfts_v2: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ",
+		aggregator_tracker: "KT1DajvCNVScudRm3kCHPfUjsRCtmPnm375s"
 	}
 
 	const provider = {
