@@ -204,7 +204,8 @@ export async function testScript(operation?: string, options: any = {}) {
 		fxhash_sales_v2: "KT1GCLoBSwUaNjaGXq5RtiP8CXTL3cEeMNDs",
 		fxhash_nfts_v1: "KT1VEXkw6rw6pJDP9APGsMneFafArijmM96j",
 		fxhash_nfts_v2: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ",
-		aggregator_tracker: "KT1DajvCNVScudRm3kCHPfUjsRCtmPnm375s"
+		aggregator_tracker: "KT1DajvCNVScudRm3kCHPfUjsRCtmPnm375s",
+		aggregator_tracker_id: "09616c6c64617461"
 	}
 
 	//For prod debug
@@ -272,7 +273,8 @@ export async function testScript(operation?: string, options: any = {}) {
 		fxhash_sales_v2: "KT1GCLoBSwUaNjaGXq5RtiP8CXTL3cEeMNDs",
 		fxhash_nfts_v1: "KT1VEXkw6rw6pJDP9APGsMneFafArijmM96j",
 		fxhash_nfts_v2: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ",
-		aggregator_tracker: "KT1DajvCNVScudRm3kCHPfUjsRCtmPnm375s"
+		aggregator_tracker: "KT1DajvCNVScudRm3kCHPfUjsRCtmPnm375s",
+		aggregator_tracker_id: "09616c6c64617461"
 	}
 
 	const provider = {
