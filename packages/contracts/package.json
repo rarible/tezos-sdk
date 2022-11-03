@@ -1,6 +1,6 @@
 {
   "name": "@rarible/tezos-contracts",
-  "version": "0.1.39",
+  "version": "0.1.41",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "author": "",
@@ -16,7 +16,7 @@
     "clean": "rimraf ./dist"
   },
   "dependencies": {
-    "@rarible/tezos-common": "^0.1.39",
+    "@rarible/tezos-common": "^0.1.41",
     "bignumber.js": "^9.0.1"
   },
   "devDependencies": {
