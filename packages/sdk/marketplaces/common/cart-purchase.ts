@@ -18,6 +18,7 @@ import {get_teia_collect_transaction} from "../teia/teia_collect";
 import {get_versum_collect_transaction} from "../versum/versum_collect";
 import {get_fxhash_v1_collect_transaction} from "../fxhash/v1/fxhash_v1_collect";
 import {get_fxhash_v2_listing_accept_transaction} from "../fxhash/v2/fxhash_v2_listing_accept";
+import {get_aggregator_event_transaction} from "./aggregator_event";
 
 export interface CartOrder {
 	order_id: string,
@@ -138,6 +139,7 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 				break;
 		}
 	}
+	transactions = transactions.concat(get_aggregator_event_transaction(provider))
 	const op = await send_batch(provider, transactions);
 	return op
 }

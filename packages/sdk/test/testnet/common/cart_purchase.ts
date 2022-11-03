@@ -82,7 +82,7 @@ export async function cart_purchase() {
 
 	const fxhash_v2_order = await testScript('fxhash_v2_listing', {
 		edsk: sellerEdsk,
-		item_id: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ:0",
+		item_id: "KT1WSwXCWPPAxAy4ibPmFyCm4NhmSJT9UuxQ:3",
 		qty: 1,
 		amount: 1,
 	})

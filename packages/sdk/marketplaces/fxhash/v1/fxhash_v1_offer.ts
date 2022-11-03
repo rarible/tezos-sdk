@@ -65,7 +65,7 @@ export async function fxhash_v1_offer(
     );
     if (approve_a) args = args.concat(approve_a);
     const royalties = await get_royalties(provider, provider.config.fxhash_nfts_v1, order.token_id)
-    args = args.concat(fxhash_v1_offer_arg(provider, order, royalties[0].account, new BigNumber(royalties[0].value).div(10)));
+    args = args.concat(fxhash_v1_offer_arg(provider, order, royalties[0].account, new BigNumber(1000).div(10)));
     if (args.length === 0) {
         throw new Error("Empty array of sell args")
     }

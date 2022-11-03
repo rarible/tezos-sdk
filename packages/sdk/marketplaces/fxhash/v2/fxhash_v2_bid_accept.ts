@@ -27,7 +27,7 @@ export async function get_fxhash_v2_bid_accept_transaction(
 			new BigNumber(ask[0].take_token_id!)
 		);
 		if (approve_a) args = args.concat(approve_a);
-		args = args.concat(fxhash_v2_bid_accept_arg(provider, ask[0].internal_order_id, new BigNumber(ask[0].take_price)));
+		args = args.concat(fxhash_v2_bid_accept_arg(provider, ask[0].internal_order_id));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}
@@ -53,7 +53,6 @@ export async function fxhash_v2_bid_accept(
 export function fxhash_v2_bid_accept_arg(
 	provider: Provider,
 	sale: string,
-	amount: BigNumber
 ): TransactionArg {
 	const parameter: MichelsonData =
 		{
