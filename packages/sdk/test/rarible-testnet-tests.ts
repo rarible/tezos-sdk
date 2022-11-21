@@ -36,64 +36,64 @@ import {batch_v2_sale} from "./testnet/rarible/batch_v2_sale";
 
 
 async function run_tests(){
-    //Batch Mint
-    await batch_mint()
-
-    //Batch Transfer
-    await batch_transfer()
-
-    //Batch sell
-    await batch_v2_sale()
-
-    //Auctions
-    await auction()
-    await auction_fa2()
-    await auction_fa12()
-
-    //Bids
-    await bid()
-    await bid_fa2()
-    await bid_fa12()
-
-    //Bundle Auctions
-    await bundle_auction()
-    await bundle_auction_fa2()
-    await bundle_auction_fa12()
-
-    //Bundle Bids
-    await bundle_bid()
-    await bundle_bid_fa2()
-    await bundle_bid_fa12()
-
-    //Bundle Sales
-    await bundle_sale()
-    await bundle_sale_fa2()
-    await bundle_sale_fa12()
-
-    //Floor Bids
-    await floor_bid()
-    await floor_bid_fa2()
-    await floor_bid_fa12()
-
-    //V2 Sales
-    await v2_sale()
-    await v2_sale_fa2()
-    await v2_sale_fa12()
-
-    //Cancel Sales
-    await v2_cancel()
-    await cancel_bundle_sale()
-
-    //Cancel Bids
-    await cancel_bid()
-    await cancel_floor_bid()
-    await cancel_bundle_bid()
-
-    //Utils
-    await deploy_nft()
-    await get_decimals()
-    await get_ft_type()
-    await pack_unpack()
+    // //Batch Mint
+    // await batch_mint()
+    //
+    // //Batch Transfer
+    // await batch_transfer()
+    //
+    // //Batch sell
+    // await batch_v2_sale()
+    //
+    // //Auctions
+    // await auction()
+    // await auction_fa2()
+    // await auction_fa12()
+    //
+    // //Bids
+    // await bid()
+    // await bid_fa2()
+    // await bid_fa12()
+    //
+    // //Bundle Auctions
+    // await bundle_auction()
+    // await bundle_auction_fa2()
+    // await bundle_auction_fa12()
+    //
+    // //Bundle Bids
+    // await bundle_bid()
+    // await bundle_bid_fa2()
+    // await bundle_bid_fa12()
+    //
+    // //Bundle Sales
+    // await bundle_sale()
+    // await bundle_sale_fa2()
+    // await bundle_sale_fa12()
+    //
+    // //Floor Bids
+    // await floor_bid()
+    // await floor_bid_fa2()
+    // await floor_bid_fa12()
+    //
+    // //V2 Sales
+    // await v2_sale()
+    // await v2_sale_fa2()
+    // await v2_sale_fa12()
+    //
+    // //Cancel Sales
+    // await v2_cancel()
+    // await cancel_bundle_sale()
+    //
+    // //Cancel Bids
+    // await cancel_bid()
+    // await cancel_floor_bid()
+    // await cancel_bundle_bid()
+    //
+    // //Utils
+    // await deploy_nft()
+    // await get_decimals()
+    // await get_ft_type()
+    // await pack_unpack()
     await get_order_type()
     //await get_auction()
 

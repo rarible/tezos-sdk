@@ -119,14 +119,7 @@ export async function put_bid(provider: Provider, bid: Bid) : Promise<string | u
   const op = await send_batch(provider, args);
   await op.confirmation();
   console.log(op.hash)
-  const bid_id = await await_order(provider.config, {
-    take_contract: bid.asset_contract,
-    take_token_id: bid.asset_token_id,
-    status: OrderStatus.ACTIVE,
-    op_hash: op.hash,
-    maker: bidder,
-    platform: Platform.RARIBLE_V2
-  }, 20, 2000)
+  const bid_id = await await_order(provider.config, `TEZOS:${bid.bid_asset_contract}:${bid.bid_asset_token_id}`, op.hash, bidder, 20, 2000)
   return bid_id
 }
 
@@ -141,13 +134,7 @@ export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
   await op.confirmation();
-  const bid_id = await await_order(provider.config, {
-    take_contract: bid.asset_contract,
-    status: OrderStatus.ACTIVE,
-    op_hash: op.hash,
-    maker: bidder,
-    platform: Platform.RARIBLE_V2
-  }, 20, 2000)
+  const bid_id = await await_order(provider.config, `TEZOS:${bid.bid_asset_contract}:${bid.bid_asset_token_id}`, op.hash, bidder, 20, 2000)
   return bid_id
 }
 

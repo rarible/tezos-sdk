@@ -12,14 +12,13 @@ import {
 	fill_order,
 	finish_auction,
 	finish_bundle_auction, get_asset_type,
-	get_auction, get_legacy_orders,
+	get_auction,
 	get_orders,
 	get_royalties,
 	mint,
 	mint_batch,
 	MintingForm,
 	order_of_json,
-	OrderDataRequest,
 	OrderForm,
 	OrderStatus,
 	Platform,
@@ -49,7 +48,7 @@ import {
 	get_active_order_type,
 	get_balance,
 	get_decimals,
-	get_ft_type,
+	get_ft_type, get_orders_by_ids,
 	get_public_key,
 	pk_to_pkh,
 	send,
@@ -792,16 +791,12 @@ export async function testScript(operation?: string, options: any = {}) {
 		case "fill": {
 			try {
 				console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
-				const response = await get_legacy_orders(
-					provider.config, {
-						data: true
-					}, {
-						order_id: [argv.order_id]
-					})
+				const response = await get_orders_by_ids(
+					provider.config, [argv.order_id])
 
-				console.log("fetched order = " + JSON.stringify(response[0].data))
+				console.log("fetched order = " + JSON.stringify(response.orders[0].data))
 
-				const order = order_of_json(response[0].data)
+				const order = order_of_json(response.orders[0].data)
 				const op = await fill_order(provider, order as OrderForm, {
 					amount: new BigNumber(order.make.value)
 				})
@@ -1200,16 +1195,12 @@ export async function testScript(operation?: string, options: any = {}) {
 		case "cancel": {
 			try {
 				console.log(`cancel legacy order=${argv.order_id} from ${await provider.tezos.address()}`)
-				const response = await get_legacy_orders(
-					provider.config, {
-						data: true
-					}, {
-						order_id: [argv.order_id]
-					})
+				const response = await get_orders_by_ids(
+					provider.config, [argv.order_id])
 
-				console.log("fetched order = " + JSON.stringify(response[0].data))
+				console.log("fetched order = " + JSON.stringify(response.orders[0].data))
 
-				const order = order_of_json(response[0].data)
+				const order = order_of_json(response.orders[0].data)
 				const op = await cancel(provider, order as OrderForm)
 				await op.confirmation()
 				return op
@@ -1555,17 +1546,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
 		case "await_v2_order": {
 			try {
-				return await_order(provider.config,
-					{
-						make_contract: argv.ft_contract!,
-						maker: argv.owner!,
-						platform: Platform.RARIBLE_V2,
-						order_id: [argv.order_id],
-						make_token_id: argv.ft_token_id!,
-						status: OrderStatus.ACTIVE
-					},
-					20,
-					2000)
+				return await await_order(provider.config, `TEZOS:${argv.ft_contract!}:${argv.ft_token_id!}`, argv.owner!, argv.order_id, 20, 2000)
 			} catch (e) {
 				console.error(e)
 			}
@@ -1651,13 +1632,7 @@ export async function testScript(operation?: string, options: any = {}) {
 				const [contract, tokenId] = argv.item_id.split(":")
 				const maker = pk_to_pkh(publicKey)
 
-				return get_orders(provider.config, {id: true}, {
-						make_contract: contract,
-						maker: maker,
-						platform: Platform.OBJKT_V2,
-						make_token_id: new BigNumber(tokenId)
-					}
-				)
+				return get_orders(provider.config, maker, true, `TEZOS:${contract}:${tokenId}`)
 			} catch (e) {
 				console.error(e)
 			}
@@ -1672,14 +1647,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
 				const [contract, tokenId] = argv.item_id.split(":")
 
-				const request: OrderDataRequest = {
-					make_contract: contract,
-					make_token_id: new BigNumber(tokenId),
-					maker: argv.owner,
-					take_contract: argv.ft_contract,
-					take_token_id: argv.ft_token_id
-				}
-				return await get_active_order_type(provider.config, request)
+				return await get_active_order_type(provider.config, argv.owner!, `TEZOS:${contract}:${tokenId}`)
 			} catch (e) {
 				console.error(e)
 			}

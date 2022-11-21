@@ -75,17 +75,7 @@ export async function objkt_bid_v1(
 		const op = await send_batch(provider, args);
 		await op.confirmation();
 		console.log(op.hash)
-		const order_id = await await_order(provider.config,
-			{
-				take_contract: bid.token_contract,
-				maker: bidder,
-				platform: Platform.OBJKT_V1,
-				op_hash: op.hash,
-				take_token_id: bid.token_id,
-				status: OrderStatus.ACTIVE
-			},
-			40,
-			2000)
+		const order_id = await await_order(provider.config, `TEZOS:${bid.token_contract}:${bid.token_id}`, op.hash, bidder, 20, 2000)
 		if (order_id == undefined || order_id.length == 0) {
 			throw new Error("Order was not found")
 		}

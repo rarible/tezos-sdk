@@ -1,5 +1,5 @@
 import {
-	get_orders,
+	get_orders, get_orders_by_ids,
 	OperationResult, OrderStatus,
 	Provider,
 	send_batch,
@@ -12,11 +12,9 @@ export async function objkt_retract_bid_v1(
 	sale: string,
 ): Promise<OperationResult | undefined> {
 	let args: TransactionArg[] = [];
-	const ask = await get_orders(provider.config,
-		{internal_order_id: true},
-		{order_id: [sale], status: OrderStatus.ACTIVE})
-	if (ask != undefined && ask.length == 1) {
-		args = args.concat(objkt_retract_bid_v1_arg(provider, ask[0].internal_order_id));
+	const ask = await get_orders_by_ids(provider.config, [sale])
+	if (ask != undefined && ask.orders.length == 1) {
+		args = args.concat(objkt_retract_bid_v1_arg(provider, ask.orders[0].internal_order_id));
 		if (args.length === 0) {
 			throw new Error("Empty array of transaction arguments")
 		}

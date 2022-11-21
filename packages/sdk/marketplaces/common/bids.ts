@@ -1,15 +1,13 @@
 import {
 	approve_v2,
 	AssetTypeV2,
-	get_legacy_orders,
-	get_orders,
+	get_orders_by_ids,
 	Part,
 	Provider,
 	send_batch,
 	TransactionArg
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
-import {marketplace_order} from "../../marketplace-client";
 import {accept_bid_arg, AcceptBid} from "../../bids";
 import {get_objkt_fulfill_bid_v1_transaction} from "../objkt/v1/fullfil_bid";
 import {get_objkt_fulfill_bid_v2_transaction} from "../objkt/v2/fulfill_offer";
@@ -28,28 +26,14 @@ export async function bid_purchase(provider: Provider, bids: CartBid[]) {
 	const order_ids = bids.map(function (bid) {
 		return bid.order_id;
 	})
-	const orders_data = await get_orders(provider.config, {
-		id: true,
-		make_contract: true,
-		make_token_id: true,
-		make_value: true,
-		maker: true,
-		make_asset_class: true,
-		take_contract: true,
-		take_token_id: true,
-		take_value: true,
-		take_asset_class: true,
-		platform: true,
-	}, {
-		order_id: order_ids
-	})
-	const order_map: Map<string, marketplace_order> = new Map()
-	for(let order_data of orders_data){
+	const orders_data = await get_orders_by_ids(provider.config, order_ids)
+	const order_map: Map<string, any> = new Map()
+	for(let order_data of orders_data.orders){
 		order_map.set(order_data.id, order_data)
 	}
 	let transactions: TransactionArg[] = []
 	for (let cart_bid of bids) {
-		const order: marketplace_order = order_map.get(cart_bid.order_id)!
+		const order: any = order_map.get(cart_bid.order_id)!
 		const token_id = order.take_token_id === undefined ? cart_bid.token_id! : new BigNumber(order.take_token_id)
 		const arg_approve = await approve_v2(
 			provider,

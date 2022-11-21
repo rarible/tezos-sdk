@@ -90,17 +90,7 @@ export async function teia_swap(
         const op = await send_batch(provider, args);
         await op.confirmation();
         console.log(op.hash)
-        const order_id = await await_order(provider.config,
-            {
-                make_contract: provider.config.hen_objkts,
-                maker: seller,
-                platform: Platform.TEIA_V1,
-                op_hash: op.hash,
-                make_token_id: order.token_id,
-                status: OrderStatus.ACTIVE
-            },
-            40,
-            2000)
+        const order_id = await await_order(provider.config, `TEZOS:${provider.config.hen_objkts}:${order.token_id}`, op.hash, seller, 20, 2000)
         if (order_id == undefined || order_id.length == 0) {
             throw new Error("Order was not found")
         }
