@@ -21,24 +21,23 @@ export async function get_active_order_type(
 ): Promise<OrderType | undefined> {
 	return retry(30, 2000, async () => {
 		let order_result = await get_orders(config, maker, true, item_id)
-		let continuation = order_result.continuation
+		let continuation = ""
 		while(continuation != undefined) {
 			if (order_result.orders.length > 0) {
 				for (let i = 0; i < order_result.orders.length; i++) {
-					if (order_result.orders[i]["@type"] == "TEZOS_RARIBLE_V2") {
+					if (order_result.orders[i].data["@type"] == "TEZOS_RARIBLE_V2") {
 						return OrderType.V1
-					} else if (order_result.orders[i]["@type"] == "TEZOS_RARIBLE_V3") {
+					} else if (order_result.orders[i].data["@type"] == "TEZOS_RARIBLE_V3") {
 						return OrderType.V2
 					} else {
 						throw new Error("Unrecognized order type: v1/v2 orders has not been found")
 					}
 				}
+				continuation = order_result.continuation
 			} else {
 				throw new Error("Unrecognized order type: v1/v2 orders has not been found")
 			}
 		}
-
-
 	})
 }
 
@@ -83,7 +82,8 @@ export async function get_orders(
 ): Promise<ProtocolOrderPayload> {
 	let continuation_filter = continuation ? `&continuation=${continuation}`: ""
 	let active_filter = is_active ? "&status=ACTIVE" : ""
-	const r = await fetchWrapper(config.union_api + `/orders/sell/byItem?itemId=TEZOS:${item_id}&maker=${maker}&size=${size}${active_filter}${continuation_filter}`)
+	console.log(config.union_api + `/orders/sell/byItem?itemId=TEZOS:${item_id}&maker=TEZOS:${maker}&size=${size}${active_filter}${continuation_filter}`)
+	const r = await fetchWrapper(config.union_api + `/orders/sell/byItem?itemId=TEZOS:${item_id}&maker=TEZOS:${maker}&size=${size}${active_filter}${continuation_filter}`)
 	return await r.json()
 }
 

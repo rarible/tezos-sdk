@@ -1,6 +1,7 @@
 import {AssetTypeV2} from "@rarible/tezos-common";
 import {testScript} from "../../../main/script";
 import {awaitItem} from "../../common/utils";
+import * as assert from "assert";
 
 export async function get_order_type() {
     console.log("--------------------")
@@ -11,18 +12,20 @@ export async function get_order_type() {
 
     const typeV1= await testScript('get_order_type', {
         edsk: sellerEdsk,
-        item_id: "KT1ANmrMfq6SfPe2b59JGVu2CDacoaoL6hW8:7",
-        owner: "tz1RLtXUYvgv7uTZGJ1ZtPQFg3PZkj4NUHrz"
+        item_id: "KT18pVpRXKPY2c4U2yFEGSH3ZnhB2kL8kwXS:45225",
+        owner: "tz1TJYGTJjhFF8tYG5sVSt5EhVZFDzUv9Csz"
     })
     console.log('typeV1', typeV1)
+    assert(typeV1 === 0)
 
     await delay(1000)
     const typeV2 = await testScript('get_order_type', {
         edsk: sellerEdsk,
-        item_id: "KT1RuoaCbnZpMgdRpSoLfJUzSkGz1ZSiaYwj:407",
-        owner: "tz1Pd5qKoPhvsn6Q9JT5MhibpuZVfsBpQGLK"
+        item_id: "KT18pVpRXKPY2c4U2yFEGSH3ZnhB2kL8kwXS:81803",
+        owner: "tz2Pu1xPLsV4LaAK9TSDYGAsYG8e6a5AjwyZ"
     })
     console.log('typeV2', typeV2)
+    assert(typeV2 === 1)
 
 
 }
