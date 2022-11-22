@@ -5,13 +5,15 @@ import {
 	await_order,
 	BundleAuction,
 	BundleAuctionBid,
-	burn, cancel,
+	burn,
+	cancel,
 	cancel_auction,
 	cancel_bundle_auction,
 	deploy_nft_public,
 	fill_order,
 	finish_auction,
-	finish_bundle_auction, get_asset_type,
+	finish_bundle_auction,
+	get_asset_type,
 	get_auction,
 	get_orders,
 	get_royalties,
@@ -20,8 +22,7 @@ import {
 	MintingForm,
 	order_of_json,
 	OrderForm,
-	OrderStatus,
-	Platform,
+	ProtocolActivity,
 	put_auction_bid,
 	put_bundle_auction_bid,
 	set_token_metadata,
@@ -43,20 +44,18 @@ import {
 } from "@rarible/tezos-contracts"
 import {
 	BundleItem,
-	check_asset_type,
 	check_signature,
 	get_active_order_type,
 	get_balance,
 	get_decimals,
-	get_ft_type, get_orders_by_ids,
+	get_ft_type,
+	get_orders_by_ids,
 	get_public_key,
 	pk_to_pkh,
 	send,
 	set_metadata,
-	TransactionArg,
-	UnknownTokenAssetType
+	TransactionArg
 } from "@rarible/tezos-common"
-import fetch from "node-fetch"
 import {
 	accept_bid,
 	accept_bundle_bid,
@@ -80,7 +79,7 @@ import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsS
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/v2/ask";
 import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/v2/fulfill_ask";
-import {HENSwapForm, hen_swap} from "../marketplaces/hen/hen_swap";
+import {hen_swap, HENSwapForm} from "../marketplaces/hen/hen_swap";
 import {hen_collect} from "../marketplaces/hen/hen_collect";
 import {hen_cancel_swap} from "../marketplaces/hen/cancel";
 import {objkt_fulfill_ask_v1} from "../marketplaces/objkt/v1/fulfill_ask";
@@ -88,7 +87,7 @@ import {ask_v1, ObjktAskV1Form} from "../marketplaces/objkt/v1/ask";
 import {objkt_retract_ask_v2} from "../marketplaces/objkt/v2/retract_ask";
 import {objkt_retract_ask_v1} from "../marketplaces/objkt/v1/retract_aks";
 import {cart_purchase, CartOrder} from "../marketplaces/common/cart-purchase";
-import {TEIASwapForm, teia_swap} from "../marketplaces/teia/teia_swap";
+import {teia_swap, TEIASwapForm} from "../marketplaces/teia/teia_swap";
 import {teia_collect} from "../marketplaces/teia/teia_collect";
 import {teia_cancel_swap} from "../marketplaces/teia/cancel";
 import {versum_swap, VersumSwapForm} from "../marketplaces/versum/versum_swap";
@@ -238,7 +237,9 @@ export async function testScript(operation?: string, options: any = {}) {
 	// 	fxhash_sales_v1: "KT1Xo5B7PNBAeynZPmca4bRh6LQow4og1Zb9",
 	// 	fxhash_sales_v2: "KT1GbyoDi7H1sfXmimXpptZJuCdHMh66WS9u",
 	// 	fxhash_nfts_v1: "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE",
-	// 	fxhash_nfts_v2: "KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi"
+	// 	fxhash_nfts_v2: "KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi",
+	// 	aggregator_tracker: "KT1Gv1tPJ3nU5T6VmFc12M6NKc5i51MYVPjG",
+	// 	aggregator_tracker_id: "09616c6c64617461"
 	// }
 
 	const devConfig = {
@@ -1546,7 +1547,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
 		case "await_v2_order": {
 			try {
-				return await await_order(provider.config, `TEZOS:${argv.ft_contract!}:${argv.ft_token_id!}`, argv.owner!, argv.order_id, 20, 2000)
+				return await await_order(provider.config, `TEZOS:${argv.ft_contract!}:${argv.ft_token_id!}`, argv.order_id, ProtocolActivity.LIST, argv.owner!, 20, 2000)
 			} catch (e) {
 				console.error(e)
 			}
@@ -1647,7 +1648,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
 				const [contract, tokenId] = argv.item_id.split(":")
 
-				return await get_active_order_type(provider.config, argv.owner!, `TEZOS:${contract}:${tokenId}`)
+				return await get_active_order_type(provider.config, argv.owner!, `${contract}:${tokenId}`)
 			} catch (e) {
 				console.error(e)
 			}

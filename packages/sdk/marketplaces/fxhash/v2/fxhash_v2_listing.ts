@@ -1,6 +1,6 @@
 import {
     approve_v2,
-    AssetTypeV2, await_order, get_royalties, OrderStatus, Platform,
+    AssetTypeV2, await_order, get_royalties, OrderStatus, Platform, ProtocolActivity,
     Provider, send_batch,
     TransactionArg
 } from "@rarible/tezos-common";
@@ -63,7 +63,7 @@ export async function fxhash_v2_listing(
         const op = await send_batch(provider, args);
         await op.confirmation();
         console.log(op.hash)
-        const order_id = await await_order(provider.config, `TEZOS:${nft_contract}:${order.token_id}`, op.hash, seller, 20, 2000)
+        const order_id = await await_order(provider.config, `TEZOS:${nft_contract}:${order.token_id}`, op.hash, ProtocolActivity.LIST, seller, 20, 2000)
         if (order_id == undefined || order_id.length == 0) {
             throw new Error("Order was not found")
         }

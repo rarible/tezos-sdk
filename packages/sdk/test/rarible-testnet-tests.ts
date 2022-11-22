@@ -51,9 +51,9 @@ async function run_tests(){
     // await auction_fa12()
     //
     // //Bids
-    // await bid()
-    // await bid_fa2()
-    // await bid_fa12()
+    await bid()
+    await bid_fa2()
+    await bid_fa12()
     //
     // //Bundle Auctions
     // await bundle_auction()
@@ -71,21 +71,21 @@ async function run_tests(){
     // await bundle_sale_fa12()
     //
     // //Floor Bids
-    // await floor_bid()
-    // await floor_bid_fa2()
-    // await floor_bid_fa12()
+    await floor_bid()
+    await floor_bid_fa2()
+    await floor_bid_fa12()
     //
     // //V2 Sales
-    // await v2_sale()
-    // await v2_sale_fa2()
-    // await v2_sale_fa12()
-    //
+    await v2_sale()
+    await v2_sale_fa2()
+    await v2_sale_fa12()
+
     // //Cancel Sales
-    // await v2_cancel()
+    await v2_cancel()
     // await cancel_bundle_sale()
     //
     // //Cancel Bids
-    // await cancel_bid()
+    await cancel_bid()
     // await cancel_floor_bid()
     // await cancel_bundle_bid()
     //
@@ -94,7 +94,7 @@ async function run_tests(){
     // await get_decimals()
     // await get_ft_type()
     // await pack_unpack()
-    await get_order_type()
+    // await get_order_type()
     //await get_auction()
 
 }

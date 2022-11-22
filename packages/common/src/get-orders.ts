@@ -14,6 +14,11 @@ export interface ProtocolActivityPayload {
 	activities: any[]
 }
 
+export enum ProtocolActivity {
+	LIST = "LIST",
+	BID = "BID"
+}
+
 export async function get_active_order_type(
 	config: Config,
 	maker: string,
@@ -44,18 +49,20 @@ export async function get_active_order_type(
 export async function await_order(
 	config: Config,
 	item_id: string,
-	maker: string,
 	op_hash: string,
+	type: ProtocolActivity,
+	maker: string,
 	max_tries: number,
 	sleep: number,
 ): Promise<string | undefined> {
 	return retry(max_tries, sleep, async () => {
 		let cursor = ""
 		while (cursor != undefined){
-			const activities = await get_item_activities(config, item_id)
+			const activities = await get_item_activities(config, item_id, type)
+			console.log(JSON.stringify(activities))
 			for(let activity of activities.activities){
 				if(
-					activity["@type"] == "LIST"
+					activity["@type"] == type
 				) {
 					if(
 						activity["maker"] == maker &&
@@ -103,10 +110,12 @@ export async function get_orders_by_ids(
 export async function get_item_activities(
 	config: Config,
 	item_id: string,
+	type: ProtocolActivity,
 	size: number = 100,
 	cursor?: string
 ): Promise<ProtocolActivityPayload> {
 	let cursor_filter = cursor ? `&cursor=${cursor}`: ""
-	const r = await fetchWrapper(config.union_api + `/activities/byItem?itemId=TEZOS:${item_id}&size=${size}${cursor_filter}`)
+	console.log(config.union_api + `/activities/byItem?itemId=TEZOS:${item_id}&type=${type}&size=${size}${cursor_filter}`)
+	const r = await fetchWrapper(config.union_api + `/activities/byItem?itemId=TEZOS:${item_id}&type=LIST&size=${size}${cursor_filter}`)
 	return await r.json()
 }

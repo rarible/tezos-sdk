@@ -4,7 +4,7 @@ import {
     AssetTypeV2, await_order, get_royalties,
     objkt_parts_to_micheline,
     optional_date_arg, OrderStatus,
-    Part, Platform,
+    Part, Platform, ProtocolActivity,
     Provider,
     send_batch,
     TransactionArg
@@ -135,7 +135,7 @@ export async function objkt_bid_v2(
         const op = await send_batch(provider, args);
         await op.confirmation();
         console.log(op.hash)
-        const order_id = await await_order(provider.config, `TEZOS:${order.token_contract}:${order.token_id}`, op.hash, bidder, 20, 2000)
+        const order_id = await await_order(provider.config, `TEZOS:${order.token_contract}:${order.token_id}`, op.hash, ProtocolActivity.BID, bidder, 20, 2000)
         if (order_id == undefined || order_id.length == 0) {
             throw new Error("Order was not found")
         }

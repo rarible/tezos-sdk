@@ -1,5 +1,5 @@
 import {
-	await_order, OrderStatus, Platform,
+	await_order, OrderStatus, Platform, ProtocolActivity,
 	Provider, send_batch,
 	TransactionArg
 } from "@rarible/tezos-common";
@@ -78,7 +78,7 @@ export async function versum_bid(
 		const op = await send_batch(provider, args);
 		await op.confirmation();
 		console.log(op.hash)
-		const order_id = await await_order(provider.config, `TEZOS:${bid.contract}:${bid.token_id}`, op.hash, bidder, 20, 2000)
+		const order_id = await await_order(provider.config, `TEZOS:${bid.contract}:${bid.token_id}`, op.hash, ProtocolActivity.BID, bidder, 20, 2000)
 
 		if (order_id == undefined || order_id.length == 0) {
 			throw new Error("Order was not found")

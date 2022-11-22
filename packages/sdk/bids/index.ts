@@ -12,7 +12,7 @@ import {
   OrderStatus,
   Part,
   parts_to_micheline,
-  Platform,
+  Platform, ProtocolActivity,
   Provider,
   send_batch,
   TransactionArg
@@ -119,11 +119,11 @@ export async function put_bid(provider: Provider, bid: Bid) : Promise<string | u
   const op = await send_batch(provider, args);
   await op.confirmation();
   console.log(op.hash)
-  const bid_id = await await_order(provider.config, `TEZOS:${bid.bid_asset_contract}:${bid.bid_asset_token_id}`, op.hash, bidder, 20, 2000)
+  const bid_id = await await_order(provider.config, `${bid.asset_contract}:${bid.asset_token_id}`, op.hash, ProtocolActivity.BID, bidder, 20, 2000)
   return bid_id
 }
 
-export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise<string | undefined> {
+export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise<OperationResult> {
   const bidder = await get_address(provider)
   let arg_approve : TransactionArg | undefined
   const processed_amount = await absolute_amount(provider.config, bid.bid.bid_amount, bid.bid_type, bid.bid_asset_contract, bid.bid_asset_token_id)
@@ -134,8 +134,7 @@ export async function put_floor_bid(provider: Provider, bid: FloorBid) : Promise
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
   await op.confirmation();
-  const bid_id = await await_order(provider.config, `TEZOS:${bid.bid_asset_contract}:${bid.bid_asset_token_id}`, op.hash, bidder, 20, 2000)
-  return bid_id
+  return op
 }
 
 export async function put_bundle_bid(provider: Provider, bid: BundleBid) : Promise<OperationResult> {
