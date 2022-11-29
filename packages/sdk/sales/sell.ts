@@ -99,7 +99,7 @@ export async function sellV2(
 	}
 	const op = await send_batch(provider, args);
 	await op.confirmation();
-	const order_id = await await_order(provider.config, `TEZOS:${order.s_asset_contract}:${order.s_asset_token_id}`, op.hash, ProtocolActivity.LIST, seller, 20, 2000)
+	const order_id = await await_order(provider.config, `${order.s_asset_contract}:${order.s_asset_token_id}`, op.hash, ProtocolActivity.LIST, seller, 20, 2000)
 	if (order_id == undefined) {
 		throw new Error("Order was not found")
 	}

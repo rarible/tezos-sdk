@@ -11,28 +11,25 @@ import BigNumber from "bignumber.js";
 
 export async function get_objkt_fulfill_bid_v1_transaction(
 	provider: Provider,
-	sale: string,
+	take_contract: string,
+	take_token_id: string,
+	internal_order_id: string
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
-	const ask = await get_orders_by_ids(provider.config, [sale])
-	if (ask != undefined && ask.orders.length == 1) {
-		const seller = await provider.tezos.address();
-		const approve_a = await approve_v2(
-			provider,
-			seller,
-			AssetTypeV2.FA2,
-			provider.config.objkt_sales_v1,
-			ask.orders[0].take_contract,
-			new BigNumber(ask.orders[0].take_token_id!)
-		);
-		if (approve_a) args = args.concat(approve_a);
-		args = args.concat(objkt_fulfill_bid_v1_arg(provider,
-			ask.orders[0].internal_order_id));
-		if (args.length === 0) {
-			throw new Error("Empty array of transaction arguments")
-		}
-	} else {
-		throw new Error("OBJKT V2 order does not exist")
+	const seller = await provider.tezos.address();
+	const approve_a = await approve_v2(
+		provider,
+		seller,
+		AssetTypeV2.FA2,
+		provider.config.objkt_sales_v1,
+		take_contract,
+		new BigNumber(take_token_id!)
+	);
+	if (approve_a) args = args.concat(approve_a);
+	args = args.concat(objkt_fulfill_bid_v1_arg(provider,
+		internal_order_id));
+	if (args.length === 0) {
+		throw new Error("Empty array of transaction arguments")
 	}
 	return args
 }
@@ -41,7 +38,8 @@ export async function objkt_fulfill_bid_v1(
 	provider: Provider,
 	sale: string
 ): Promise<OperationResult | undefined> {
-	let args: TransactionArg[] = await get_objkt_fulfill_bid_v1_transaction(provider, sale)
+	const ask = await get_orders_by_ids(provider.config, [sale])
+	let args: TransactionArg[] = await get_objkt_fulfill_bid_v1_transaction(provider, ask.orders[0].take.contract, ask.orders[0].take.tokenId, ask.orders[0].data.internalOrderId)
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
 	}

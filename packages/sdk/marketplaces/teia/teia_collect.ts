@@ -11,16 +11,12 @@ import {MichelsonData} from "@taquito/michel-codec";
 export async function get_teia_collect_transaction(
 	provider: Provider,
 	sale: string,
+	make_price: BigNumber
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
-	const ask = await get_orders_by_ids(provider.config, [sale])
-	if (ask != undefined && ask.orders.length == 1) {
-		args = args.concat(teia_collect_arg(provider, ask.orders[0].internal_order_id, new BigNumber(ask.orders[0].make_price)));
-		if (args.length === 0) {
-			throw new Error("Empty array of transaction arguments")
-		}
-	} else {
-		throw new Error("TEIA order does not exist")
+	args = args.concat(teia_collect_arg(provider, sale, new BigNumber(make_price)));
+	if (args.length === 0) {
+		throw new Error("Empty array of transaction arguments")
 	}
 	return args
 }
@@ -29,7 +25,8 @@ export async function teia_collect(
 	provider: Provider,
 	sale: string
 ): Promise<OperationResult | undefined> {
-	let args: TransactionArg[] = await get_teia_collect_transaction(provider, sale)
+	const ask = await get_orders_by_ids(provider.config, [sale])
+	let args: TransactionArg[] = await get_teia_collect_transaction(provider, ask.orders[0].data.internalOrderId, new BigNumber(ask.orders[0].makePrice))
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
 	}

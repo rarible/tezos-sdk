@@ -11,18 +11,14 @@ import {MichelsonData} from "@taquito/michel-codec";
 export async function get_objkt_fulfill_ask_v2_transaction(
 	provider: Provider,
 	sale: string,
+	make_price: BigNumber
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
-	const ask = await get_orders_by_ids(provider.config, [sale])
-	if (ask != undefined && ask.orders.length == 1) {
-		args = args.concat(objkt_fulfill_ask_v2_arg(provider,
-			ask.orders[0].internal_order_id,
-			ask.orders[0].make_price));
-		if (args.length === 0) {
-			throw new Error("Empty array of transaction arguments")
-		}
-	} else {
-		throw new Error("OBJKT V2 order does not exist")
+	args = args.concat(objkt_fulfill_ask_v2_arg(provider,
+		sale,
+		make_price));
+	if (args.length === 0) {
+		throw new Error("Empty array of transaction arguments")
 	}
 	return args
 }
@@ -31,7 +27,8 @@ export async function objkt_fulfill_ask_v2(
 	provider: Provider,
 	sale: string
 ): Promise<OperationResult | undefined> {
-	let args: TransactionArg[] = await get_objkt_fulfill_ask_v2_transaction(provider, sale)
+	const ask = await get_orders_by_ids(provider.config, [sale])
+	let args: TransactionArg[] = await get_objkt_fulfill_ask_v2_transaction(provider, ask.orders[0].internalOrderId, ask.orders[0].makePrice)
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
 	}

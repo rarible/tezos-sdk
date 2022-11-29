@@ -58,7 +58,7 @@ export async function fxhash_v2_bid(
         const op = await send_batch(provider, args);
         await op.confirmation();
         console.log(op.hash)
-        const order_id = await await_order(provider.config, `TEZOS:${nft_contract}:${order.token_id}`, op.hash, ProtocolActivity.BID, seller, 20, 2000)
+        const order_id = await await_order(provider.config, `${nft_contract}:${order.token_id}`, op.hash, ProtocolActivity.BID, seller, 20, 2000)
         if (order_id == undefined || order_id.length == 0) {
             throw new Error("Order was not found")
         }

@@ -59,16 +59,15 @@ export async function await_order(
 		let cursor = ""
 		while (cursor != undefined){
 			const activities = await get_item_activities(config, item_id, type)
-			console.log(JSON.stringify(activities))
 			for(let activity of activities.activities){
 				if(
-					activity["@type"] == type
+					activity["@type"] === type.valueOf()
 				) {
 					if(
-						activity["maker"] == maker &&
-						activity["hash"] == op_hash
+						activity["maker"] === `TEZOS:${maker}` &&
+						activity["hash"] === op_hash
 					){
-						return activity["id"]
+						return activity["orderId"]
 					}
 				}
 				cursor = activity["cursor"]
@@ -89,7 +88,6 @@ export async function get_orders(
 ): Promise<ProtocolOrderPayload> {
 	let continuation_filter = continuation ? `&continuation=${continuation}`: ""
 	let active_filter = is_active ? "&status=ACTIVE" : ""
-	console.log(config.union_api + `/orders/sell/byItem?itemId=TEZOS:${item_id}&maker=TEZOS:${maker}&size=${size}${active_filter}${continuation_filter}`)
 	const r = await fetchWrapper(config.union_api + `/orders/sell/byItem?itemId=TEZOS:${item_id}&maker=TEZOS:${maker}&size=${size}${active_filter}${continuation_filter}`)
 	return await r.json()
 }
@@ -98,12 +96,14 @@ export async function get_orders_by_ids(
 	config: Config,
 	ids: string[],
 ): Promise<ProtocolOrderPayload> {
-	const r = await fetch(config.union_api + `/orders/byIds}`, {
-		method: 'post',
-		body: JSON.stringify(ids),
+	const r = await fetchWrapper(config.union_api + `/orders/byIds`, {
+		method: 'POST',
+		body: JSON.stringify({ids: ids}),
 		headers: {'Content-Type': 'application/json'}
 	});
-	return await r.json()
+	const res = await r.json()
+	console.log(res)
+	return res
 }
 
 
@@ -115,7 +115,8 @@ export async function get_item_activities(
 	cursor?: string
 ): Promise<ProtocolActivityPayload> {
 	let cursor_filter = cursor ? `&cursor=${cursor}`: ""
-	console.log(config.union_api + `/activities/byItem?itemId=TEZOS:${item_id}&type=${type}&size=${size}${cursor_filter}`)
 	const r = await fetchWrapper(config.union_api + `/activities/byItem?itemId=TEZOS:${item_id}&type=LIST&size=${size}${cursor_filter}`)
-	return await r.json()
+	const res = await r.json()
+	console.log(res)
+	return res
 }

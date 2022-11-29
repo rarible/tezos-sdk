@@ -85,22 +85,22 @@ export async function bid_purchase(provider: Provider, bids: CartBid[]) {
 				break;
 			case "OBJKT_V1":
 				const objkt_v1_txs = await get_objkt_fulfill_bid_v1_transaction(provider,
-					cart_bid.order_id)
+					order.take.contract, order.take.tokenId, order.data.internalOrderId)
 				transactions = transactions.concat(objkt_v1_txs)
 				break;
 			case "OBJKT_V2":
 				const objkt_v2_txs = await get_objkt_fulfill_bid_v2_transaction(provider,
-					cart_bid.order_id)
+					order.take.contract, order.take.tokenId, order.data.internalOrderId)
 				transactions = transactions.concat(objkt_v2_txs)
 				break;
 			case "VERSUM_V1":
 				const versum_txs = await get_versum_accept_bid_transaction(provider,
-					cart_bid.order_id)
+					order.take.contract, order.take.tokenId, order.data.internalOrderId)
 				transactions = transactions.concat(versum_txs)
 				break;
 			case "FXHASH_V2":
 				const fxhash_v2_txs = await get_fxhash_v2_bid_accept_transaction(provider,
-					cart_bid.order_id)
+					order.take.contract, order.take.tokenId, order.data.internalOrderId)
 				transactions = transactions.concat(fxhash_v2_txs)
 				break;
 		}
