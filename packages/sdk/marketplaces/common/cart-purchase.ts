@@ -28,7 +28,10 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 	const order_ids = orders.map(function (order) {
 		return order.order_id;
 	})
+	console.log(order_ids)
 	const orders_data = await get_orders_by_ids(provider.config, order_ids)
+	console.log(JSON.stringify(orders_data))
+
 	const order_map: Map<string, any> = new Map()
 	for(let order_data of orders_data.orders){
 		order_map.set(order_data.id, order_data)
@@ -36,8 +39,8 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 	let transactions: TransactionArg[] = []
 	for (let cart_order of orders) {
 		const order: any = order_map.get(cart_order.order_id)!
-		switch (order.platform) {
-			case "RARIBLE_V1":
+		switch (order.data["@type"]) {
+			case "TEZOS_RARIBLE_V2":
 				// const response = await get_legacy_orders(
 				// 	provider.config, {
 				// 		data: true
@@ -51,32 +54,32 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 				// })
 				// transactions = transactions.concat(rarible_legacy_txs)
 				break;
-			case "RARIBLE_V2":
+			case "TEZOS_RARIBLE_V3":
 				let asset_type = AssetTypeV2.XTZ
-				switch (order.take_asset_class) {
+				switch (order.take.type["@type"]) {
 					case "XTZ":
 						break;
 					case "TEZOS_FT":
-						if (order.take_contract != undefined && order.take_token_id != undefined) {
+						if (order.take.type.contract != undefined && order.take.type.tokenId != undefined) {
 							asset_type = AssetTypeV2.FA2
 						} else {
 							asset_type = AssetTypeV2.FA12
 						}
 				}
 				let take_token_id = undefined;
-				if(order.take_token_id != undefined){
-					take_token_id = new BigNumber(order.take_token_id)
+				if(order.take.type.tokenId != undefined){
+					take_token_id = new BigNumber(order.take.type.tokenId)
 				} else {
 					take_token_id = undefined
 				}
 				const buyRequest: BuyRequest = {
-					asset_contract: order.make_contract!,
-					asset_token_id: new BigNumber(order.make_token_id!),
-					asset_seller: order.maker,
+					asset_contract: order.make.type.contract!.split("TEZOS:")[1],
+					asset_token_id: new BigNumber(order.make.type.tokenId!),
+					asset_seller: order.maker.split("TEZOS:")[1],
 					sale_type: asset_type,
-					sale_asset_contract: order.take_contract,
+					sale_asset_contract: order.take.type.contract === undefined ? undefined : order.take.type.contract.split("TEZOS:")[1],
 					sale_asset_token_id: take_token_id,
-					sale_amount: order.take_value,
+					sale_amount: new BigNumber(order.take.value),
 					sale_qty: new BigNumber(cart_order.amount),
 					sale_payouts: cart_order.payouts,
 					sale_origin_fees: cart_order.origin_fees,
@@ -85,39 +88,39 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 				const rarible_v2_txs = await get_rarible_v2_buy_transaction(provider, buyRequest)
 				transactions = transactions.concat(rarible_v2_txs)
 				break;
-			case "OBJKT_V1":
+			case "TEZOS_OBJKT_V1":
 				const objkt_v1_txs = await get_objkt_fulfill_ask_v1_transaction(provider,
-					cart_order.order_id)
+					order.data.internalOrderId, new BigNumber(order.makePrice))
 				transactions = transactions.concat(objkt_v1_txs)
 				break;
-			case "OBJKT_V2":
+			case "TEZOS_OBJKT_V2":
 				const objkt_v2_txs = await get_objkt_fulfill_ask_v2_transaction(provider,
-					cart_order.order_id)
+					order.data.internalOrderId, new BigNumber(order.makePrice))
 				transactions = transactions.concat(objkt_v2_txs)
 				break;
-			case "HEN":
+			case "TEZOS_HEN":
 				const hen_txs = await get_hen_collect_transaction(provider,
-					cart_order.order_id)
+					order.data.internalOrderId, new BigNumber(order.makePrice))
 				transactions = transactions.concat(hen_txs)
 				break;
-			case "TEIA_V1":
+			case "TEZOS_TEIA_V1":
 				const teia_txs = await get_teia_collect_transaction(provider,
-					cart_order.order_id)
+					order.data.internalOrderId, new BigNumber(order.makePrice))
 				transactions = transactions.concat(teia_txs)
 				break;
-			case "VERSUM_V1":
+			case "TEZOS_VERSUM_V1":
 				const versum_txs = await get_versum_collect_transaction(provider,
-					cart_order.order_id, cart_order.amount)
+					order.data.internalOrderId, new BigNumber(order.makePrice), cart_order.amount)
 				transactions = transactions.concat(versum_txs)
 				break;
-			case "FXHASH_V1":
+			case "TEZOS_FXHASH_V1":
 				const fxhash_v1_txs = await get_fxhash_v1_collect_transaction(provider,
-					cart_order.order_id)
+					order.data.internalOrderId, new BigNumber(order.makePrice))
 				transactions = transactions.concat(fxhash_v1_txs)
 				break;
-			case "FXHASH_V2":
+			case "TEZOS_FXHASH_V2":
 				const fxhash_v2_txs = await get_fxhash_v2_listing_accept_transaction(provider,
-					cart_order.order_id)
+					order.data.internalOrderId, new BigNumber(order.makePrice))
 				transactions = transactions.concat(fxhash_v2_txs)
 				break;
 		}
