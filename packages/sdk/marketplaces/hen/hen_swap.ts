@@ -6,6 +6,7 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import {get_address} from "@rarible/tezos-common";
 
 export declare type HENSwapForm = {
     editions: BigNumber;
@@ -58,7 +59,7 @@ export async function hen_swap(
     order: HENSwapForm,
 ): Promise<string> {
     let args: TransactionArg[] = [];
-    const seller = await provider.tezos.address();
+    const seller = await get_address(provider);
 
     const approve_a = await approve_v2(
         provider,

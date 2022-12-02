@@ -10,6 +10,7 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import {get_address} from "@rarible/tezos-common";
 
 
 export declare type ObjktBidV1Form = {
@@ -60,7 +61,7 @@ export async function objkt_bid_v1(
 	bid: ObjktBidV1Form,
 ): Promise<string> {
 	let args: TransactionArg[] = [];
-	const bidder = await provider.tezos.address();
+	const bidder = await get_address(provider)
 
 	bid.shares = await get_royalties(provider, bid.token_contract, bid.token_id)
 	for(let share of bid.shares){

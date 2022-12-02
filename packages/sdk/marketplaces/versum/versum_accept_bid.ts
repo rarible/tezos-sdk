@@ -8,6 +8,7 @@ import {
 } from "@rarible/tezos-common";
 import {MichelsonData} from "@taquito/michel-codec";
 import BigNumber from "bignumber.js";
+import {get_address} from "@rarible/tezos-common";
 
 
 export async function get_versum_accept_bid_transaction(
@@ -19,7 +20,7 @@ export async function get_versum_accept_bid_transaction(
 		{internal_order_id: true, take_contract: true, take_token_id: true},
 		{order_id: [sale], status: OrderStatus.ACTIVE})
 	if (ask != undefined && ask.length == 1) {
-		const seller = await provider.tezos.address();
+		const seller = await get_address(provider);
 
 		const approve_a = await approve_v2(
 			provider,
