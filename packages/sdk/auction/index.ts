@@ -14,6 +14,7 @@ import {
 } from "@rarible/tezos-common"
 import {MichelsonData} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
+import {get_storage} from "@rarible/tezos-common";
 
 export interface Auction {
   sell_asset_contract: string,
@@ -140,7 +141,7 @@ export async function start_bundle_auction(provider: Provider, auction: BundleAu
 }
 
 export async function get_auction(provider: Provider, auction_asset_contract: string, auction_asset_token_id: BigNumber, auction_seller: string) : Promise<AuctionInfo | undefined> {
-  const st : StorageAuctions = await provider.tezos.storage(provider.config.auction_storage)
+  const st : StorageAuctions = await get_storage(provider, provider.config.auction_storage)
   const auction: AuctionInfo | undefined = await st.auctions.get({
     0: auction_asset_contract,
     1: auction_asset_token_id.toFixed(),
@@ -150,7 +151,7 @@ export async function get_auction(provider: Provider, auction_asset_contract: st
 }
 
 export async function get_bundle_auction(provider: Provider, bundle: Array<BundleItem>, auction_seller: string) : Promise<BundleAuctionInfo | undefined> {
-  const st : StorageAuctions = await provider.tezos.storage(provider.config.auction_storage)
+  const st : StorageAuctions = await get_storage(provider, provider.config.auction_storage)
   const auction: BundleAuctionInfo | undefined = await st.bundle_auctions.get({
     0: mkPackedBundle(bundle),
     1: auction_seller,

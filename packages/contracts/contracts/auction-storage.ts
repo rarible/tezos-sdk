@@ -1,4 +1,5 @@
 import { Provider, DeployResult } from "@rarible/tezos-common"
+import {get_originate} from "@rarible/tezos-common";
 
 export const auction_storage_code =
   [  {  "prim": "storage",
@@ -4721,5 +4722,5 @@ export async function deploy_auction_storage(
   owner: string,
 ) : Promise<DeployResult> {
   const init = auction_storage_storage(owner)
-  return provider.tezos.originate({init, code: auction_storage_code})
+  return get_originate(provider, {init, code: auction_storage_code})
 }

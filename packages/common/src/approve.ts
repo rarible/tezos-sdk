@@ -2,7 +2,7 @@ import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-cod
 import BigNumber from "bignumber.js"
 import {
   Asset, AssetTypeV2,
-  b58enc,
+  b58enc, get_storage,
   hex_to_uint8array,
   OperationResult,
   Provider,
@@ -37,7 +37,7 @@ export async function approve_fa1_2_arg(
   spender?: string
 ) : Promise<TransactionArg | undefined > {
   spender = spender || provider.config.transfer_proxy
-  const st : StorageFA1_2 = await provider.tezos.storage(contract)
+  const st : StorageFA1_2 = await get_storage(provider, contract)
   let key_exists = false
   let allowance = 0
   try {
@@ -80,7 +80,7 @@ export async function approve_fa2_arg(
   use_all = false,
   operator ?: string) : Promise<TransactionArg | undefined> {
   operator = operator || provider.config.transfer_proxy
-  const st : StorageFA2 = await provider.tezos.storage(contract)
+  const st : StorageFA2 = await get_storage(provider, contract)
   let key_exists = false
   if (use_all && st.operators_for_all) {
     try {

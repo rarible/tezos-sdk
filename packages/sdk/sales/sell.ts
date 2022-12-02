@@ -16,6 +16,7 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import {get_address} from "@rarible/tezos-common";
 
 export declare type OrderFormV2 = {
 	s_asset_contract: string;
@@ -74,7 +75,7 @@ export async function sellV2(
 	order: OrderFormV2,
 ): Promise<string> {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const seller = await get_address(provider)
 
 	order = await process_order(provider.config, order)
 
@@ -123,7 +124,7 @@ export async function sellBundle(
 	order: BundleOrderForm,
 ) {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const seller = await get_address(provider);
 	const processed_amount = await absolute_amount(provider.config,
 		order.s_sale.sale_amount,
 		order.s_sale_type,
@@ -154,9 +155,10 @@ export async function sell_v2_batch(
 	order_form: Array<OrderFormV2>,
 ) {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const seller = await get_address(provider);
 	for (const order of order_form) {
-		const processed_amount = await absolute_amount(provider.config,
+		const processed_amount = await absolute_amount(
+      provider.config,
 			order.s_sale.sale_amount,
 			order.s_sale_type,
 			order.s_sale_asset_contract,

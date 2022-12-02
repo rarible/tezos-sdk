@@ -15,6 +15,7 @@ import {get_objkt_fulfill_bid_v1_transaction} from "../objkt/v1/fullfil_bid";
 import {get_objkt_fulfill_bid_v2_transaction} from "../objkt/v2/fulfill_offer";
 import {get_versum_accept_bid_transaction} from "../versum/versum_accept_bid";
 import {get_fxhash_v2_bid_accept_transaction} from "../fxhash/v2/fxhash_v2_bid_accept";
+import {get_address} from "@rarible/tezos-common";
 
 export interface CartBid {
 	order_id: string,
@@ -53,7 +54,7 @@ export async function bid_purchase(provider: Provider, bids: CartBid[]) {
 		const token_id = order.take_token_id === undefined ? cart_bid.token_id! : new BigNumber(order.take_token_id)
 		const arg_approve = await approve_v2(
 			provider,
-			await provider.tezos.address(),
+			await get_address(provider),
 			AssetTypeV2.FA2,
 			provider.config.transfer_manager,
 			order.take_contract,

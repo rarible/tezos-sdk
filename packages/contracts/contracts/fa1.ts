@@ -1,5 +1,6 @@
 import { Provider, DeployResult, to_hex } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
+import {get_originate} from "@rarible/tezos-common";
 
 export const fa1_code : any =
   [ { "prim": "parameter",
@@ -311,5 +312,5 @@ export async function deploy_fa1(
   uri?: string,
 ) : Promise<DeployResult> {
   const init = fa1_storage(owner, supply, decimals, name, symbol, uri)
-  return provider.tezos.originate({init, code: fa1_code})
+  return get_originate(provider, {init, code: fa1_code})
 }

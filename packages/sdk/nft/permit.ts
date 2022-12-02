@@ -1,8 +1,9 @@
 import { Provider, send, OperationResult, TransactionArg, hex_to_uint8array, uint8array_to_hex } from "@rarible/tezos-common"
-import { pk_to_pkh } from "@rarible/tezos-common"
 import { BigMapAbstraction } from "@taquito/taquito"
 import { MichelsonData, MichelsonType, packDataBytes } from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
+import {get_address, get_storage, get_sign} from "@rarible/tezos-common";
+import {get_public_key} from "@rarible/tezos-common";
 const blake = require('blakejs');
 
 function pack(data: MichelsonData, type: MichelsonType) : string {
@@ -46,9 +47,9 @@ export async function get_counter(
   provider: Provider,
   contract: string,
   mandator?: string) : Promise<BigNumber> {
-  const st = await provider.tezos.storage(contract)
+  const st = await get_storage(provider, contract)
   const permits : BigMapAbstraction = st.permits
-  const issuer = (mandator==undefined) ? await provider.tezos.address() : mandator
+  const issuer = (mandator==undefined) ? await get_address(provider) : mandator
   try {
     const info : any | undefined = await permits.get(issuer)
     if (info==undefined) return new BigNumber(0)
@@ -63,8 +64,8 @@ export async function make_permit(
   contract: string,
   transfers: TransferDestination[],
   counter?: number) : Promise<{permit: Permit, transfer: TransactionArg}> {
-  const issuer = await provider.tezos.address()
-  const pk = await provider.tezos.public_key()
+  const issuer = await get_address(provider);
+  const pk = await get_public_key(provider)
   if (pk==undefined) throw new Error("cannot retrieve public key from wallet")
   const transfer_data : MichelsonData = [ {
     prim: "Pair", args: [
@@ -89,7 +90,7 @@ export async function make_permit(
     ]
   }
   const permit = pack(permit_data, permit_type)
-  const {signature} = await provider.tezos.sign(permit)
+  const {signature} = await get_sign(provider, permit)
   return {
     permit: { hash, signature, pk, contract },
     transfer: {

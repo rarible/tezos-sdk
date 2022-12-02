@@ -3,6 +3,7 @@ import {Provider, AssetType, Asset, get_decimals} from "@rarible/tezos-common"
 import { OrderForm, OrderRaribleV2DataV1 } from "./utils"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
+import {get_sign} from "@rarible/tezos-common";
 const keccak_base = require("keccak")
 
 export function keccak(s : string) : string {
@@ -148,7 +149,7 @@ export async function sign_order(
   order: OrderForm) : Promise<string> {
   let o = await order_to_struct(provider, order)
   let h = pack(o, order_type)
-  const {signature} = await provider.tezos.sign(h)
+  const {signature} = await get_sign(provider, h)
   return signature
 }
 

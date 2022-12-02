@@ -1,5 +1,6 @@
 import { Provider, DeployResult } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
+import {get_originate} from "@rarible/tezos-common";
 
 export const transfer_manager_code : any =
   [  {  "prim": "storage",
@@ -16488,5 +16489,5 @@ export async function deploy_transfer_manager(
   default_fee_receiver: string,
   protocol_fee: BigNumber) : Promise<DeployResult> {
   const init = transfer_manager_storage(owner, default_fee_receiver, protocol_fee)
-  return provider.tezos.originate({init, code: transfer_manager_code})
+  return get_originate(provider, {init, code: transfer_manager_code})
 }

@@ -1,4 +1,5 @@
 import { Provider, DeployResult } from "@rarible/tezos-common"
+import {get_originate} from "@rarible/tezos-common";
 
 export const exchange_code : any =
   [  {  "prim": "storage",
@@ -17516,5 +17517,5 @@ export async function deploy_exchange(
   royalties: string,
   fill: string) : Promise<DeployResult> {
   const init = exchange_storage(owner, transfer_manager, royalties, fill)
-  return provider.tezos.originate({init, code: exchange_code})
+  return get_originate(provider, {init, code: exchange_code})
 }
