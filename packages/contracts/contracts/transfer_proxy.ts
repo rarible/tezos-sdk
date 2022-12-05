@@ -1,4 +1,5 @@
 import { Provider, DeployResult } from "@rarible/tezos-common"
+import {get_originate} from "@rarible/tezos-common";
 
 export const transfer_proxy_code : any =
   [  {  "prim": "storage",
@@ -645,5 +646,5 @@ export async function deploy_transfer_proxy(
   owner: string,
 ) : Promise<DeployResult> {
   const init = transfer_proxy_storage(owner)
-  return provider.tezos.originate({init, code: transfer_proxy_code})
+  return get_originate(provider, {init, code: transfer_proxy_code})
 }

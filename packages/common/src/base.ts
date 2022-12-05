@@ -241,55 +241,171 @@ export function asset_type_contract(p: Provider, a: TokenAssetType) {
 	}
 }
 
-export function get_address(p: Provider): Promise<string> {
-	return p.tezos.address()
+export async function get_address(p: Provider): Promise<string> {
+  try {
+	  return await p.tezos.address()
+  } catch (e) {
+    throw new TezosProviderError({
+      error: e,
+      method: "provider.tezos.address"
+    })
+  }
 }
 
-export function get_public_key(p: Provider): Promise<string | undefined> {
-	return p.tezos.public_key()
+export async function get_public_key(p: Provider): Promise<string | undefined> {
+  try {
+	  return await p.tezos.public_key()
+  } catch (e) {
+    throw new TezosProviderError({
+      error: e,
+      method: "provider.tezos.public_key"
+    })
+  }
 }
 
-export async function storage<T>(p: Provider, contract: string): Promise<T> {
-	return p.tezos.storage(contract)
+export async function get_storage(p: Provider, contract: string): Promise<any> {
+  try {
+	  return await p.tezos.storage(contract)
+  } catch (e) {
+    throw new TezosProviderError({
+      error: e,
+      args: { contract },
+      method: "provider.tezos.storage"
+    })
+  }
+}
+
+export async function get_sign(
+  provider: Provider,
+  bytes: string,
+  type?: "operation" | "message"
+): Promise<{ signature: string, prefix: string }> {
+  try {
+    return await provider.tezos.sign(bytes, type)
+  } catch (e) {
+    throw new TezosProviderError({
+      error: e,
+      args: {bytes, type},
+      method: "provider.tezos.sign"
+    })
+  }
+}
+export async function get_originate(
+  provider: Provider,
+  arg: OriginateParams
+): Promise<DeployResult> {
+  try {
+    return wrap_confirmation(await provider.tezos.originate(arg), arg)
+  } catch (e) {
+    throw new TezosProviderError({
+      error: e,
+      args: {arg},
+      method: "provider.tezos.originate"
+    })
+  }
 }
 
 export async function send(
 	provider: Provider,
 	arg: TransactionArg,
 ): Promise<OperationResult> {
-	if (arg.entrypoint && arg.parameter) {
-		return provider.tezos.transfer({
-			amount: (arg.amount != undefined) ? Number(arg.amount) : 0,
-			to: arg.destination,
-			parameter: {entrypoint: arg.entrypoint, value: arg.parameter}
-		})
-	} else {
-		return provider.tezos.transfer({
-			amount: (arg.amount != undefined) ? Number(arg.amount) : 0,
-			to: arg.destination
-		})
-	}
+  try {
+    if (arg.entrypoint && arg.parameter) {
+      const op = await provider.tezos.transfer({
+        amount: (arg.amount != undefined) ? Number(arg.amount) : 0,
+        to: arg.destination,
+        parameter: {entrypoint: arg.entrypoint, value: arg.parameter}
+      })
+      return wrap_confirmation(op, arg)
+    } else {
+      const op = await provider.tezos.transfer({
+        amount: (arg.amount != undefined) ? Number(arg.amount) : 0,
+        to: arg.destination
+      })
+      return wrap_confirmation(op, arg)
+    }
+  } catch (e) {
+    throw new TezosProviderError({
+      error: e,
+      args: arg,
+      method: "send"
+    })
+  }
+}
+
+export class TezosProviderError extends Error {
+  error: any
+  args: any
+  method: string
+  constructor(data: {error?: any, args?: any, method: string}) {
+    super(TezosProviderError.getErrorMessage(data?.error) || "TezosProviderError")
+    Object.setPrototypeOf(this, TezosProviderError.prototype)
+    this.name = "TezosProviderError"
+    this.error = data?.error
+    this.args = data?.args
+    this.method = data?.method
+  }
+
+  static getErrorMessage(error: any) {
+    try {
+      const notEnoughFundsError = error?.data?.find((err: any) =>
+        err?.id?.endsWith && err.id.endsWith("implicit.empty_implicit_contract")
+      )
+
+      if (notEnoughFundsError) {
+        return `Wallet ${notEnoughFundsError?.implicit} does not have enough funds for transaction`
+      }
+    } catch (e) {}
+    return error?.message || ""
+  }
 }
 
 export async function send_batch(
 	provider: Provider,
 	args: TransactionArg[],
 ): Promise<OperationResult> {
-	const params = args.map(function (p) {
-		if (p.entrypoint && p.parameter) {
-			return {
-				amount: (p.amount != undefined) ? Number(p.amount) : 0,
-				to: p.destination,
-				parameter: {entrypoint: p.entrypoint, value: p.parameter}
-			}
-		} else {
-			return {
-				amount: (p.amount != undefined) ? Number(p.amount) : 0,
-				to: p.destination,
-			}
-		}
-	})
-	return provider.tezos.batch(params)
+  let params
+  try {
+    params = args.map(function (p) {
+      if (p.entrypoint && p.parameter) {
+        return {
+          amount: (p.amount != undefined) ? Number(p.amount) : 0,
+          to: p.destination,
+          parameter: {entrypoint: p.entrypoint, value: p.parameter}
+        }
+      } else {
+        return {
+          amount: (p.amount != undefined) ? Number(p.amount) : 0,
+          to: p.destination,
+        }
+      }
+    })
+	  const op = await provider.tezos.batch(params)
+    return wrap_confirmation(op, args)
+  } catch (e) {
+    throw new TezosProviderError({
+      error: e,
+      args: args,
+      method: "send_batch"
+    })
+  }
+}
+
+export function wrap_confirmation<T extends OperationResult>(op: T, args?: any) {
+  return {
+    ...op,
+    confirmation: async () => {
+      try {
+        return await op.confirmation()
+      } catch (e) {
+        throw new TezosProviderError({
+          error: e,
+          args: args,
+          method: "confirmation"
+        })
+      }
+    }
+  }
 }
 
 export async function get_royalties(

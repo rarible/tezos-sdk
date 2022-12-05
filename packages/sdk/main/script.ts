@@ -108,6 +108,7 @@ import {versum_accept_bid} from "../marketplaces/versum/versum_accept_bid";
 import {fxhash_v2_bid, FXHashV2BidForm} from "../marketplaces/fxhash/v2/fxhash_v2_bid";
 import {fxhash_v2_bid_accept} from "../marketplaces/fxhash/v2/fxhash_v2_bid_accept";
 import {bid_purchase, CartBid} from "../marketplaces/common/bids";
+import {get_address} from "@rarible/tezos-common";
 
 export async function testScript(operation?: string, options: any = {}) {
 	let argv = await yargs(process.argv.slice(2)).options({
@@ -283,9 +284,9 @@ export async function testScript(operation?: string, options: any = {}) {
 	}
 	console.log('is_dev=', !!argv.is_dev)
 
-	const to = (argv.to) ? argv.to : await provider.tezos.address()
-	const owner = (argv.owner) ? argv.owner : await provider.tezos.address()
-	const fee_receiver = (argv.fee_receiver) ? argv.fee_receiver : await provider.tezos.address()
+	const to = (argv.to) ? argv.to : await get_address(provider)
+	const owner = (argv.owner) ? argv.owner : await get_address(provider)
+	const fee_receiver = (argv.fee_receiver) ? argv.fee_receiver : await get_address(provider)
 	const asset_class = (amount == undefined) ? "NFT" : "MT"
 
 	switch (action) {
@@ -1405,6 +1406,7 @@ export async function testScript(operation?: string, options: any = {}) {
 					bid_data_type: undefined
 				}
 			}
+      console.log('bid request', JSON.stringify(bid, null, '  '))
 			const bid_op = await put_bid(provider, bid)
 			return bid_op
 		}
@@ -1428,6 +1430,7 @@ export async function testScript(operation?: string, options: any = {}) {
 				asset_token_id: new BigNumber(tokenId),
 				bidder: argv.owner!
 			}
+      console.log('bid_data', JSON.stringify(bid_data, null, '  '))
 			const result = await accept_bid(provider, bid_data)
 			return result
 		}

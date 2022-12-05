@@ -6,6 +6,7 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import {get_address} from "@rarible/tezos-common";
 
 export declare type FXHashV2ListingForm = {
     token_id: BigNumber;
@@ -44,7 +45,7 @@ export async function fxhash_v2_listing(
     order: FXHashV2ListingForm,
 ): Promise<string> {
     let args: TransactionArg[] = [];
-    const seller = await provider.tezos.address();
+    const seller = await get_address(provider);
     const nft_contract = order.version == 1? provider.config.fxhash_nfts_v2: provider.config.fxhash_nfts_v1
     const approve_a = await approve_v2(
         provider,

@@ -8,6 +8,7 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import {get_address} from "@rarible/tezos-common";
 
 export async function get_fxhash_v2_bid_accept_transaction(
 	provider: Provider,
@@ -18,7 +19,7 @@ export async function get_fxhash_v2_bid_accept_transaction(
 	let args: TransactionArg[] = [];
 	const approve_a = await approve_v2(
 		provider,
-		await provider.tezos.address(),
+		await get_address(provider),
 		AssetTypeV2.FA2,
 		provider.config.fxhash_sales_v2,
 		take_contract,

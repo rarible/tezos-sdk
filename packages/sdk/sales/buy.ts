@@ -12,7 +12,9 @@ import {
 	Provider,
 	send_batch,
 	StorageSalesV2,
-	TransactionArg
+	TransactionArg,
+  get_address,
+  get_storage
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
@@ -62,7 +64,7 @@ export async function get_rarible_v2_buy_transaction(
 	use_all = false
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const seller = await get_address(provider)
 
 	sale = await process_buy_request(provider.config, sale)
 
@@ -117,7 +119,7 @@ export async function buy_bundle(
 	use_all = false
 ) {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const seller = await get_address(provider);
 	const processed_amount = await absolute_amount(provider.config,
 		sale.sale_amount,
 		sale.sale_type,
@@ -150,7 +152,7 @@ export async function buy_v2_batch(
 	use_all = false
 ) {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const seller = await get_address(provider);
 
 	for (const sale of sale_form) {
 		const processed_amount = await absolute_amount(provider.config,
@@ -282,7 +284,7 @@ export function buy_bundle_arg(
 }
 
 export async function isExistsSaleOrder(provider: Provider, buyRequest: BuyRequest): Promise<boolean> {
-	const st: StorageSalesV2 = await provider.tezos.storage(provider.config.sales_storage)
+	const st: StorageSalesV2 = await get_storage(provider, provider.config.sales_storage)
 	let key_exists = false
 	const ft_token_id = (buyRequest.sale_asset_token_id != undefined) ? new BigNumber(buyRequest.sale_asset_token_id) : new BigNumber(
 		0)

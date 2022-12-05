@@ -1,5 +1,6 @@
 import { Provider, DeployResult } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
+import {get_originate} from "@rarible/tezos-common";
 
 export const auction_code : any =
   [  {  "prim": "storage",
@@ -17133,5 +17134,5 @@ export async function deploy_auction(
   protocol_fee: BigNumber,
   royalties_provider: string) : Promise<DeployResult> {
   const init = auction_storage(owner, default_fee_receiver, protocol_fee, royalties_provider)
-  return provider.tezos.originate({init, code: auction_code})
+  return get_originate(provider, {init, code: auction_code})
 }

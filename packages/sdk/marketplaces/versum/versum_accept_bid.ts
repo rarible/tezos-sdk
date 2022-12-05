@@ -8,6 +8,7 @@ import {
 } from "@rarible/tezos-common";
 import {MichelsonData} from "@taquito/michel-codec";
 import BigNumber from "bignumber.js";
+import {get_address} from "@rarible/tezos-common";
 
 
 export async function get_versum_accept_bid_transaction(
@@ -17,7 +18,7 @@ export async function get_versum_accept_bid_transaction(
 	take_token_id: string
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const seller = await get_address(provider);
 
 	const approve_a = await approve_v2(
 		provider,

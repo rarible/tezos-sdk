@@ -11,6 +11,7 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import {get_address} from "@rarible/tezos-common";
 
 
 export declare type ObjktBidV2Form = {
@@ -120,7 +121,7 @@ export async function objkt_bid_v2(
     order: ObjktBidV2Form,
 ): Promise<string> {
     let args: TransactionArg[] = [];
-    const bidder = await provider.tezos.address();
+    const bidder = await get_address(provider);
     const processed_amount = await absolute_amount(provider.config, order.amount, AssetTypeV2.XTZ, undefined, undefined)
 
     order.shares = await get_royalties(provider, order.token_contract, order.token_id)

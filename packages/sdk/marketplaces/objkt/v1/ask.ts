@@ -10,6 +10,7 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import {get_address} from "@rarible/tezos-common";
 
 
 export declare type ObjktAskV1Form = {
@@ -77,7 +78,7 @@ export async function ask_v1(
     order: ObjktAskV1Form,
 ): Promise<string> {
     let args: TransactionArg[] = [];
-    const seller = await provider.tezos.address();
+    const seller = await get_address(provider);
     const processed_amount = await absolute_amount(provider.config, order.amount, AssetTypeV2.XTZ, undefined, undefined)
 
     const approve_a = await approve_v2(

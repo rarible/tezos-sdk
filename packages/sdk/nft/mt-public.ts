@@ -1,4 +1,5 @@
 import { Provider, DeployResult, getJson, make_metadata } from "@rarible/tezos-common"
+import {get_originate} from "@rarible/tezos-common";
 
 const mt_public_contract_url = "https://raw.githubusercontent.com/rarible/contracts-registry/master/tezos/mt-public.json"
 
@@ -64,5 +65,5 @@ export async function deploy_mt_public(
 ) : Promise<DeployResult> {
 	const init = mt_public_storage(owner, metadata, metadata_uri)
 	const code = contractJson ?? await getJson(mt_public_contract_url)
-	return provider.tezos.originate({init, code})
+	return get_originate(provider, {init, code})
 }

@@ -8,6 +8,7 @@ import {
 } from "@rarible/tezos-common";
 import BigNumber from "bignumber.js";
 import {MichelsonData} from "@taquito/michel-codec";
+import {get_address} from "@rarible/tezos-common";
 
 export async function get_objkt_fulfill_bid_v2_transaction(
 	provider: Provider,
@@ -16,7 +17,7 @@ export async function get_objkt_fulfill_bid_v2_transaction(
 	take_token_id: string,
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
-	const seller = await provider.tezos.address();
+	const seller = await get_address(provider);
 	const approve_a = await approve_v2(
 		provider,
 		seller,
