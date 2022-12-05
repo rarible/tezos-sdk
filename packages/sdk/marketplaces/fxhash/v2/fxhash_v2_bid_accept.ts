@@ -11,9 +11,9 @@ import {MichelsonData} from "@taquito/michel-codec";
 
 export async function get_fxhash_v2_bid_accept_transaction(
 	provider: Provider,
+	sale: string,
 	take_contract: string,
 	take_token_id: string,
-	internal_order_id: string
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const approve_a = await approve_v2(
@@ -25,7 +25,7 @@ export async function get_fxhash_v2_bid_accept_transaction(
 		new BigNumber(take_token_id!)
 	);
 	if (approve_a) args = args.concat(approve_a);
-	args = args.concat(fxhash_v2_bid_accept_arg(provider, internal_order_id));
+	args = args.concat(fxhash_v2_bid_accept_arg(provider, sale));
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
 	}

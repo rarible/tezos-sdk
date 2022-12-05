@@ -11,9 +11,9 @@ import BigNumber from "bignumber.js";
 
 export async function get_objkt_fulfill_bid_v1_transaction(
 	provider: Provider,
+	sale: string,
 	take_contract: string,
 	take_token_id: string,
-	internal_order_id: string
 ): Promise<TransactionArg[]> {
 	let args: TransactionArg[] = [];
 	const seller = await provider.tezos.address();
@@ -27,7 +27,7 @@ export async function get_objkt_fulfill_bid_v1_transaction(
 	);
 	if (approve_a) args = args.concat(approve_a);
 	args = args.concat(objkt_fulfill_bid_v1_arg(provider,
-		internal_order_id));
+		sale));
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
 	}

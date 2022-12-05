@@ -184,7 +184,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		sales: "KT1NcKyhPnomH9PKGeDfvMiGH2PDgKCd5YuM",
 		sales_storage: "KT1GDUG3AQpaKmFjFHVn6PYT4Tprf7ccwPa3",
 		transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
-		bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+		bid: "KT1FiEi3Mrh31vJy39CD4hkiHq1AfRpTxNpF",
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ghostnet.tzkt.io",
@@ -220,7 +220,7 @@ export async function testScript(operation?: string, options: any = {}) {
 	// 	sales: "KT1N4Rrm6BU6229drs6scrH3vard1pPngMyA",
 	// 	sales_storage: "KT1BEZNm3E25rZtXfPPKr5Jxygbi2kL2cCEW",
 	// 	transfer_manager: "KT1ViAbsAM5rp89yVydEkbQozp1S12zqirwS",
-	// 	bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+	// 	bid: "KT1FiEi3Mrh31vJy39CD4hkiHq1AfRpTxNpF",
 	// 	bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 	// 	sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 	// 	tzkt: "https://api.tzkt.io",
@@ -255,7 +255,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		sales: "KT1NcKyhPnomH9PKGeDfvMiGH2PDgKCd5YuM",
 		sales_storage: "KT1GDUG3AQpaKmFjFHVn6PYT4Tprf7ccwPa3",
 		transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
-		bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+		bid: "KT1FiEi3Mrh31vJy39CD4hkiHq1AfRpTxNpF",
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ghostnet.tzkt.io",
@@ -797,7 +797,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
 				console.log("fetched order = " + JSON.stringify(response.orders[0].data))
 
-				const order = order_of_json(response.orders[0].data)
+				const order = order_of_json(JSON.parse(response.orders[0].data))
 				const op = await fill_order(provider, order as OrderForm, {
 					amount: new BigNumber(order.make.value)
 				})

@@ -83,7 +83,7 @@ export async function get_orders(
 	maker: string,
 	is_active: boolean,
 	item_id: string,
-	size: number = 100,
+	size: number = 1000,
 	continuation?: string
 ): Promise<ProtocolOrderPayload> {
 	let continuation_filter = continuation ? `&continuation=${continuation}`: ""
@@ -102,7 +102,6 @@ export async function get_orders_by_ids(
 		headers: {'Content-Type': 'application/json'}
 	});
 	const res = await r.json()
-	console.log(res)
 	return res
 }
 
@@ -111,12 +110,11 @@ export async function get_item_activities(
 	config: Config,
 	item_id: string,
 	type: ProtocolActivity,
-	size: number = 100,
+	size: number = 1000,
 	cursor?: string
 ): Promise<ProtocolActivityPayload> {
 	let cursor_filter = cursor ? `&cursor=${cursor}`: ""
-	const r = await fetchWrapper(config.union_api + `/activities/byItem?itemId=TEZOS:${item_id}&type=LIST&size=${size}${cursor_filter}`)
+	const r = await fetchWrapper(config.union_api + `/activities/byItem?itemId=TEZOS:${item_id}&type=${type}&size=${size}${cursor_filter}`)
 	const res = await r.json()
-	console.log(res)
 	return res
 }

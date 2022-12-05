@@ -34,48 +34,48 @@ export async function bid_purchase(provider: Provider, bids: CartBid[]) {
 	let transactions: TransactionArg[] = []
 	for (let cart_bid of bids) {
 		const order: any = order_map.get(cart_bid.order_id)!
-		const token_id = order.take_token_id === undefined ? cart_bid.token_id! : new BigNumber(order.take_token_id)
+		const token_id = order.take.type.tokenId === undefined ? cart_bid.token_id! : new BigNumber(order.take.type.tokenId)
 		const arg_approve = await approve_v2(
 			provider,
 			await provider.tezos.address(),
 			AssetTypeV2.FA2,
 			provider.config.transfer_manager,
-			order.take_contract,
+			order.take.type.contract.split("TEZOS:")[1],
 			new BigNumber(token_id)
 		)
 		if (arg_approve) transactions = transactions.concat(arg_approve)
-		switch (order.platform) {
-			case "RARIBLE_V2":
+		switch (order.data["@type"]) {
+			case "TEZOS_RARIBLE_V3":
 				let asset_type = AssetTypeV2.XTZ
-				switch (order.take_asset_class) {
+				switch (order.make.type["@type"]) {
 					case "XTZ":
 						break;
 					case "TEZOS_FT":
-						if (order.take_contract != undefined && order.take_token_id != undefined) {
+						if (order.make.type.contract != undefined && order.make.type.tokenId != undefined) {
 							asset_type = AssetTypeV2.FA2
 						} else {
 							asset_type = AssetTypeV2.FA12
 						}
 				}
 				let make_token_id = undefined;
-				if(order.make_token_id != undefined){
-					make_token_id = new BigNumber(order.make_token_id)
+				if(order.make.type.tokenId != undefined){
+					make_token_id = new BigNumber(order.make.type.tokenId)
 				} else {
 					make_token_id = undefined
 				}
 
 				const bid_request: AcceptBid = {
-					asset_contract: order.take_contract!,
+					asset_contract: order.take.type.contract!.split("TEZOS:")[1],
 					asset_token_id: token_id,
-					bidder: order.maker,
+					bidder: order.maker.split("TEZOS:")[1],
 					bid_type: asset_type,
-					bid_asset_contract: order.make_contract,
+					bid_asset_contract: order.make.type.contract === undefined ? undefined : order.make.type.contract.split("TEZOS:")[1],
 					bid_asset_token_id: make_token_id,
 					bid_origin_fees : cart_bid.origin_fees,
 					bid_payouts : cart_bid.payouts
 				}
 
-				if (order.take_token_id == undefined){
+				if (order.take.type.tokenId == undefined){
 					const bid_arg = accept_bid_arg(provider, bid_request, true)
 					transactions = transactions.concat(bid_arg)
 				} else {
@@ -83,24 +83,24 @@ export async function bid_purchase(provider: Provider, bids: CartBid[]) {
 					transactions = transactions.concat(bid_arg)
 				}
 				break;
-			case "OBJKT_V1":
+			case "TEZOS_OBJKT_V1":
 				const objkt_v1_txs = await get_objkt_fulfill_bid_v1_transaction(provider,
-					order.take.contract, order.take.tokenId, order.data.internalOrderId)
+					order.data.internalOrderId, order.take.type.contract.split("TEZOS:")[1], order.take.type.tokenId)
 				transactions = transactions.concat(objkt_v1_txs)
 				break;
-			case "OBJKT_V2":
+			case "TEZOS_OBJKT_V2":
 				const objkt_v2_txs = await get_objkt_fulfill_bid_v2_transaction(provider,
-					order.take.contract, order.take.tokenId, order.data.internalOrderId)
+					order.data.internalOrderId, order.take.type.contract.split("TEZOS:")[1], order.take.type.tokenId)
 				transactions = transactions.concat(objkt_v2_txs)
 				break;
-			case "VERSUM_V1":
+			case "TEZOS_VERSUM_V1":
 				const versum_txs = await get_versum_accept_bid_transaction(provider,
-					order.take.contract, order.take.tokenId, order.data.internalOrderId)
+					order.data.internalOrderId, order.take.type.contract.split("TEZOS:")[1], order.take.type.tokenId)
 				transactions = transactions.concat(versum_txs)
 				break;
-			case "FXHASH_V2":
+			case "TEZOS_FXHASH_V2":
 				const fxhash_v2_txs = await get_fxhash_v2_bid_accept_transaction(provider,
-					order.take.contract, order.take.tokenId, order.data.internalOrderId)
+					order.data.internalOrderId, order.take.type.contract.split("TEZOS:")[1], order.take.type.tokenId)
 				transactions = transactions.concat(fxhash_v2_txs)
 				break;
 		}

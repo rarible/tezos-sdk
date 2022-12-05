@@ -41,18 +41,11 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 		const order: any = order_map.get(cart_order.order_id)!
 		switch (order.data["@type"]) {
 			case "TEZOS_RARIBLE_V2":
-				// const response = await get_legacy_orders(
-				// 	provider.config, {
-				// 		data: true
-				// 	}, {
-				// 		order_id: [order.id]
-				// 	})
-				//
-				// const order_form = order_of_json(response[0].data)
-				// const rarible_legacy_txs = await get_rarible_legacy_buy_transaction(provider, order_form as OrderForm, {
-				// 	amount: new BigNumber(order_form.make.value)
-				// })
-				// transactions = transactions.concat(rarible_legacy_txs)
+				const order_form = order_of_json(JSON.parse(order.data.legacyData))
+				const rarible_legacy_txs = await get_rarible_legacy_buy_transaction(provider, order_form as OrderForm, {
+					amount: new BigNumber(order_form.make.value)
+				})
+				transactions = transactions.concat(rarible_legacy_txs)
 				break;
 			case "TEZOS_RARIBLE_V3":
 				let asset_type = AssetTypeV2.XTZ
