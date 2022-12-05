@@ -28,9 +28,7 @@ export async function cart_purchase(provider: Provider, orders: CartOrder[]) {
 	const order_ids = orders.map(function (order) {
 		return order.order_id;
 	})
-	console.log(order_ids)
 	const orders_data = await get_orders_by_ids(provider.config, order_ids)
-	console.log(JSON.stringify(orders_data))
 
 	const order_map: Map<string, any> = new Map()
 	for(let order_data of orders_data.orders){
