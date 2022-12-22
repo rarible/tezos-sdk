@@ -9,7 +9,7 @@ import {
 	optional_date_arg, OrderStatus,
 	Part,
 	parts_to_micheline,
-	Platform, process_token_id,
+	Platform, process_token_id, ProtocolActivity,
 	Provider,
 	send_batch,
 	TransactionArg
@@ -100,19 +100,7 @@ export async function sellV2(
 	}
 	const op = await send_batch(provider, args);
 	await op.confirmation();
-	const order_id = await await_order(provider.config,
-		{
-			make_contract: order.s_asset_contract,
-			maker: seller,
-			platform: Platform.RARIBLE_V2,
-			op_hash: op.hash,
-			make_token_id: order.s_asset_token_id,
-			status: OrderStatus.ACTIVE,
-			take_contract: order.s_sale_asset_contract,
-			take_token_id: order.s_sale_asset_token_id
-		},
-		40,
-		2000)
+	const order_id = await await_order(provider.config, `${order.s_asset_contract}:${order.s_asset_token_id}`, op.hash, ProtocolActivity.LIST, seller, 20, 2000)
 	if (order_id == undefined) {
 		throw new Error("Order was not found")
 	}

@@ -5,24 +5,24 @@ import {
 	await_order,
 	BundleAuction,
 	BundleAuctionBid,
-	burn, cancel,
+	burn,
+	cancel,
 	cancel_auction,
 	cancel_bundle_auction,
 	deploy_nft_public,
 	fill_order,
 	finish_auction,
-	finish_bundle_auction, get_asset_type,
-	get_auction, get_legacy_orders,
+	finish_bundle_auction,
+	get_asset_type,
+	get_auction,
 	get_orders,
 	get_royalties,
 	mint,
 	mint_batch,
 	MintingForm,
 	order_of_json,
-	OrderDataRequest,
 	OrderForm,
-	OrderStatus,
-	Platform,
+	ProtocolActivity,
 	put_auction_bid,
 	put_bundle_auction_bid,
 	set_token_metadata,
@@ -44,20 +44,18 @@ import {
 } from "@rarible/tezos-contracts"
 import {
 	BundleItem,
-	check_asset_type,
 	check_signature,
 	get_active_order_type,
 	get_balance,
 	get_decimals,
 	get_ft_type,
+	get_orders_by_ids,
 	get_public_key,
 	pk_to_pkh,
 	send,
 	set_metadata,
-	TransactionArg,
-	UnknownTokenAssetType
+	TransactionArg
 } from "@rarible/tezos-common"
-import fetch from "node-fetch"
 import {
 	accept_bid,
 	accept_bundle_bid,
@@ -81,7 +79,7 @@ import {buy_bundle, buy_v2_batch, BuyBundleRequest, BuyRequest, buyV2, isExistsS
 import {cancel_bundle_sale, CancelBundleSaleRequest, cancelV2, CancelV2OrderRequest} from "../sales/cancel";
 import {ask_v2, ObjktAskV2Form} from "../marketplaces/objkt/v2/ask";
 import {objkt_fulfill_ask_v2} from "../marketplaces/objkt/v2/fulfill_ask";
-import {HENSwapForm, hen_swap} from "../marketplaces/hen/hen_swap";
+import {hen_swap, HENSwapForm} from "../marketplaces/hen/hen_swap";
 import {hen_collect} from "../marketplaces/hen/hen_collect";
 import {hen_cancel_swap} from "../marketplaces/hen/cancel";
 import {objkt_fulfill_ask_v1} from "../marketplaces/objkt/v1/fulfill_ask";
@@ -89,7 +87,7 @@ import {ask_v1, ObjktAskV1Form} from "../marketplaces/objkt/v1/ask";
 import {objkt_retract_ask_v2} from "../marketplaces/objkt/v2/retract_ask";
 import {objkt_retract_ask_v1} from "../marketplaces/objkt/v1/retract_aks";
 import {cart_purchase, CartOrder} from "../marketplaces/common/cart-purchase";
-import {TEIASwapForm, teia_swap} from "../marketplaces/teia/teia_swap";
+import {teia_swap, TEIASwapForm} from "../marketplaces/teia/teia_swap";
 import {teia_collect} from "../marketplaces/teia/teia_collect";
 import {teia_cancel_swap} from "../marketplaces/teia/cancel";
 import {versum_swap, VersumSwapForm} from "../marketplaces/versum/versum_swap";
@@ -187,7 +185,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		sales: "KT1NcKyhPnomH9PKGeDfvMiGH2PDgKCd5YuM",
 		sales_storage: "KT1GDUG3AQpaKmFjFHVn6PYT4Tprf7ccwPa3",
 		transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
-		bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+		bid: "KT1FiEi3Mrh31vJy39CD4hkiHq1AfRpTxNpF",
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ghostnet.tzkt.io",
@@ -223,7 +221,7 @@ export async function testScript(operation?: string, options: any = {}) {
 	// 	sales: "KT1N4Rrm6BU6229drs6scrH3vard1pPngMyA",
 	// 	sales_storage: "KT1BEZNm3E25rZtXfPPKr5Jxygbi2kL2cCEW",
 	// 	transfer_manager: "KT1ViAbsAM5rp89yVydEkbQozp1S12zqirwS",
-	// 	bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+	// 	bid: "KT1FiEi3Mrh31vJy39CD4hkiHq1AfRpTxNpF",
 	// 	bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 	// 	sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 	// 	tzkt: "https://api.tzkt.io",
@@ -240,7 +238,9 @@ export async function testScript(operation?: string, options: any = {}) {
 	// 	fxhash_sales_v1: "KT1Xo5B7PNBAeynZPmca4bRh6LQow4og1Zb9",
 	// 	fxhash_sales_v2: "KT1GbyoDi7H1sfXmimXpptZJuCdHMh66WS9u",
 	// 	fxhash_nfts_v1: "KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE",
-	// 	fxhash_nfts_v2: "KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi"
+	// 	fxhash_nfts_v2: "KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi",
+	// 	aggregator_tracker: "KT1Gv1tPJ3nU5T6VmFc12M6NKc5i51MYVPjG",
+	// 	aggregator_tracker_id: "09616c6c64617461"
 	// }
 
 	const devConfig = {
@@ -256,7 +256,7 @@ export async function testScript(operation?: string, options: any = {}) {
 		sales: "KT1NcKyhPnomH9PKGeDfvMiGH2PDgKCd5YuM",
 		sales_storage: "KT1GDUG3AQpaKmFjFHVn6PYT4Tprf7ccwPa3",
 		transfer_manager: "KT1LQPAi4w2h9GQ61S8NkENcNe3aH5vYEzjP",
-		bid: "KT1MwKGYWWbXtfYdnQfwspwz5ZGfqGwiJuQF",
+		bid: "KT1FiEi3Mrh31vJy39CD4hkiHq1AfRpTxNpF",
 		bid_storage: "KT1ENB6j6uMJn7MtDV4VBE1AAAwCXmMtzjUd",
 		sig_checker: "KT1RGGtyEtGCYCoRmTVNoE6qg3ay2DZ1BmDs",
 		tzkt: "https://api.ghostnet.tzkt.io",
@@ -793,16 +793,12 @@ export async function testScript(operation?: string, options: any = {}) {
 		case "fill": {
 			try {
 				console.log(`fill order=${argv.order_id} from ${await provider.tezos.address()}`)
-				const response = await get_legacy_orders(
-					provider.config, {
-						data: true
-					}, {
-						order_id: [argv.order_id]
-					})
+				const response = await get_orders_by_ids(
+					provider.config, [argv.order_id])
 
-				console.log("fetched order = " + JSON.stringify(response[0].data))
+				console.log("fetched order = " + JSON.stringify(response.orders[0].data))
 
-				const order = order_of_json(response[0].data)
+				const order = order_of_json(JSON.parse(response.orders[0].data))
 				const op = await fill_order(provider, order as OrderForm, {
 					amount: new BigNumber(order.make.value)
 				})
@@ -1201,16 +1197,12 @@ export async function testScript(operation?: string, options: any = {}) {
 		case "cancel": {
 			try {
 				console.log(`cancel legacy order=${argv.order_id} from ${await provider.tezos.address()}`)
-				const response = await get_legacy_orders(
-					provider.config, {
-						data: true
-					}, {
-						order_id: [argv.order_id]
-					})
+				const response = await get_orders_by_ids(
+					provider.config, [argv.order_id])
 
-				console.log("fetched order = " + JSON.stringify(response[0].data))
+				console.log("fetched order = " + JSON.stringify(response.orders[0].data))
 
-				const order = order_of_json(response[0].data)
+				const order = order_of_json(response.orders[0].data)
 				const op = await cancel(provider, order as OrderForm)
 				await op.confirmation()
 				return op
@@ -1558,17 +1550,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
 		case "await_v2_order": {
 			try {
-				return await_order(provider.config,
-					{
-						make_contract: argv.ft_contract!,
-						maker: argv.owner!,
-						platform: Platform.RARIBLE_V2,
-						order_id: [argv.order_id],
-						make_token_id: argv.ft_token_id!,
-						status: OrderStatus.ACTIVE
-					},
-					20,
-					2000)
+				return await await_order(provider.config, `TEZOS:${argv.ft_contract!}:${argv.ft_token_id!}`, argv.order_id, ProtocolActivity.LIST, argv.owner!, 20, 2000)
 			} catch (e) {
 				console.error(e)
 			}
@@ -1654,13 +1636,7 @@ export async function testScript(operation?: string, options: any = {}) {
 				const [contract, tokenId] = argv.item_id.split(":")
 				const maker = pk_to_pkh(publicKey)
 
-				return get_orders(provider.config, {id: true}, {
-						make_contract: contract,
-						maker: maker,
-						platform: Platform.OBJKT_V2,
-						make_token_id: new BigNumber(tokenId)
-					}
-				)
+				return get_orders(provider.config, maker, true, `TEZOS:${contract}:${tokenId}`)
 			} catch (e) {
 				console.error(e)
 			}
@@ -1675,14 +1651,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
 				const [contract, tokenId] = argv.item_id.split(":")
 
-				const request: OrderDataRequest = {
-					make_contract: contract,
-					make_token_id: new BigNumber(tokenId),
-					maker: argv.owner,
-					take_contract: argv.ft_contract,
-					take_token_id: argv.ft_token_id
-				}
-				return await get_active_order_type(provider.config, request)
+				return await get_active_order_type(provider.config, argv.owner!, `${contract}:${tokenId}`)
 			} catch (e) {
 				console.error(e)
 			}

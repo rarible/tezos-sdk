@@ -3,7 +3,7 @@ import {
     approve_v2,
     AssetTypeV2, await_order, get_royalties,
     OrderStatus,
-    Part, Platform,
+    Part, Platform, ProtocolActivity,
     Provider,
     send_batch,
     TransactionArg
@@ -102,17 +102,7 @@ export async function ask_v1(
         const op = await send_batch(provider, args);
         await op.confirmation();
         console.log(op.hash)
-        const order_id = await await_order(provider.config,
-            {
-                make_contract: order.token_contract,
-                maker: seller,
-                platform: Platform.OBJKT_V1,
-                op_hash: op.hash,
-                make_token_id: order.token_id,
-                status: OrderStatus.ACTIVE
-            },
-            40,
-            2000)
+        const order_id = await await_order(provider.config, `${order.token_contract}:${order.token_id}`, op.hash, ProtocolActivity.LIST, seller, 20, 2000)
         if (order_id == undefined || order_id.length == 0) {
             throw new Error("Order was not found")
         }
