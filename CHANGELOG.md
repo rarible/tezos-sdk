@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.44](https://github.com/rarible/tezos-sdk/compare/v0.1.43...v0.1.44) (2023-01-30)
+
+
+### Bug Fixes
+
+* marketplaces orders fixes ([cb3ff55](https://github.com/rarible/tezos-sdk/commit/cb3ff55a61b2b4c136a09b7281a90b642c033692))
+
+
+
+
+
 ## [0.1.43](https://github.com/rarible/tezos-sdk/compare/v0.1.42...v0.1.43) (2022-12-22)
 
 **Note:** Version bump only for package root
