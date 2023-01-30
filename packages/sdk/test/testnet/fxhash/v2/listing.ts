@@ -18,8 +18,9 @@ export async function fxhash_v2_listing() {
 
   const buyOrder = await testScript('fxhash_v2_listing_accept', {
     edsk: buyerEdsk,
-    item_id: sellOrder,
+    item_id: "TEZOS:9bce48a3-81bf-5485-a2fe-78af6ef0e5f5",
   })
   console.log('buyOrder', buyOrder)
 
 }
+fxhash_v2_listing()

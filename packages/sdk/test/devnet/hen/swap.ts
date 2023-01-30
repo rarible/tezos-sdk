@@ -25,3 +25,4 @@ export async function hen_swap() {
   console.log('buyOrder', buyOrder)
 
 }
+hen_swap()

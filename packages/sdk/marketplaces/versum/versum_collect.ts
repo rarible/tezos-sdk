@@ -26,8 +26,11 @@ export async function versum_collect(
 	provider: Provider,
 	sale: string,
 	qty: BigNumber
-): Promise<OperationResult | undefined> {
+): Promise<OperationResult> {
 	const ask = await get_orders_by_ids(provider.config, [sale])
+  if (!ask) {
+    throw new Error(`Order has not been found (${sale})`)
+  }
 	let args: TransactionArg[] = await get_versum_collect_transaction(provider, ask.orders[0].data.internalOrderId, new BigNumber(ask.orders[0].makePrice), qty)
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")

@@ -5,12 +5,13 @@ export async function fxhash_v2_cancel_listing() {
   console.log("Running fxhash_v2_cancel_listing test")
   console.log("--------------------")
 
-  const sellerEdsk = "edskRpm2mUhvoUjHjXgMoDRxMKhtKfww1ixmWiHCWhHuMEEbGzdnz8Ks4vgarKDtxok7HmrEo1JzkXkdkvyw7Rtw6BNtSd7MJ7"
+  const sellerEdsk = "edskRqrEPcFetuV7xDMMFXHLMPbsTawXZjH9yrEz4RBqH1D6H8CeZTTtjGA3ynjTqD8Sgmksi7p5g3u5KUEVqX2EWrRnq5Bymj"
 
   const cancel = await testScript('fxhash_v2_cancel_listing', {
     edsk: sellerEdsk,
-    item_id: "7be536de-c106-5bb7-ae88-56d26216851c",
+    item_id: "TEZOS:e5fdfc89-c12b-57f4-b724-9547ebf4250f",
   })
   console.log('cancel', cancel)
 
 }
+fxhash_v2_cancel_listing()

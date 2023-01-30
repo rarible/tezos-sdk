@@ -35,3 +35,4 @@ export async function bid() {
   })
   console.log('acceptBid', acceptBid)
 }
+bid()

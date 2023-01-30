@@ -37,3 +37,4 @@ export async function bid_fa12() {
   })
   console.log('acceptBid', acceptBid)
 }
+bid_fa12()

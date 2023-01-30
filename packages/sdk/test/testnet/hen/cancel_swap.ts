@@ -10,8 +10,9 @@ export async function hen_cancel_swap() {
 
   const cancel = await testScript('hen_cancel_swap', {
     edsk: sellerEdsk,
-    item_id: "42b95037-4d84-5f85-b19b-8e20f0c64555",
+    item_id: "TEZOS:b70ee52e-ff45-5851-a96c-f3ea5f291c2d",
   })
   console.log('cancel', cancel)
 
 }
+hen_cancel_swap()

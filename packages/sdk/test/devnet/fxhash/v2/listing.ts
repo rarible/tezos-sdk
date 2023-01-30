@@ -25,3 +25,4 @@ export async function fxhash_v2_listing() {
   console.log('buyOrder', buyOrder)
 
 }
+fxhash_v2_listing()

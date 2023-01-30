@@ -24,3 +24,4 @@ export async function versum_swap() {
   console.log('buyOrder', buyOrder)
 
 }
+versum_swap()
