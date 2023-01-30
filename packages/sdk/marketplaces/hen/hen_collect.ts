@@ -30,7 +30,6 @@ export async function hen_collect(
     throw new Error(`Order has not been found (${sale})`)
   }
 	let args: TransactionArg[] = await get_hen_collect_transaction(provider, ask.orders[0].data.internalOrderId, ask.orders[0].makePrice)
-  console.log('args', args)
   if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
 	}
