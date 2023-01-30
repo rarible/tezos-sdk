@@ -23,3 +23,4 @@ export async function fxhash_v1_offer() {
   console.log('buyOrder', buyOrder)
 
 }
+fxhash_v1_offer()

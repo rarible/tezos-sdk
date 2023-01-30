@@ -10,26 +10,19 @@ import {MichelsonData} from "@taquito/michel-codec";
 export async function objkt_retract_ask_v1(
 	provider: Provider,
 	sale: string,
-): Promise<OperationResult | undefined> {
+): Promise<OperationResult> {
 	let args: TransactionArg[] = [];
 	const ask = await get_orders_by_ids(provider.config, [sale])
-	if (ask != undefined && ask.orders.length == 1) {
-		args = args.concat(objkt_retract_ask_v1_arg(provider, ask.orders[0].internal_order_id));
-		if (args.length === 0) {
-			throw new Error("Empty array of transaction arguments")
-		}
-		try {
-			const op = await send_batch(provider, args);
-			await op.confirmation();
-			return op
-		} catch (e) {
-			console.log((e as Error).message)
-		}
-
-
-	} else {
-		return undefined
-	}
+  if (!ask || !ask.orders.length) {
+    throw new Error(`Order has not been found (${sale})`)
+  }
+  args = args.concat(objkt_retract_ask_v1_arg(provider, ask.orders[0].data.internalOrderId));
+  if (args.length === 0) {
+    throw new Error("Empty array of transaction arguments")
+  }
+  const op = await send_batch(provider, args);
+  await op.confirmation();
+  return op
 }
 
 export function objkt_retract_ask_v1_arg(

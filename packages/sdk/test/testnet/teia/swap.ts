@@ -23,3 +23,4 @@ export async function teia_swap() {
   console.log('buyOrder', buyOrder)
 
 }
+teia_swap()

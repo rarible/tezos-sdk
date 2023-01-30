@@ -9,8 +9,9 @@ export async function versum_cancel_swap() {
 
   const cancel = await testScript('versum_cancel_swap', {
     edsk: sellerEdsk,
-    item_id: "4a1860e5-1ba8-53fd-b20f-6c6548e10c51",
+    item_id: "TEZOS:ee1d547b-9d9d-55a3-9775-bd96c76fdf7c",
   })
   console.log('cancel', cancel)
 
 }
+versum_cancel_swap()

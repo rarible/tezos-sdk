@@ -23,3 +23,4 @@ export async function objkt_ask_v1() {
   console.log('buyOrder', buyOrder)
 
 }
+objkt_ask_v1()

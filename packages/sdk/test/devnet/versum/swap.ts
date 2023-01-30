@@ -16,6 +16,7 @@ export async function versum_swap() {
   })
   console.log('sellOrder', sellOrder)
 
+  return
   const buyOrder = await testScript('versum_collect', {
     edsk: buyerEdsk,
     item_id: sellOrder,

@@ -39,3 +39,4 @@ export async function bid_fa2() {
   })
   console.log('acceptBid', acceptBid)
 }
+bid_fa2()

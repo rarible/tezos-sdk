@@ -641,7 +641,7 @@ export async function testScript(operation?: string, options: any = {}) {
 				price_per_item: new BigNumber(argv.amount)
 			}
 
-			const order = await teia_swap(provider, sell_request)
+			const order = await hen_swap(provider, sell_request)
 			console.log('order=', order)
 			return order
 		}
@@ -683,6 +683,7 @@ export async function testScript(operation?: string, options: any = {}) {
 
 			const [contract, tokenId] = argv.item_id.split(":")
 
+      console.log('tokenid', tokenId)
 			const sell_request: VersumSwapForm = {
 				token_id: new BigNumber(tokenId),
 				editions: new BigNumber(argv.qty),

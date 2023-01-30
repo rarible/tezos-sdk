@@ -40,8 +40,11 @@ export async function get_objkt_fulfill_bid_v2_transaction(
 export async function objkt_fulfill_bid_v2(
 	provider: Provider,
 	sale: string
-): Promise<OperationResult | undefined> {
+): Promise<OperationResult> {
 	const ask = await get_orders_by_ids(provider.config, [sale])
+  if (!ask || !ask.orders.length) {
+    throw new Error(`Order has not been found (${sale})`)
+  }
 	let args: TransactionArg[] = await get_objkt_fulfill_bid_v2_transaction(provider, ask.orders[0].data.internalOrderId, ask.orders[0].take.contract, ask.orders[0].take.tokenId)
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")

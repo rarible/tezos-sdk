@@ -24,8 +24,11 @@ export async function get_teia_collect_transaction(
 export async function teia_collect(
 	provider: Provider,
 	sale: string
-): Promise<OperationResult | undefined> {
+): Promise<OperationResult> {
 	const ask = await get_orders_by_ids(provider.config, [sale])
+  if (!ask) {
+    throw new Error(`Order has not been found (${sale})`)
+  }
 	let args: TransactionArg[] = await get_teia_collect_transaction(provider, ask.orders[0].data.internalOrderId, new BigNumber(ask.orders[0].makePrice))
 	if (args.length === 0) {
 		throw new Error("Empty array of transaction arguments")
