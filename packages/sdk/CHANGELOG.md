@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.45](https://github.com/rarible/tezos-sdk/compare/v0.1.44...v0.1.45) (2023-03-29)
+
+
+### Features
+
+* add log_event to all batch operations ([e724469](https://github.com/rarible/tezos-sdk/commit/e7244697bb4fcd67e79c7ae6f8b5a03e7b5c9fc2))
+
+
+
+
+
 ## [0.1.44](https://github.com/rarible/tezos-sdk/compare/v0.1.43...v0.1.44) (2023-01-30)
 
 
