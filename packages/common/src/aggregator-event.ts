@@ -1,5 +1,5 @@
-import {Provider, TransactionArg} from "@rarible/tezos-common";
 import {MichelsonData} from "@taquito/michel-codec";
+import {Provider, TransactionArg} from "./base";
 
 export function get_aggregator_event_transaction(provider: Provider): TransactionArg {
 	const parameter: MichelsonData =

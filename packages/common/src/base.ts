@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
 import {fetchWrapper, NetworkErrorCode} from "./fetch-wrapper";
 import {NetworkError} from "@rarible/logger/build";
+import {get_aggregator_event_transaction} from "./aggregator-event";
 
 const {TextEncoder, TextDecoder} = require("text-encoder")
 const bs58check = require("bs58check")
@@ -364,9 +365,12 @@ export async function send_batch(
 	provider: Provider,
 	args: TransactionArg[],
 ): Promise<OperationResult> {
-  let params
+  let prepared: TransferParams[]
   try {
-    params = args.map(function (p) {
+    prepared = args
+      //add log_event to track rarible tx
+      .concat(get_aggregator_event_transaction(provider))
+      .map(function (p) {
       if (p.entrypoint && p.parameter) {
         return {
           amount: (p.amount != undefined) ? Number(p.amount) : 0,
@@ -380,7 +384,7 @@ export async function send_batch(
         }
       }
     })
-	  const op = await provider.tezos.batch(params)
+	  const op = await provider.tezos.batch(prepared)
     return wrap_confirmation(op, args)
   } catch (e) {
     throw new TezosProviderError({
