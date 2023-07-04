@@ -2,9 +2,10 @@ import {BigMapAbstraction, OriginateParams, TezosToolkit, TransferParams} from "
 import {MichelsonData, packDataBytes, unpackDataBytes} from "@taquito/michel-codec"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
-import {fetchWrapper, NetworkErrorCode} from "./fetch-wrapper";
+import { fetchAPI, fetchWrapper, NetworkErrorCode } from "./fetch-wrapper";
 import {NetworkError} from "@rarible/logger/build";
 import {get_aggregator_event_transaction} from "./aggregator-event";
+import { Config } from "./types";
 
 const {TextEncoder, TextDecoder} = require("text-encoder")
 const bs58check = require("bs58check")
@@ -124,40 +125,7 @@ export interface TezosProvider {
 	tk: TezosToolkit
 }
 
-export interface Config {
-	chain_id: string;
-	exchange: string;
-	transfer_proxy: string;
-	fees: BigNumber;
-	nft_public: string;
-	mt_public: string;
-	auction: string;
-	auction_storage: string;
-	node_url: string;
-	sales: string,
-	sales_storage: string,
-	transfer_manager: string,
-	bid: string,
-	bid_storage: string,
-	sig_checker: string,
-	tzkt: string,
-	dipdup: string,
-	union_api: string,
-	objkt_sales_v1: string,
-	objkt_sales_v2: string,
-	hen_marketplace: string,
-	hen_objkts: string,
-	teia_marketplace: string,
-	versum_marketplace: string,
-	versum_nfts: string,
-	royalties_provider: string,
-	fxhash_sales_v1: string,
-	fxhash_sales_v2: string,
-	fxhash_nfts_v1: string,
-	fxhash_nfts_v2: string,
-	aggregator_tracker: string,
-	aggregator_tracker_id: string
-}
+
 
 export interface Provider {
 	tezos: TezosProvider;
@@ -417,7 +385,9 @@ export async function get_royalties(
 	token_contract: string,
 	tokenId: BigNumber
 ): Promise<Array<Part>> {
-	const r = await fetchWrapper(provider.config.union_api + `/items/TEZOS:${token_contract}:${tokenId}/royalties`)
+	const r = await fetchAPI(`/items/TEZOS:${token_contract}:${tokenId}/royalties`, {
+    config: provider.config
+  })
   const result = await r.json()
   const royalties: Array<Part> = result.royalties
   for (let share of royalties) {
@@ -677,7 +647,7 @@ export function getAsset(sale_type: AssetTypeV2, assetContract?: string, assetId
 
 export async function get_ft_type(config: Config, assetContract: string): Promise<AssetTypeV2 | undefined> {
 	const result = await fetchWrapper(config.tzkt + '/v1/contracts/' + assetContract, {
-		defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
+		defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR,
 	})
 	let assetType = undefined
 	try {
@@ -696,7 +666,7 @@ export async function get_ft_type(config: Config, assetContract: string): Promis
 
 export async function get_decimals(config: Config, contract: string, token_id = new BigNumber(0)): Promise<BigNumber> {
 	const result = await fetchWrapper(`${config.tzkt}/v1/tokens?contract=${contract}&tokenId=${token_id}`, {
-		defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
+		defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR,
 	})
 	const token = await result.json()
 	if (token.length == 1 && token[0].metadata != undefined) {

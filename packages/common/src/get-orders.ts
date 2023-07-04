@@ -1,6 +1,6 @@
-import {Config, OrderType, retry} from "./base"
-import {fetchWrapper} from "./fetch-wrapper";
-import fetch from "node-fetch";
+import { delay, OrderType, retry } from "./base"
+import { fetchAPI } from "./fetch-wrapper";
+import { Config } from "./types";
 
 
 export interface ProtocolOrderPayload {
@@ -27,7 +27,7 @@ export async function get_active_order_type(
 	return retry(30, 2000, async () => {
 		let order_result = await get_orders(config, maker, true, item_id)
 		let continuation = ""
-		while(continuation != undefined) {
+		while (continuation != undefined) {
 			if (order_result.orders.length > 0) {
 				for (let i = 0; i < order_result.orders.length; i++) {
 					if (order_result.orders[i].data["@type"] == "TEZOS_RARIBLE_V2") {
@@ -58,21 +58,25 @@ export async function await_order(
 	return retry(max_tries, sleep, async () => {
 		let cursor = ""
 		while (cursor != undefined){
-			const activities = await get_item_activities(config, item_id, type)
-			for(let activity of activities.activities){
-				if(
-					activity["@type"] === type.valueOf()
-				) {
-					if(
-						activity["maker"] === `TEZOS:${maker}` &&
-						activity["hash"] === op_hash
-					){
-						return activity["orderId"]
-					}
-				}
-				cursor = activity["cursor"]
-			}
-		}
+      const activities = await get_item_activities(config, item_id, type, 1000, cursor)
+      if (!activities.activities.length) {
+        throw new Error("await_order: Order has not been found")
+      }
+      for (let activity of activities.activities){
+        if (
+          activity["@type"] === type.valueOf()
+        ) {
+          if(
+            activity["maker"] === `TEZOS:${maker}` &&
+            activity["hash"] === op_hash
+          ){
+            return activity["orderId"]
+          }
+        }
+      }
+      cursor = activities["cursor"]
+      await delay(sleep)
+    }
 
 	})
 }
@@ -88,7 +92,10 @@ export async function get_orders(
 ): Promise<ProtocolOrderPayload> {
 	let continuation_filter = continuation ? `&continuation=${continuation}`: ""
 	let active_filter = is_active ? "&status=ACTIVE" : ""
-	const r = await fetchWrapper(config.union_api + `/orders/sell/byItem?itemId=TEZOS:${item_id}&maker=TEZOS:${maker}&size=${size}${active_filter}${continuation_filter}`)
+	const r = await fetchAPI(
+    `/orders/sell/byItem?itemId=TEZOS:${item_id}&maker=TEZOS:${maker}&size=${size}${active_filter}${continuation_filter}`,
+    { config }
+  )
 	return await r.json()
 }
 
@@ -96,7 +103,8 @@ export async function get_orders_by_ids(
 	config: Config,
 	ids: string[],
 ): Promise<ProtocolOrderPayload> {
-	const r = await fetchWrapper(config.union_api + `/orders/byIds`, {
+	const r = await fetchAPI("/orders/byIds", {
+    config,
 		method: 'POST',
 		body: JSON.stringify({ids: ids}),
 		headers: {'Content-Type': 'application/json'}
@@ -114,7 +122,10 @@ export async function get_item_activities(
 	cursor?: string
 ): Promise<ProtocolActivityPayload> {
 	let cursor_filter = cursor ? `&cursor=${cursor}`: ""
-	const r = await fetchWrapper(config.union_api + `/activities/byItem?itemId=TEZOS:${item_id}&type=${type}&size=${size}${cursor_filter}`)
+	const r = await fetchAPI(
+    `/activities/byItem?itemId=TEZOS:${item_id}&type=${type}&size=${size}${cursor_filter}`,
+    { config }
+  )
 	const res = await r.json()
 	return res
 }

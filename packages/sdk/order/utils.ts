@@ -6,7 +6,8 @@ import {
   asset_to_json,
   asset_of_json,
   Part,
-  get_royalties, are_royalties_on_chain
+  get_royalties,
+  are_royalties_on_chain,
 } from "@rarible/tezos-common"
 import BigNumber from "bignumber.js"
 import fetch from "node-fetch"
@@ -89,7 +90,9 @@ export function salt() : string {
   return a.reduce((acc, x) => acc + x.toString(10).padStart(2, '0'), '')
 }
 
-export async function fill_offchain_royalties(provider : Provider, order: OrderForm) : Promise<OrderForm> {
+export async function fill_offchain_royalties(
+  provider : Provider,
+  order: OrderForm) : Promise<OrderForm> {
   let asset : NFTAssetType | MTAssetType | undefined ;
   if ((order.make.asset_type.asset_class=="NFT" || order.make.asset_type.asset_class=="MT") && order.take.asset_type.asset_class!="NFT" && order.take.asset_type.asset_class!="MT") {
     asset = order.make.asset_type }
