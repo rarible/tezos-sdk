@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.46](https://github.com/rarible/tezos-sdk/compare/v0.1.45...v0.1.46) (2023-07-04)
+
+
+### Bug Fixes
+
+* **MPX-2118:** tezos queries ([47741d0](https://github.com/rarible/tezos-sdk/commit/47741d0854797724f8851d04384f3890059ad194))
+
+
+
+
+
 ## [0.1.45](https://github.com/rarible/tezos-sdk/compare/v0.1.44...v0.1.45) (2023-03-29)
 
 
