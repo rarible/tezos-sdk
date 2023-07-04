@@ -1,6 +1,7 @@
-import {asset_factor, AssetTypeV2, Config} from "./base"
+import {asset_factor, AssetTypeV2} from "./base"
 import BigNumber from "bignumber.js"
 import {fetchWrapper, NetworkErrorCode} from "./fetch-wrapper";
+import { Config } from "./types";
 
 export async function get_balance(
     config: Config,
@@ -18,7 +19,7 @@ export async function get_balance(
       }
       const tokenIdQuery = asset_token_id !== undefined ? `&token.tokenId=${asset_token_id.toString()}` : ""
       const r = await fetchWrapper(`${config.tzkt}/v1/tokens/balances?account=${owner}&token.contract=${asset_contract}${tokenIdQuery}`, {
-        defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
+        defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR,
       })
       const json = await r.json()
       if (!json.length) {
@@ -33,7 +34,7 @@ export async function get_balance(
 
 export async function get_xtz_balance(config: Config, account: string) : Promise<BigNumber> {
   const r = await fetchWrapper(`${config.node_url}/chains/main/blocks/head/context/contracts/${account}/balance`, {
-    defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR
+    defaultErrorCode: NetworkErrorCode.TEZOS_EXTERNAL_ERR,
   })
   const json = await r.json()
   return (new BigNumber(json)).div(1000000)

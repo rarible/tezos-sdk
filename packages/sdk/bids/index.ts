@@ -118,7 +118,6 @@ export async function put_bid(provider: Provider, bid: Bid) : Promise<string | u
   const args = (arg_approve) ? [ arg_approve, arg ] : [ arg ]
   const op = await send_batch(provider, args);
   await op.confirmation();
-  console.log(op.hash)
   const bid_id = await await_order(provider.config, `${bid.asset_contract}:${bid.asset_token_id}`, op.hash, ProtocolActivity.BID, bidder, 20, 2000)
   return bid_id
 }

@@ -1,15 +1,15 @@
 import {MichelsonData} from "@taquito/michel-codec"
 import {
-	Provider,
-	send_batch,
-	get_public_key,
-	OperationResult,
-	Asset,
-	get_address,
-	FTAssetType,
-	get_decimals,
-	Part,
-	approve_arg, TransactionArg
+  Provider,
+  send_batch,
+  get_public_key,
+  OperationResult,
+  Asset,
+  get_address,
+  FTAssetType,
+  get_decimals,
+  Part,
+  approve_arg, TransactionArg,
 } from "@rarible/tezos-common"
 import {OrderForm, fill_offchain_royalties} from "./utils"
 import {invert_order} from "./invert-order"

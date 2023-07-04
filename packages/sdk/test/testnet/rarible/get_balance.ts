@@ -12,13 +12,14 @@ export async function get_balance() {
     owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
     sale_type: AssetTypeV2.FA2
   })
-  console.log(balanceFA2)
+  console.log(balanceFA2?.toString())
   assert(balanceFA2 != 0)
   const balanceFA12 = await testScript('get_balance', {
     ft_contract: "KT1WsXMAzcre2MNUjNkGtVQLpsTnNFhBJhLv",
     owner: "tz1Mxsc66En4HsVHr6rppYZW82ZpLhpupToC",
     sale_type: AssetTypeV2.FA12
   })
-  console.log(balanceFA12)
+  console.log(balanceFA12?.toString())
   assert(balanceFA12 != 0)
 }
+get_balance()
